@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Star, ArrowUpRight, Plus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Star, ArrowUpRight, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { GROWTH } from "@/data/content";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
 import { scrollToId } from "@/lib/scroll";
@@ -15,6 +15,103 @@ const GoogleG = () => (
     <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.3-5.7c-2 1.4-4.7 2.3-8.6 2.3-6.7 0-12.4-4.5-14.4-10.6l-7.8 6C6.4 42.6 14.6 48 24 48z" />
   </svg>
 );
+
+function ReviewsCarousel({ reviews }) {
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+
+  useEffect(() => {
+    if (reviews.length <= 1) return;
+    const timer = setInterval(() => {
+      setDirection(1);
+      setIndex((i) => (i + 1) % reviews.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [reviews.length]);
+
+  const go = (dir) => {
+    setDirection(dir);
+    setIndex((i) => (i + dir + reviews.length) % reviews.length);
+  };
+
+  const r = reviews[index];
+
+  return (
+    <div
+      className="flex h-full flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9"
+      data-testid="reviews-carousel"
+    >
+      <div className="relative min-h-[168px] overflow-hidden">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.figure
+            key={index}
+            initial={{ opacity: 0, x: direction >= 0 ? 32 : -32 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: direction >= 0 ? -32 : 32 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            data-testid={`review-card-${index}`}
+          >
+            <div className="flex items-center gap-3">
+              {r.author_photo_uri ? (
+                <img src={r.author_photo_uri} alt="" className="h-10 w-10 rounded-full" loading="lazy" />
+              ) : (
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-crimson/15 text-sm font-bold text-crimson">
+                  {(r.author || "G")[0]}
+                </span>
+              )}
+              <div>
+                <div className="text-sm font-semibold text-white">{r.author || "Google user"}</div>
+                <div className="flex gap-0.5 text-crimson">
+                  {[...Array(r.rating || 5)].map((_, s) => (
+                    <Star key={s} size={12} fill="currentColor" strokeWidth={0} />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <blockquote className="mt-4 text-sm leading-relaxed text-dim">"{r.text}"</blockquote>
+          </motion.figure>
+        </AnimatePresence>
+      </div>
+
+      <div className="mt-6 flex items-center justify-between">
+        <div className="flex gap-2">
+          {reviews.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                setDirection(i > index ? 1 : -1);
+                setIndex(i);
+              }}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === index ? "w-6 bg-crimson" : "w-1.5 bg-white/20"
+              }`}
+              data-testid={`review-dot-${i}`}
+              aria-label={`Go to review ${i + 1}`}
+            />
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => go(-1)}
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 text-white transition-colors duration-300 hover:border-crimson hover:text-crimson"
+            data-testid="review-prev-btn"
+            aria-label="Previous review"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <button
+            onClick={() => go(1)}
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 text-white transition-colors duration-300 hover:border-crimson hover:text-crimson"
+            data-testid="review-next-btn"
+            aria-label="Next review"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Growth() {
   const [rev, setRev] = useState(null);
@@ -82,61 +179,32 @@ export default function Growth() {
           </Reveal>
         </div>
 
-        {/* Google reviews */}
-        <div className="mt-12 flex justify-center">
+        {/* Google reviews — summary card (left) + carousel (right) */}
+        <div className="mt-12 grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-stretch">
           <Reveal delay={0.1}>
-            <div className="flex w-full max-w-xl flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9" data-testid="google-reviews-card">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <GoogleG />
-                  <span className="font-display text-lg font-bold">Google Reviews</span>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-display text-3xl font-extrabold leading-none" data-testid="reviews-rating">{Number(rating).toFixed(1)}</span>
-                    <div className="flex gap-0.5 text-crimson">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={12} fill="currentColor" strokeWidth={0} />
-                      ))}
-                    </div>
+            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9" data-testid="google-reviews-card">
+              <div className="flex items-center gap-3">
+                <GoogleG />
+                <span className="font-display text-lg font-bold">Google Reviews</span>
+              </div>
+
+              <div className="mt-6 flex items-center gap-3">
+                <span className="font-display text-5xl font-extrabold leading-none" data-testid="reviews-rating">
+                  {Number(rating).toFixed(1)}
+                </span>
+                <div>
+                  <div className="flex gap-0.5 text-crimson">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
+                    ))}
                   </div>
-                  <div className="mt-0.5 text-[11px] text-dim" data-testid="reviews-count">
+                  <div className="mt-1 text-[11px] text-dim" data-testid="reviews-count">
                     {rev?.live && rev.review_count != null ? `${rev.review_count} Google reviews` : "Verified listing on Google Maps"}
                   </div>
                 </div>
               </div>
 
-              {/* Auto-scrolling review feed — shows 2 reviews at a time */}
-              <div className="relative mt-6 h-[248px] overflow-hidden" data-testid="reviews-scroller">
-                <div className="animate-marquee-y flex flex-col gap-3">
-                  {[...reviewList, ...reviewList].map((r, i) => (
-                    <figure key={i} className="h-[118px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-surface p-4">
-                      <div className="flex items-center gap-2">
-                        {r.author_photo_uri ? (
-                          <img src={r.author_photo_uri} alt="" className="h-6 w-6 rounded-full" loading="lazy" />
-                        ) : (
-                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-crimson/15 text-[10px] font-bold text-crimson">
-                            {(r.author || "G")[0]}
-                          </span>
-                        )}
-                        <span className="text-xs font-semibold text-white">{r.author || "Google user"}</span>
-                        <span className="ml-auto flex gap-0.5 text-crimson">
-                          {[...Array(r.rating || 5)].map((_, s) => (
-                            <Star key={s} size={10} fill="currentColor" strokeWidth={0} />
-                          ))}
-                        </span>
-                      </div>
-                      <blockquote className="mt-2 line-clamp-3 text-xs leading-relaxed text-dim">
-                        "{r.text.length > 160 ? `${r.text.slice(0, 160)}…` : r.text}"
-                      </blockquote>
-                    </figure>
-                  ))}
-                </div>
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-elevated to-transparent" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-elevated to-transparent" />
-              </div>
-
-              <div className="mt-6 flex flex-col gap-3">
+              <div className="mt-8 flex flex-1 flex-col justify-end gap-3">
                 <a
                   href={rev?.google_maps_uri || "https://maps.google.com/?cid=885671371509995655"}
                   target="_blank"
@@ -159,6 +227,10 @@ export default function Growth() {
                 {rev?.live && <span className="text-center text-[10px] text-dim">Live data provided by Google Maps</span>}
               </div>
             </div>
+          </Reveal>
+
+          <Reveal delay={0.15}>
+            <ReviewsCarousel reviews={reviewList} />
           </Reveal>
         </div>
       </div>

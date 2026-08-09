@@ -81,6 +81,16 @@ export const GROWTH = {
       rating: 5,
       text: "We have been working with Vertical Infinity for over a year now and they have exceeded our expectations. They are a true partner and have helped us grow our business significantly.",
     },
+    {
+      author: "Anonymous",
+      rating: 5,
+      text: "Sharp team, fast turnaround, and they actually understand SME budgets. Our new site paid for itself within the first quarter.",
+    },
+    {
+      author: "Anonymous",
+      rating: 5,
+      text: "From strategy to launch, Vertical Infinity kept things simple and transparent. Highly recommend for anyone scaling a growing business.",
+    },
   ],
   clients: ["NIMBUS", "Orbital", "Kadence", "VERITAS", "Loop", "Meridian", "Foundry", "Aperture"],
   reviews: {
