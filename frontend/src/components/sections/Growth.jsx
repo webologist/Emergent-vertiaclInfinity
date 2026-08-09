@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Quote, Star, ArrowUpRight, Plus } from "lucide-react";
+import { Star, ArrowUpRight, Plus } from "lucide-react";
 import { GROWTH } from "@/data/content";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
 import { scrollToId } from "@/lib/scroll";
@@ -27,7 +27,7 @@ export default function Growth() {
   }, []);
 
   const rating = rev?.rating ?? 4.9;
-  const topReview = rev?.live && rev.reviews?.length ? rev.reviews[0] : null;
+  const reviewList = rev?.live && rev.reviews?.length ? rev.reviews : GROWTH.fallbackReviews;
 
   return (
     <section id="growth" className="relative border-t border-white/10 py-24 md:py-36" data-testid="growth-section">
@@ -70,59 +70,68 @@ export default function Growth() {
           </Reveal>
         </div>
 
-        {/* Testimonial + reviews */}
-        <div className="mt-12 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-          {GROWTH.quotes.map((q, i) => (
-            <Reveal key={i} delay={i * 0.1}>
-              <figure className="relative flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-surface p-8 transition-colors duration-500 hover:border-crimson/40 md:p-10">
-                <Quote className="text-crimson" size={30} strokeWidth={1.4} />
-                <blockquote className="mt-6 font-display text-xl font-medium leading-snug tracking-tight text-white md:text-2xl">
-                  "{q.text}"
-                </blockquote>
-                <figcaption className="mt-8 flex items-center gap-3 border-t border-white/10 pt-6">
-                  <div className="h-9 w-9 rounded-full bg-gradient-to-br from-white/20 to-white/5" />
-                  <div>
-                    <div className="text-sm font-semibold text-white">{q.author}</div>
-                    <div className="text-xs text-dim">{q.role}</div>
-                  </div>
-                </figcaption>
-              </figure>
-            </Reveal>
-          ))}
+        {/* Branson quote + scrolling reviews */}
+        <div className="mt-14 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <Reveal>
+            <blockquote className="max-w-2xl font-display text-2xl font-semibold leading-snug tracking-tight text-white md:text-3xl" data-testid="branson-quote">
+              "{GROWTH.bransonQuote.text}"
+            </blockquote>
+            <p className="mt-3 text-sm text-dim" data-testid="branson-quote-author">– {GROWTH.bransonQuote.author}</p>
+          </Reveal>
 
           <Reveal delay={0.1}>
-            <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-elevated p-8 md:p-10" data-testid="google-reviews-card">
-              <div className="flex items-center gap-3">
-                <GoogleG />
-                <span className="font-display text-lg font-bold">Google Reviews</span>
-              </div>
-              <div className="mt-6 flex items-end gap-3">
-                <span className="font-display text-6xl font-extrabold leading-none" data-testid="reviews-rating">{Number(rating).toFixed(1)}</span>
-                <div className="mb-1.5">
-                  <div className="flex gap-0.5 text-crimson">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={16} fill="currentColor" strokeWidth={0} />
-                    ))}
+            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9" data-testid="google-reviews-card">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <GoogleG />
+                  <span className="font-display text-lg font-bold">Google Reviews</span>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-display text-3xl font-extrabold leading-none" data-testid="reviews-rating">{Number(rating).toFixed(1)}</span>
+                    <div className="flex gap-0.5 text-crimson">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={12} fill="currentColor" strokeWidth={0} />
+                      ))}
+                    </div>
                   </div>
-                  <div className="mt-1 text-xs text-dim" data-testid="reviews-count">
+                  <div className="mt-0.5 text-[11px] text-dim" data-testid="reviews-count">
                     {rev?.live && rev.review_count != null ? `${rev.review_count} Google reviews` : "Verified listing on Google Maps"}
                   </div>
                 </div>
               </div>
-              {topReview && (
-                <figure className="mt-6 border-t border-white/10 pt-5" data-testid="reviews-top-review">
-                  <blockquote className="text-sm leading-relaxed text-dim">
-                    "{topReview.text.length > 150 ? `${topReview.text.slice(0, 150)}…` : topReview.text}"
-                  </blockquote>
-                  <figcaption className="mt-2 flex items-center gap-2 text-xs text-white">
-                    {topReview.author_photo_uri && (
-                      <img src={topReview.author_photo_uri} alt="" className="h-5 w-5 rounded-full" loading="lazy" />
-                    )}
-                    {topReview.author} · {topReview.rating}/5
-                  </figcaption>
-                </figure>
-              )}
-              <div className="mt-8 flex flex-col gap-3">
+
+              {/* Auto-scrolling review feed */}
+              <div className="relative mt-6 h-[240px] overflow-hidden" data-testid="reviews-scroller">
+                <div className="animate-marquee-y flex flex-col gap-3">
+                  {[...reviewList, ...reviewList].map((r, i) => (
+                    <figure key={i} className="rounded-xl border border-white/10 bg-surface p-4">
+                      <div className="flex items-center gap-2">
+                        {r.author_photo_uri ? (
+                          <img src={r.author_photo_uri} alt="" className="h-6 w-6 rounded-full" loading="lazy" />
+                        ) : (
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-crimson/15 text-[10px] font-bold text-crimson">
+                            {(r.author || "G")[0]}
+                          </span>
+                        )}
+                        <span className="text-xs font-semibold text-white">{r.author || "Google user"}</span>
+                        <span className="ml-auto flex gap-0.5 text-crimson">
+                          {[...Array(r.rating || 5)].map((_, s) => (
+                            <Star key={s} size={10} fill="currentColor" strokeWidth={0} />
+                          ))}
+                        </span>
+                      </div>
+                      <blockquote className="mt-2 text-xs leading-relaxed text-dim">
+                        "{r.text.length > 180 ? `${r.text.slice(0, 180)}…` : r.text}"
+                      </blockquote>
+                    </figure>
+                  ))}
+                </div>
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-elevated to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-elevated to-transparent" />
+              </div>
+
+              <div className="mt-6 flex flex-col gap-3">
                 <a
                   href={rev?.google_maps_uri || "https://maps.google.com/?cid=885671371509995655"}
                   target="_blank"

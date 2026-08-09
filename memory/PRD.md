@@ -75,6 +75,13 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - Journey per PDF (2026-06): removed parallax image (PDF has none); chapters in PDF order; "Our Philosophy"
   highlighted as crimson-bordered card with glow, crimson heading and emphasized lead sentence.
 
+- Growth per PDF v2 (2026-06): Branson quote now plain display text (exact user wording) under the "your logo"
+  pill on the LEFT; Google Reviews block moved to RHS with an auto-scrolling vertical review feed
+  (`.animate-marquee-y`, pauses on hover) — fed by /api/reviews when live, PDF's two sample reviews
+  (Anonymous 5★) as fallback.
+- Journey per PDF v2 (2026-06): heading "We, our Journey" top-left, chapters stacked full-width, no numbers,
+  full PDF "Since 2003" text; "Our Philosophy" keeps its crimson highlight card (user request).
+
 ## Verified
 - iteration_1: core site flows. iteration_2: auth/admin/case-studies/E2E (100% frontend; 2 backend
   security issues found → fixed and curl-verified).

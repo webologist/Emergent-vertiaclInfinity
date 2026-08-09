@@ -66,11 +66,20 @@ export const GROWTH = {
     text: "If you build a great experience, customers tell each other about that. Word of mouth is very powerful.",
     author: "Brian Chesky, CEO of Airbnb",
   },
-  quotes: [
+  bransonQuote: {
+    text: "The key is to set realistic customer expectations, and then not to just meet them, but to exceed them — preferably in unexpected and helpful ways.",
+    author: "Richard Branson",
+  },
+  fallbackReviews: [
     {
-      text: "The key is to set realistic customer expectations, and then not just meet them, but exceed them — preferably in unexpected and helpful ways.",
-      author: "Richard Branson",
-      role: "Founder, Virgin Group",
+      author: "Anonymous",
+      rating: 5,
+      text: "This company is great. They have really helped us with our digital marketing and website design. The team is very knowledgeable and responsive.",
+    },
+    {
+      author: "Anonymous",
+      rating: 5,
+      text: "We have been working with Vertical Infinity for over a year now and they have exceeded our expectations. They are a true partner and have helped us grow our business significantly.",
     },
   ],
   clients: ["NIMBUS", "Orbital", "Kadence", "VERITAS", "Loop", "Meridian", "Foundry", "Aperture"],
@@ -82,7 +91,7 @@ export const GROWTH = {
 };
 
 export const JOURNEY = {
-  overline: "We, our journey",
+  title: "We, our Journey",
   chapters: [
     {
       no: "01",
@@ -97,7 +106,7 @@ export const JOURNEY = {
     {
       no: "03",
       title: "Since 2003",
-      body: "When we started out as Zxis back in 2003, we had a simple dream: to solve real problems with big ideas and a lot of heart. Over twenty years later, that spark has grown into Vertical Infinity Pvt. Ltd. While our name and scale have evolved, the passion that got us started hasn't changed one bit — we're still driven by curiosity, genuine connection, and a goal to keep reaching new heights together.",
+      body: "When we started out as Zxis back in 2003, we had a simple dream: to solve real problems with big ideas and a lot of heart. Over twenty years later, that spark has grown into Vertical Infinity Pvt. Ltd. — a milestone that reflects not just how much we've grown, but how many incredible partners and clients have walked this path with us. While our name and scale have evolved, the passion that got us started hasn't changed one bit. We're still the same team driven by curiosity, genuine connection, and a goal to keep reaching for new heights together. Welcome to our journey — we're so glad you're here.",
     },
   ],
 };
