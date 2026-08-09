@@ -41,7 +41,7 @@ function ReviewsCarousel({ reviews }) {
       className="flex h-full flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9"
       data-testid="reviews-carousel"
     >
-      <div className="relative min-h-[168px] overflow-hidden">
+      <div className="relative min-h-[168px] touch-pan-y overflow-hidden">
         <AnimatePresence mode="wait" initial={false}>
           <motion.figure
             key={index}
@@ -49,11 +49,20 @@ function ReviewsCarousel({ reviews }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: direction >= 0 ? -32 : 32 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            drag="x"
+            dragElastic={0.35}
+            dragConstraints={{ left: 0, right: 0 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -60 || info.velocity.x < -400) go(1);
+              else if (info.offset.x > 60 || info.velocity.x > 400) go(-1);
+            }}
+            whileDrag={{ cursor: "grabbing" }}
+            className="cursor-grab active:cursor-grabbing"
             data-testid={`review-card-${index}`}
           >
             <div className="flex items-center gap-3">
               {r.author_photo_uri ? (
-                <img src={r.author_photo_uri} alt="" className="h-10 w-10 rounded-full" loading="lazy" />
+                <img src={r.author_photo_uri} alt="" className="h-10 w-10 rounded-full" loading="lazy" draggable={false} />
               ) : (
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-crimson/15 text-sm font-bold text-crimson">
                   {(r.author || "G")[0]}
