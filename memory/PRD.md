@@ -72,6 +72,9 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
   directly under Chesky attribution; added PDF line "We would like your logo to be here." as dashed pill
   CTA (scrolls to #contact); Branson card + reviews card now share the bottom row.
 
+- Journey per PDF (2026-06): removed parallax image (PDF has none); chapters in PDF order; "Our Philosophy"
+  highlighted as crimson-bordered card with glow, crimson heading and emphasized lead sentence.
+
 ## Verified
 - iteration_1: core site flows. iteration_2: auth/admin/case-studies/E2E (100% frontend; 2 backend
   security issues found → fixed and curl-verified).
