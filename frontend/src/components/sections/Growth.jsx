@@ -70,16 +70,19 @@ export default function Growth() {
           </Reveal>
         </div>
 
-        {/* Branson quote + scrolling reviews */}
-        <div className="mt-14 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <Reveal>
-            <blockquote className="max-w-2xl font-display text-2xl font-semibold leading-snug tracking-tight text-white md:text-3xl" data-testid="branson-quote">
+        {/* Branson quote */}
+        <Reveal delay={0.05}>
+          <div className="mt-12 text-center">
+            <blockquote className="mx-auto max-w-3xl font-display text-2xl font-semibold leading-snug tracking-tight text-white md:text-3xl" data-testid="branson-quote">
               "{GROWTH.bransonQuote.text}"
             </blockquote>
             <p className="mt-3 text-sm text-dim" data-testid="branson-quote-author">– {GROWTH.bransonQuote.author}</p>
-          </Reveal>
+          </div>
+        </Reveal>
 
-          <Reveal delay={0.1}>
+        {/* Scrolling reviews (RHS) */}
+        <div className="mt-14 flex lg:justify-end">
+          <Reveal delay={0.1} className="w-full lg:max-w-xl">
             <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9" data-testid="google-reviews-card">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
