@@ -1,21 +1,6 @@
 import { SME } from "@/data/content";
 import { Reveal } from "@/components/Reveal";
 
-const MarqueeRow = ({ reverse, strong }) => (
-  <div className="flex select-none overflow-hidden py-2" aria-hidden="true">
-    <div className={`flex shrink-0 items-center gap-8 pr-8 ${reverse ? "animate-marquee-reverse" : "animate-marquee"}`}>
-      {[...SME.tags, ...SME.tags].map((t, i) => (
-        <span key={i} className="flex items-center gap-8">
-          <span className={`font-display text-5xl font-extrabold uppercase tracking-tighter sm:text-7xl md:text-8xl ${strong ? "text-cwhite" : "text-cwhite/45"}`}>
-            {t}
-          </span>
-          <span className="h-3 w-3 rotate-45 bg-cwhite" />
-        </span>
-      ))}
-    </div>
-  </div>
-);
-
 export default function SMEsMarquee() {
   return (
     <section
@@ -33,11 +18,6 @@ export default function SMEsMarquee() {
           </span>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-cwhite/90 md:text-xl">{SME.body}</p>
         </Reveal>
-      </div>
-
-      <div className="relative mt-16 flex flex-col gap-2 border-y border-cwhite/20 py-6">
-        <MarqueeRow />
-        <MarqueeRow reverse strong />
       </div>
     </section>
   );
