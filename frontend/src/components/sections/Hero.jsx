@@ -99,7 +99,7 @@ export default function Hero() {
         >
           {HERO.stats.map((s) => (
             <div key={s.label} className="px-4 first:pl-0">
-              <div className="font-display text-3xl font-bold text-white md:text-4xl">{s.value}</div>
+              <div className="font-display text-3xl font-bold text-white md:text-4xl">{s.value ?? `${new Date().getFullYear() - 2003}+`}</div>
               <div className="mt-1 text-xs uppercase tracking-widest text-dim">{s.label}</div>
             </div>
           ))}

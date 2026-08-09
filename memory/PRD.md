@@ -58,6 +58,9 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
   Sent as FastAPI BackgroundTask with reply-to = lead's email; failures only logged, never break /api/contact.
   Verified: proxy 202, real submission → "Lead alert sent" log with email id.
 
+- Hero stats (2026-06): removed "100% IP ownership" & "4 Industries served"; "Years building" now rolling
+  (current year − 2003, auto-updates each January).
+
 ## Verified
 - iteration_1: core site flows. iteration_2: auth/admin/case-studies/E2E (100% frontend; 2 backend
   security issues found → fixed and curl-verified).

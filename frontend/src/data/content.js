@@ -17,9 +17,7 @@ export const HERO = {
   cta: "Let's Chat Over Coffee",
   ctaHref: "#contact",
   stats: [
-    { value: "20+", label: "Years building" },
-    { value: "100%", label: "IP ownership" },
-    { value: "4", label: "Industries served" },
+    { label: "Years building" },
   ],
 };
 
