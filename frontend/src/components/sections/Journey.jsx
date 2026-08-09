@@ -12,36 +12,37 @@ export default function Journey() {
         </Reveal>
 
         <div className="mt-14 flex flex-col gap-8">
-          {JOURNEY.chapters.map((c, i) => {
-            const highlight = c.title === "Our Philosophy";
-            return (
-              <Reveal key={c.no} delay={i * 0.05}>
-                {highlight ? (
-                  <div
-                    className="relative overflow-hidden rounded-2xl border border-crimson/50 bg-surface p-8 md:p-12"
-                    data-testid={`journey-chapter-${c.no}`}
-                  >
-                    <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-crimson/15 blur-[100px]" aria-hidden="true" />
-                    <h3 className="font-display text-2xl font-bold tracking-tight text-crimson md:text-3xl">{c.title}</h3>
-                    <p className="mt-5 max-w-3xl font-display text-lg font-semibold leading-snug text-white md:text-xl">
-                      Your growth is the true measure of our success.
-                    </p>
-                    <p className="mt-4 max-w-3xl text-base leading-relaxed text-dim">
-                      {c.body.replace("Your growth is the true measure of our success. ", "")}
-                    </p>
-                  </div>
-                ) : (
-                  <div
-                    className="border-t border-white/10 py-8 first:border-t-0 first:pt-0"
-                    data-testid={`journey-chapter-${c.no}`}
-                  >
-                    <h3 className="font-display text-2xl font-bold tracking-tight md:text-3xl">{c.title}</h3>
-                    <p className="mt-5 max-w-3xl text-base leading-relaxed text-dim">{c.body}</p>
-                  </div>
-                )}
-              </Reveal>
-            );
-          })}
+          <div className="grid gap-8 md:grid-cols-2 md:items-stretch">
+            <Reveal>
+              <div className="h-full border-t border-white/10 py-8 md:border-t-0 md:pt-0" data-testid="journey-chapter-01">
+                <h3 className="font-display text-2xl font-bold tracking-tight md:text-3xl">{JOURNEY.chapters[0].title}</h3>
+                <p className="mt-5 max-w-md text-base leading-relaxed text-dim">{JOURNEY.chapters[0].body}</p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.05}>
+              <div
+                className="relative h-full overflow-hidden rounded-2xl border border-crimson/50 bg-surface p-8 md:p-10"
+                data-testid="journey-chapter-02"
+              >
+                <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-crimson/15 blur-[100px]" aria-hidden="true" />
+                <h3 className="font-display text-2xl font-bold tracking-tight text-crimson md:text-3xl">{JOURNEY.chapters[1].title}</h3>
+                <p className="mt-5 max-w-md font-display text-lg font-semibold leading-snug text-white md:text-xl">
+                  Your growth is the true measure of our success.
+                </p>
+                <p className="mt-4 max-w-md text-base leading-relaxed text-dim">
+                  {JOURNEY.chapters[1].body.replace("Your growth is the true measure of our success. ", "")}
+                </p>
+              </div>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.1}>
+            <div className="border-t border-white/10 py-8" data-testid="journey-chapter-03">
+              <h3 className="font-display text-2xl font-bold tracking-tight md:text-3xl">{JOURNEY.chapters[2].title}</h3>
+              <p className="mt-5 max-w-3xl text-base leading-relaxed text-dim">{JOURNEY.chapters[2].body}</p>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>
