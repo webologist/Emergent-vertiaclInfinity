@@ -44,7 +44,7 @@ export default function Growth() {
 
         {/* Client wordmarks */}
         <div className="mt-12 border-y border-white/10 py-8">
-          <StaggerGroup className="grid grid-cols-2 items-center gap-x-8 gap-y-6 sm:grid-cols-4 lg:grid-cols-8">
+          <StaggerGroup className="grid grid-cols-2 items-center gap-x-8 gap-y-6 sm:grid-cols-3">
             {GROWTH.clients.map((c) => (
               <motion.div
                 key={c}

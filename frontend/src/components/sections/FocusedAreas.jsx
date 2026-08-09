@@ -9,19 +9,15 @@ export default function FocusedAreas() {
   return (
     <section id="focus" className="relative border-t border-white/10 py-24 md:py-36" data-testid="focus-section">
       <div className="container-x">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <Reveal>
-            <div>
-              <span className="overline">{FOCUS.overline}</span>
-              <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tighter sm:text-5xl lg:text-6xl">
-                {FOCUS.title}
-              </h2>
-            </div>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="max-w-md text-sm leading-relaxed text-dim md:text-base">{FOCUS.intro}</p>
-          </Reveal>
-        </div>
+        <Reveal>
+          <div>
+            <span className="overline">{FOCUS.overline}</span>
+            <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tighter sm:text-5xl lg:text-6xl">
+              {FOCUS.title}
+            </h2>
+            <p className="mt-6 max-w-xl text-sm leading-relaxed text-dim md:text-base">{FOCUS.intro}</p>
+          </div>
+        </Reveal>
 
         <StaggerGroup className="mt-16 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:grid-cols-3">
           {FOCUS.services.map((s) => {
