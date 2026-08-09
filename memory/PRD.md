@@ -61,6 +61,9 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - Hero stats (2026-06): removed "100% IP ownership" & "4 Industries served"; "Years building" now rolling
   (current year − 2003, auto-updates each January).
 
+- Power for SMEs highlight (2026-06): section is now an inverted full-bleed black band (scoped `dark` class)
+  with crimson glows, crimson kicker, and a crimson-outlined second marquee row — pops in both themes.
+
 ## Verified
 - iteration_1: core site flows. iteration_2: auth/admin/case-studies/E2E (100% frontend; 2 backend
   security issues found → fixed and curl-verified).
