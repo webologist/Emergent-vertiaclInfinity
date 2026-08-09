@@ -88,6 +88,7 @@ class Contact(BaseModel):
     company: str = ""
     message: str
     topic: str = "General"
+    status: str = "new"
     created_at: str = Field(default_factory=now_iso)
 
 
@@ -381,6 +382,30 @@ async def delete_contact(contact_id: str, user: UserOut = Depends(get_current_us
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Contact not found")
     return {"ok": True}
+
+
+class StatusUpdate(BaseModel):
+    status: str
+
+    @field_validator("status")
+    @classmethod
+    def _valid_status(cls, v):
+        if v not in {"new", "contacted", "closed"}:
+            raise ValueError("status must be one of: new, contacted, closed")
+        return v
+
+
+@api_router.patch("/contact/{contact_id}/status", response_model=Contact)
+async def update_contact_status(contact_id: str, payload: StatusUpdate, user: UserOut = Depends(get_current_user)):
+    result = await db.contacts.find_one_and_update(
+        {"id": contact_id},
+        {"$set": {"status": payload.status}},
+        projection={"_id": 0},
+        return_document=True,
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    return result
 
 
 @api_router.post("/status", response_model=StatusCheck)

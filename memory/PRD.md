@@ -82,6 +82,10 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - Journey per PDF v2 (2026-06): heading "We, our Journey" top-left, chapters stacked full-width, no numbers,
   full PDF "Since 2003" text; "Our Philosophy" keeps its crimson highlight card (user request).
 
+- Lead Status (2026-06): contacts have status new/contacted/closed (default new, older docs coerce to new);
+  PATCH /api/contact/{id}/status (protected, validates values); inbox has filter tabs with counts, status
+  badges and per-lead segmented control with optimistic updates. Curl + UI verified.
+
 ## Verified
 - iteration_1: core site flows. iteration_2: auth/admin/case-studies/E2E (100% frontend; 2 backend
   security issues found → fixed and curl-verified).

@@ -105,11 +105,25 @@ const LoginCard = ({ onSuccess }) => {
   );
 };
 
-const LeadCard = ({ lead, onDelete }) => (
+const STATUS_META = {
+  new: { label: "New", cls: "border-crimson/40 bg-crimson/10 text-crimson" },
+  contacted: { label: "Contacted", cls: "border-amber-500/40 bg-amber-500/10 text-amber-500" },
+  closed: { label: "Closed", cls: "border-white/15 bg-white/5 text-dim" },
+};
+
+const LeadCard = ({ lead, onDelete, onStatus }) => (
   <article className="rounded-2xl border border-white/10 bg-surface p-6 transition-colors duration-300 hover:border-white/20" data-testid={`lead-card-${lead.id}`}>
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div>
-        <div className="font-display text-base font-bold">{lead.name}</div>
+        <div className="flex items-center gap-2.5">
+          <span className="font-display text-base font-bold">{lead.name}</span>
+          <span
+            className={`rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${STATUS_META[lead.status || "new"].cls}`}
+            data-testid={`lead-status-badge-${lead.id}`}
+          >
+            {STATUS_META[lead.status || "new"].label}
+          </span>
+        </div>
         <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-dim">
           <a href={`mailto:${lead.email}`} className="flex items-center gap-1.5 transition-colors duration-300 hover:text-crimson" data-testid={`lead-email-${lead.id}`}>
             <Mail size={12} /> {lead.email}
@@ -120,7 +134,7 @@ const LeadCard = ({ lead, onDelete }) => (
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <span className="rounded-full border border-crimson/40 bg-crimson/10 px-3 py-1 text-xs font-semibold text-crimson">{lead.topic}</span>
+        <span className="rounded-full border border-white/10 bg-elevated px-3 py-1 text-xs font-semibold text-white">{lead.topic}</span>
         <button
           onClick={() => onDelete(lead.id)}
           className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-dim transition-colors duration-300 hover:border-crimson hover:text-crimson"
@@ -132,7 +146,23 @@ const LeadCard = ({ lead, onDelete }) => (
       </div>
     </div>
     <p className="mt-4 border-t border-white/10 pt-4 text-sm leading-relaxed text-white/85">{lead.message}</p>
-    <div className="mt-3 text-xs text-dim">{new Date(lead.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</div>
+    <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+      <span className="text-xs text-dim">{new Date(lead.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</span>
+      <div className="flex overflow-hidden rounded-full border border-white/10" data-testid={`lead-status-control-${lead.id}`}>
+        {Object.entries(STATUS_META).map(([key, meta]) => (
+          <button
+            key={key}
+            onClick={() => onStatus(lead.id, key)}
+            className={`px-3.5 py-1.5 text-xs font-semibold transition-colors duration-300 ${
+              (lead.status || "new") === key ? "bg-white text-ink" : "text-dim hover:text-white"
+            }`}
+            data-testid={`lead-status-${key}-${lead.id}`}
+          >
+            {meta.label}
+          </button>
+        ))}
+      </div>
+    </div>
   </article>
 );
 
@@ -140,6 +170,7 @@ export default function Admin() {
   const [user, setUser] = useState(null);
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState("all");
 
   const loadLeads = useCallback(async () => {
     setLoading(true);
@@ -184,6 +215,21 @@ export default function Admin() {
       toast.error("Could not delete enquiry.");
     }
   };
+
+  const setStatus = async (id, status) => {
+    const prev = leads;
+    setLeads((ls) => ls.map((l) => (l.id === id ? { ...l, status } : l)));
+    try {
+      await withRefresh(() => api.patch(`/api/contact/${id}/status`, { status }));
+      toast.success(`Marked as ${status}.`);
+    } catch {
+      setLeads(prev);
+      toast.error("Could not update status.");
+    }
+  };
+
+  const filtered = filter === "all" ? leads : leads.filter((l) => (l.status || "new") === filter);
+  const countOf = (s) => leads.filter((l) => (l.status || "new") === s).length;
 
   if (user === null) {
     return (
@@ -233,17 +279,41 @@ export default function Admin() {
           </span>
         </div>
 
+        <div className="mt-8 flex flex-wrap gap-2" data-testid="admin-status-filters">
+          {[
+            ["all", "All"],
+            ["new", "New"],
+            ["contacted", "Contacted"],
+            ["closed", "Closed"],
+          ].map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setFilter(key)}
+              className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors duration-300 ${
+                filter === key ? "border-crimson bg-crimson text-cwhite" : "border-white/15 text-dim hover:border-crimson hover:text-white"
+              }`}
+              data-testid={`admin-filter-${key}`}
+            >
+              {label} · {key === "all" ? leads.length : countOf(key)}
+            </button>
+          ))}
+        </div>
+
         {loading && leads.length === 0 ? (
           <div className="mt-16 flex justify-center"><Loader2 size={22} className="animate-spin text-dim" /></div>
-        ) : leads.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="mt-16 flex flex-col items-center gap-4 rounded-2xl border border-dashed border-white/15 py-20 text-center" data-testid="admin-empty-state">
             <Inbox size={32} className="text-dim" strokeWidth={1.4} />
-            <p className="text-sm text-dim">No enquiries yet. They'll land here the moment someone reaches out.</p>
+            <p className="text-sm text-dim">
+              {leads.length === 0
+                ? "No enquiries yet. They'll land here the moment someone reaches out."
+                : `No ${filter} enquiries right now.`}
+            </p>
           </div>
         ) : (
-          <div className="mt-10 grid gap-4 lg:grid-cols-2">
-            {leads.map((lead) => (
-              <LeadCard key={lead.id} lead={lead} onDelete={deleteLead} />
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            {filtered.map((lead) => (
+              <LeadCard key={lead.id} lead={lead} onDelete={deleteLead} onStatus={setStatus} />
             ))}
           </div>
         )}
