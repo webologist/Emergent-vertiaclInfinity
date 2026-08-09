@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -10,7 +10,9 @@ from typing import List, Optional, Annotated, Any
 from bson import ObjectId
 from pydantic import BeforeValidator
 import uuid
-from datetime import datetime, timezone
+import bcrypt
+import jwt
+from datetime import datetime, timezone, timedelta
 
 
 ROOT_DIR = Path(__file__).parent
@@ -88,10 +90,133 @@ class Contact(BaseModel):
     created_at: str = Field(default_factory=now_iso)
 
 
+# ---- Auth ----
+JWT_ALGORITHM = "HS256"
+ACCESS_TTL_MIN = 15
+REFRESH_TTL_DAYS = 7
+MAX_LOGIN_ATTEMPTS = 5
+LOCKOUT_MINUTES = 15
+
+
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+
+def verify_password(plain: str, hashed: str) -> bool:
+    return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+
+
+def create_access_token(user_id: str, email: str) -> str:
+    payload = {"sub": user_id, "email": email, "type": "access",
+               "exp": datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TTL_MIN)}
+    return jwt.encode(payload, os.environ["JWT_SECRET"], algorithm=JWT_ALGORITHM)
+
+
+def create_refresh_token(user_id: str) -> str:
+    payload = {"sub": user_id, "type": "refresh",
+               "exp": datetime.now(timezone.utc) + timedelta(days=REFRESH_TTL_DAYS)}
+    return jwt.encode(payload, os.environ["JWT_SECRET"], algorithm=JWT_ALGORITHM)
+
+
+def set_access_cookie(response: Response, token: str):
+    response.set_cookie("access_token", token, httponly=True, secure=True,
+                        samesite="none", max_age=ACCESS_TTL_MIN * 60, path="/")
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(..., min_length=1)
+
+
+class UserOut(BaseModel):
+    id: str
+    email: str
+    name: str
+    role: str
+
+
+async def get_current_user(request: Request) -> UserOut:
+    token = request.cookies.get("access_token")
+    if not token:
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            token = auth_header[7:]
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    try:
+        payload = jwt.decode(token, os.environ["JWT_SECRET"], algorithms=[JWT_ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    if payload.get("type") != "access":
+        raise HTTPException(status_code=401, detail="Invalid token type")
+    user = await db.users.find_one({"id": payload["sub"]}, {"_id": 0, "password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    return UserOut(**user)
+
+
 # ---- Routes ----
 @api_router.get("/")
 async def root():
     return {"message": "Vertical Infinity API is live"}
+
+
+@api_router.post("/auth/login", response_model=UserOut)
+async def login(payload: LoginRequest, request: Request, response: Response):
+    email = payload.email.lower().strip()
+    ip = request.client.host if request.client else "unknown"
+    identifier = f"{ip}:{email}"
+    attempt = await db.login_attempts.find_one({"identifier": identifier})
+    if attempt and attempt.get("count", 0) >= MAX_LOGIN_ATTEMPTS:
+        last = datetime.fromisoformat(attempt["last_attempt"])
+        if datetime.now(timezone.utc) - last < timedelta(minutes=LOCKOUT_MINUTES):
+            raise HTTPException(status_code=429, detail="Too many failed attempts. Try again in 15 minutes.")
+        await db.login_attempts.delete_one({"identifier": identifier})
+    user = await db.users.find_one({"email": email})
+    if not user or not verify_password(payload.password, user["password_hash"]):
+        await db.login_attempts.update_one(
+            {"identifier": identifier},
+            {"$inc": {"count": 1}, "$set": {"last_attempt": now_iso()}},
+            upsert=True,
+        )
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    await db.login_attempts.delete_one({"identifier": identifier})
+    set_access_cookie(response, create_access_token(user["id"], email))
+    response.set_cookie("refresh_token", create_refresh_token(user["id"]), httponly=True, secure=True,
+                        samesite="none", max_age=REFRESH_TTL_DAYS * 86400, path="/")
+    return UserOut(id=user["id"], email=user["email"], name=user["name"], role=user["role"])
+
+
+@api_router.post("/auth/refresh")
+async def refresh_token(request: Request, response: Response):
+    token = request.cookies.get("refresh_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    try:
+        payload = jwt.decode(token, os.environ["JWT_SECRET"], algorithms=[JWT_ALGORITHM])
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    if payload.get("type") != "refresh":
+        raise HTTPException(status_code=401, detail="Invalid token type")
+    user = await db.users.find_one({"id": payload["sub"]}, {"_id": 0, "password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    set_access_cookie(response, create_access_token(user["id"], user["email"]))
+    return {"ok": True}
+
+
+@api_router.post("/auth/logout")
+async def logout(response: Response):
+    response.delete_cookie("access_token", path="/")
+    response.delete_cookie("refresh_token", path="/")
+    return {"ok": True}
+
+
+@api_router.get("/auth/me", response_model=UserOut)
+async def me(user: UserOut = Depends(get_current_user)):
+    return user
 
 
 @api_router.post("/contact", response_model=Contact)
@@ -103,9 +228,17 @@ async def create_contact(payload: ContactCreate):
 
 
 @api_router.get("/contact", response_model=List[Contact])
-async def list_contacts():
+async def list_contacts(user: UserOut = Depends(get_current_user)):
     items = await db.contacts.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     return items
+
+
+@api_router.delete("/contact/{contact_id}")
+async def delete_contact(contact_id: str, user: UserOut = Depends(get_current_user)):
+    result = await db.contacts.delete_one({"id": contact_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    return {"ok": True}
 
 
 @api_router.post("/status", response_model=StatusCheck)
@@ -142,6 +275,26 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+
+@app.on_event("startup")
+async def seed_admin():
+    await db.users.create_index("email", unique=True)
+    await db.login_attempts.create_index("identifier")
+    admin_email = os.environ["ADMIN_EMAIL"].lower()
+    admin_password = os.environ["ADMIN_PASSWORD"]
+    existing = await db.users.find_one({"email": admin_email})
+    if existing is None:
+        await db.users.insert_one({
+            "id": str(uuid.uuid4()),
+            "email": admin_email,
+            "password_hash": hash_password(admin_password),
+            "name": "Admin",
+            "role": "admin",
+            "created_at": now_iso(),
+        })
+    elif not verify_password(admin_password, existing["password_hash"]):
+        await db.users.update_one({"email": admin_email}, {"$set": {"password_hash": hash_password(admin_password)}})
 
 
 @app.on_event("shutdown")

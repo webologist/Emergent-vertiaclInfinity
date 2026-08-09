@@ -4,13 +4,11 @@ import { toast } from "sonner";
 import { Search, Menu, X, ArrowUpRight } from "lucide-react";
 import { NAV } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
+import { Logo } from "@/components/Logo";
 
 const NavMark = () => (
   <div className="flex items-center gap-2.5" data-testid="nav-brand">
-    <div className="relative h-7 w-7">
-      <div className="absolute inset-0 rounded-[7px] border border-white/25" />
-      <div className="absolute inset-[5px] rounded-[3px] bg-crimson" />
-    </div>
+    <Logo size={30} />
     <span className="font-display text-[15px] font-bold tracking-tight leading-none">
       Vertical<span className="text-crimson">.</span>Infinity
     </span>

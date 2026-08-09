@@ -2,9 +2,11 @@ import { ArrowUpRight, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { FOOTER } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
+import { Logo } from "@/components/Logo";
 
 const DEST = {
   "Our Focused Areas": "#focus",
+  "Case Studies": "#work",
   "Power For SMEs": "#sme",
   "Drivers of our Growth": "#growth",
   "Who we are": "#journey",
@@ -24,10 +26,7 @@ export default function Footer() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2.6fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <div className="relative h-7 w-7">
-                <div className="absolute inset-0 rounded-[7px] border border-white/25" />
-                <div className="absolute inset-[5px] rounded-[3px] bg-crimson" />
-              </div>
+              <Logo size={30} />
               <span className="font-display text-lg font-bold tracking-tight">
                 Vertical<span className="text-crimson">.</span>Infinity
               </span>
