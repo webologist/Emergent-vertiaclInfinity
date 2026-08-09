@@ -62,12 +62,11 @@ export const SME = {
 
 export const GROWTH = {
   overline: "Drivers of our growth",
+  subQuote: {
+    text: "If you build a great experience, customers tell each other about that. Word of mouth is very powerful.",
+    author: "Brian Chesky, CEO of Airbnb",
+  },
   quotes: [
-    {
-      text: "If you build a great experience, customers tell each other about that. Word of mouth is very powerful.",
-      author: "Brian Chesky",
-      role: "CEO, Airbnb",
-    },
     {
       text: "The key is to set realistic customer expectations, and then not just meet them, but exceed them — preferably in unexpected and helpful ways.",
       author: "Richard Branson",

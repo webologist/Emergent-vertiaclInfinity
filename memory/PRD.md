@@ -64,6 +64,14 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - Power for SMEs highlight (2026-06): section is now an inverted full-bleed black band (scoped `dark` class)
   with crimson glows, crimson kicker, and a crimson-outlined second marquee row — pops in both themes.
 
+- Growth subtext (2026-06): Chesky quote ("If you build a great experience…, — Brian Chesky, CEO of Airbnb")
+  now sits as display subtext under the "Drivers of our growth" overline; removed from quote cards to avoid
+  duplication (Branson card now full-width).
+
+- Growth restructure (2026-06, per PDF): removed "Trusted by teams that ship."; client wordmarks moved
+  directly under Chesky attribution; added PDF line "We would like your logo to be here." as dashed pill
+  CTA (scrolls to #contact); Branson card + reviews card now share the bottom row.
+
 ## Verified
 - iteration_1: core site flows. iteration_2: auth/admin/case-studies/E2E (100% frontend; 2 backend
   security issues found → fixed and curl-verified).

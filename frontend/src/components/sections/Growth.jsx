@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Quote, Star, ArrowUpRight } from "lucide-react";
+import { Quote, Star, ArrowUpRight, Plus } from "lucide-react";
 import { GROWTH } from "@/data/content";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
+import { scrollToId } from "@/lib/scroll";
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -34,9 +35,43 @@ export default function Growth() {
         <Reveal>
           <span className="overline">{GROWTH.overline}</span>
         </Reveal>
+        <Reveal delay={0.05}>
+          <blockquote className="mt-6 max-w-3xl font-display text-2xl font-semibold leading-snug tracking-tight text-white md:text-3xl" data-testid="growth-subtext">
+            "{GROWTH.subQuote.text}"
+          </blockquote>
+          <p className="mt-3 text-sm text-dim" data-testid="growth-subtext-author">— {GROWTH.subQuote.author}</p>
+        </Reveal>
 
-        {/* Testimonials */}
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
+        {/* Client wordmarks */}
+        <div className="mt-12 border-y border-white/10 py-8">
+          <StaggerGroup className="grid grid-cols-2 items-center gap-x-8 gap-y-6 sm:grid-cols-4 lg:grid-cols-8">
+            {GROWTH.clients.map((c) => (
+              <motion.div
+                key={c}
+                variants={staggerItem}
+                className="flex items-center justify-center"
+                data-testid={`client-${c.toLowerCase()}`}
+              >
+                <span className="font-display text-lg font-bold uppercase tracking-tight text-white/35 transition-colors duration-300 hover:text-white">
+                  {c}
+                </span>
+              </motion.div>
+            ))}
+          </StaggerGroup>
+          <Reveal delay={0.1}>
+            <button
+              onClick={() => scrollToId("#contact")}
+              className="group mx-auto mt-8 flex items-center gap-2.5 rounded-full border border-dashed border-white/25 px-6 py-2.5 text-sm text-dim transition-colors duration-300 hover:border-crimson hover:text-white"
+              data-testid="your-logo-here-btn"
+            >
+              <Plus size={14} className="text-crimson transition-transform duration-300 group-hover:rotate-90" />
+              We would like&nbsp;<span className="font-semibold text-white">your logo</span>&nbsp;to be here.
+            </button>
+          </Reveal>
+        </div>
+
+        {/* Testimonial + reviews */}
+        <div className="mt-12 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
           {GROWTH.quotes.map((q, i) => (
             <Reveal key={i} delay={i * 0.1}>
               <figure className="relative flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-surface p-8 transition-colors duration-500 hover:border-crimson/40 md:p-10">
@@ -54,29 +89,6 @@ export default function Growth() {
               </figure>
             </Reveal>
           ))}
-        </div>
-
-        {/* Clients + reviews */}
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-          <Reveal>
-            <div className="h-full rounded-2xl border border-white/10 bg-surface p-8 md:p-10">
-              <p className="text-sm text-dim">Trusted by teams that ship.</p>
-              <StaggerGroup className="mt-8 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4">
-                {GROWTH.clients.map((c) => (
-                  <motion.div
-                    key={c}
-                    variants={staggerItem}
-                    className="flex items-center justify-center"
-                    data-testid={`client-${c.toLowerCase()}`}
-                  >
-                    <span className="font-display text-lg font-bold uppercase tracking-tight text-white/35 transition-colors duration-300 hover:text-white">
-                      {c}
-                    </span>
-                  </motion.div>
-                ))}
-              </StaggerGroup>
-            </div>
-          </Reveal>
 
           <Reveal delay={0.1}>
             <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-elevated p-8 md:p-10" data-testid="google-reviews-card">
