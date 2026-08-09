@@ -70,19 +70,16 @@ export default function Growth() {
           </Reveal>
         </div>
 
-        {/* Branson quote */}
-        <Reveal delay={0.05}>
-          <div className="mt-12 text-center">
-            <blockquote className="mx-auto max-w-3xl font-display text-2xl font-semibold leading-snug tracking-tight text-white md:text-3xl" data-testid="branson-quote">
+        {/* Branson quote (left) + reviews carousel (right) */}
+        <div className="mt-14 grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <Reveal>
+            <blockquote className="max-w-2xl font-display text-2xl font-semibold leading-snug tracking-tight text-white md:text-3xl" data-testid="branson-quote">
               "{GROWTH.bransonQuote.text}"
             </blockquote>
             <p className="mt-3 text-sm text-dim" data-testid="branson-quote-author">– {GROWTH.bransonQuote.author}</p>
-          </div>
-        </Reveal>
+          </Reveal>
 
-        {/* Scrolling reviews (RHS) */}
-        <div className="mt-14 flex lg:justify-end">
-          <Reveal delay={0.1} className="w-full lg:max-w-xl">
+          <Reveal delay={0.1}>
             <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9" data-testid="google-reviews-card">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -104,11 +101,11 @@ export default function Growth() {
                 </div>
               </div>
 
-              {/* Auto-scrolling review feed */}
-              <div className="relative mt-6 h-[240px] overflow-hidden" data-testid="reviews-scroller">
+              {/* Auto-scrolling review feed — shows 2 reviews at a time */}
+              <div className="relative mt-6 h-[248px] overflow-hidden" data-testid="reviews-scroller">
                 <div className="animate-marquee-y flex flex-col gap-3">
                   {[...reviewList, ...reviewList].map((r, i) => (
-                    <figure key={i} className="rounded-xl border border-white/10 bg-surface p-4">
+                    <figure key={i} className="h-[118px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-surface p-4">
                       <div className="flex items-center gap-2">
                         {r.author_photo_uri ? (
                           <img src={r.author_photo_uri} alt="" className="h-6 w-6 rounded-full" loading="lazy" />
@@ -124,14 +121,14 @@ export default function Growth() {
                           ))}
                         </span>
                       </div>
-                      <blockquote className="mt-2 text-xs leading-relaxed text-dim">
-                        "{r.text.length > 180 ? `${r.text.slice(0, 180)}…` : r.text}"
+                      <blockquote className="mt-2 line-clamp-3 text-xs leading-relaxed text-dim">
+                        "{r.text.length > 160 ? `${r.text.slice(0, 160)}…` : r.text}"
                       </blockquote>
                     </figure>
                   ))}
                 </div>
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-elevated to-transparent" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-elevated to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-elevated to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-elevated to-transparent" />
               </div>
 
               <div className="mt-6 flex flex-col gap-3">
