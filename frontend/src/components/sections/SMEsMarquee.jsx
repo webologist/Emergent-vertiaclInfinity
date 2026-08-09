@@ -18,6 +18,19 @@ export default function SMEsMarquee() {
           </span>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-cwhite/90 md:text-xl">{SME.body}</p>
         </Reveal>
+        <Reveal delay={0.12}>
+          <div className="mt-10 flex flex-wrap gap-3" data-testid="sme-tags-row">
+            {SME.tags.map((tag) => (
+              <span
+                key={tag}
+                data-testid={`sme-tag-${tag.toLowerCase().replace(/\s+/g, "-")}`}
+                className="rounded-full border border-cwhite/40 bg-cwhite/10 px-5 py-2 text-xs font-medium uppercase tracking-[0.15em] text-cwhite backdrop-blur-sm transition-colors duration-300 hover:bg-cwhite hover:text-crimson"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </Reveal>
       </div>
     </section>
   );

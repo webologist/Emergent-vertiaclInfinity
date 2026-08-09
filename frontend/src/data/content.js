@@ -55,7 +55,7 @@ export const SME = {
     "Website Development",
     "Project Development",
     "Custom Applications",
-    "Experiential Marketing",
+    "Experimental Marketing",
     "Mini Apps",
   ],
 };
