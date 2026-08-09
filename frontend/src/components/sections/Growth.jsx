@@ -82,7 +82,7 @@ export default function Growth() {
               </div>
               <div className="mt-8 flex flex-col gap-3">
                 <button
-                  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-crimson hover:text-white"
+                  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-crimson hover:text-cwhite"
                   data-testid="view-reviews-btn"
                 >
                   View all reviews

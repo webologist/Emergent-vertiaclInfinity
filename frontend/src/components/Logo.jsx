@@ -10,7 +10,7 @@ export const Logo = ({ size = 28, className = "" }) => (
   >
     <path
       d="M32 50 C 10 68, 10 94, 32 94 C 54 94, 54 68, 32 50"
-      stroke="white"
+      stroke="currentColor"
       strokeWidth="10"
       strokeLinecap="round"
     />

@@ -203,5 +203,6 @@ export const FOOTER = {
 
 export const ASSETS = {
   heroBg: "https://static.prod-images.emergentagent.com/jobs/dc85d5e8-cf2f-4435-a796-5396dc27e178/images/88f29ea496d496bd8c8b7af9eb6da2c5267999a8e0c5f27199491693158f45e0.jpeg",
+  heroBgLight: "https://static.prod-images.emergentagent.com/jobs/dc85d5e8-cf2f-4435-a796-5396dc27e178/images/12bddeecd01384b052bd2ad224eea77984b056895a51739ba47a5306054fa96b.jpeg",
   crimson: "https://static.prod-images.emergentagent.com/jobs/dc85d5e8-cf2f-4435-a796-5396dc27e178/images/1d69c6ecb89a8a20d06e967b3bc0838386252dd26de16f04ae41101e19003667.jpeg",
 };

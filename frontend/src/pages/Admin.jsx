@@ -90,7 +90,7 @@ const LoginCard = ({ onSuccess }) => {
           <button
             type="submit"
             disabled={busy}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-crimson hover:text-white disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-crimson hover:text-cwhite disabled:opacity-60"
             data-testid="admin-login-submit"
           >
             {busy && <Loader2 size={15} className="animate-spin" />}

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { Search, Menu, X, ArrowUpRight } from "lucide-react";
+import { Search, Menu, X, ArrowUpRight, Sun, Moon } from "lucide-react";
 import { NAV } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
 import { Logo } from "@/components/Logo";
+import { useTheme } from "@/lib/theme";
 
 const NavMark = () => (
   <div className="flex items-center gap-2.5" data-testid="nav-brand">
@@ -18,6 +19,7 @@ const NavMark = () => (
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { theme, toggle } = useTheme();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -63,6 +65,14 @@ export default function Nav() {
 
           <div className="flex items-center gap-3">
             <button
+              onClick={toggle}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-dim transition-colors duration-300 hover:border-crimson hover:text-white"
+              data-testid="theme-toggle-btn"
+              aria-label="Toggle dark mode"
+            >
+              {theme === "dark" ? <Sun size={16} strokeWidth={1.6} /> : <Moon size={16} strokeWidth={1.6} />}
+            </button>
+            <button
               onClick={() => toast("Search is coming soon — try the nav or reach us below.")}
               className="hidden h-9 w-9 items-center justify-center rounded-full border border-white/10 text-dim transition-colors duration-300 hover:border-crimson hover:text-white md:flex"
               data-testid="nav-search-btn"
@@ -73,7 +83,7 @@ export default function Nav() {
             <button
               onClick={() => go("#contact")}
               data-testid="nav-cta-btn"
-              className="group hidden items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-crimson hover:text-white md:flex"
+              className="group hidden items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-crimson hover:text-cwhite md:flex"
             >
               Start a project
               <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

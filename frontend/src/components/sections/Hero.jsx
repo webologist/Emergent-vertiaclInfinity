@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowUpRight, Sparkles } from "lucide-react";
 import { HERO, ASSETS } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
+import { useTheme } from "@/lib/theme";
 
 const lineVariant = {
   hidden: { y: "110%" },
@@ -14,6 +15,7 @@ const lineVariant = {
 
 export default function Hero() {
   const ref = useRef(null);
+  const { theme } = useTheme();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "24%"]);
   const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
@@ -24,7 +26,7 @@ export default function Hero() {
     <section id="top" ref={ref} className="relative min-h-[100svh] w-full overflow-hidden" data-testid="hero-section">
       {/* Parallax background */}
       <motion.div style={{ y: bgY, scale: bgScale }} className="absolute inset-0 -z-10">
-        <img src={ASSETS.heroBg} alt="" className="h-full w-full object-cover object-right" draggable={false} />
+        <img src={theme === "dark" ? ASSETS.heroBg : ASSETS.heroBgLight} alt="" className="h-full w-full object-cover object-right" draggable={false} />
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60" />
       </motion.div>
@@ -78,10 +80,10 @@ export default function Hero() {
             transition={{ delay: 1.15, duration: 0.9 }}
             onClick={() => scrollToId(HERO.ctaHref)}
             data-testid="hero-cta-btn"
-            className="group flex w-max items-center gap-3 rounded-full bg-crimson px-7 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white hover:text-ink"
+            className="group flex w-max items-center gap-3 rounded-full bg-crimson px-7 py-4 text-sm font-semibold text-cwhite transition-colors duration-300 hover:bg-white hover:text-ink"
           >
             {HERO.cta}
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 transition-colors duration-300 group-hover:bg-ink/10">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cwhite/20 transition-colors duration-300 group-hover:bg-ink/10">
               <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </span>
           </motion.button>

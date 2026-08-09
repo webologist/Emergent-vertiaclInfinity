@@ -17,11 +17,14 @@ module.exports = {
         body: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
-        ink: '#0A0A0A',
-        surface: '#121212',
-        elevated: '#1A1A1A',
+        ink: 'rgb(var(--c-ink) / <alpha-value>)',
+        surface: 'rgb(var(--c-surface) / <alpha-value>)',
+        elevated: 'rgb(var(--c-elevated) / <alpha-value>)',
         crimson: '#CE1F2E',
-        dim: '#A1A1AA',
+        dim: 'rgb(var(--c-dim) / <alpha-value>)',
+        white: 'rgb(var(--c-fg) / <alpha-value>)',
+        black: 'rgb(var(--c-bgstrong) / <alpha-value>)',
+        cwhite: '#FFFFFF',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

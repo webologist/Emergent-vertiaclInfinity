@@ -102,7 +102,7 @@ export default function Contact() {
                     data-testid={`topic-${t.split(" ")[0].toLowerCase()}`}
                     className={`rounded-full border px-4 py-1.5 text-xs transition-colors duration-300 ${
                       form.topic === t
-                        ? "border-crimson bg-crimson text-white"
+                        ? "border-crimson bg-crimson text-cwhite"
                         : "border-white/15 text-dim hover:border-white/40 hover:text-white"
                     }`}
                   >
@@ -135,7 +135,7 @@ export default function Contact() {
                 disabled={status === "loading"}
                 whileTap={{ scale: 0.98 }}
                 data-testid="contact-submit-btn"
-                className="group mt-6 flex items-center justify-center gap-2 rounded-full bg-crimson px-6 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white hover:text-ink disabled:opacity-60"
+                className="group mt-6 flex items-center justify-center gap-2 rounded-full bg-crimson px-6 py-4 text-sm font-semibold text-cwhite transition-colors duration-300 hover:bg-white hover:text-ink disabled:opacity-60"
               >
                 {status === "loading" && <Loader2 size={16} className="animate-spin" />}
                 {status === "done" && <Check size={16} />}

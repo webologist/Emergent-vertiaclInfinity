@@ -14,6 +14,7 @@ import Team from "@/components/sections/Team";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import Admin from "@/pages/Admin";
+import { ThemeProvider, useTheme } from "@/lib/theme";
 
 function Home() {
   useEffect(() => {
@@ -50,18 +51,25 @@ function Home() {
   );
 }
 
+function ThemedToaster() {
+  const { theme } = useTheme();
+  return <Toaster position="bottom-right" theme={theme} richColors />;
+}
+
 function App() {
   return (
-    <div className="App bg-ink font-body text-white antialiased">
-      <div className="noise-overlay" aria-hidden="true" />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/admin" element={<Admin />} />
-          <Route path="*" element={<Home />} />
-        </Routes>
-      </BrowserRouter>
-      <Toaster position="bottom-right" theme="dark" richColors />
-    </div>
+    <ThemeProvider>
+      <div className="App bg-ink font-body text-white antialiased">
+        <div className="noise-overlay" aria-hidden="true" />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/admin" element={<Admin />} />
+            <Route path="*" element={<Home />} />
+          </Routes>
+        </BrowserRouter>
+        <ThemedToaster />
+      </div>
+    </ThemeProvider>
   );
 }
 

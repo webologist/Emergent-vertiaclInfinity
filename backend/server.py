@@ -164,10 +164,9 @@ async def root():
 
 
 @api_router.post("/auth/login", response_model=UserOut)
-async def login(payload: LoginRequest, request: Request, response: Response):
+async def login(payload: LoginRequest, response: Response):
     email = payload.email.lower().strip()
-    ip = request.client.host if request.client else "unknown"
-    identifier = f"{ip}:{email}"
+    identifier = email
     attempt = await db.login_attempts.find_one({"identifier": identifier})
     if attempt and attempt.get("count", 0) >= MAX_LOGIN_ATTEMPTS:
         last = datetime.fromisoformat(attempt["last_attempt"])
@@ -262,10 +261,11 @@ async def get_status_checks():
 # Include the router in the main app
 app.include_router(api_router)
 
+cors_origins = [o.strip() for o in os.environ.get('CORS_ORIGINS', '').split(',') if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_credentials="*" not in cors_origins,
+    allow_origins=cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
