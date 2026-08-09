@@ -14,7 +14,7 @@ const GoogleG = () => (
 
 export default function Growth() {
   return (
-    <section className="relative border-t border-white/10 py-24 md:py-36" data-testid="growth-section">
+    <section id="growth" className="relative border-t border-white/10 py-24 md:py-36" data-testid="growth-section">
       <div className="container-x">
         <Reveal>
           <span className="overline">{GROWTH.overline}</span>

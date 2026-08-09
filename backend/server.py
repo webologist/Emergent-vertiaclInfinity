@@ -5,7 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
+from pydantic import BaseModel, Field, ConfigDict, EmailStr, field_validator
 from typing import List, Optional, Annotated, Any
 from bson import ObjectId
 from pydantic import BeforeValidator
@@ -50,11 +50,30 @@ class StatusCheckCreate(BaseModel):
 
 
 class ContactCreate(BaseModel):
-    name: str = Field(..., min_length=1, max_length=120)
+    name: str = Field(..., max_length=120)
     email: EmailStr
     company: Optional[str] = Field(default="", max_length=160)
-    message: str = Field(..., min_length=1, max_length=4000)
+    message: str = Field(..., max_length=4000)
     topic: Optional[str] = Field(default="General", max_length=80)
+
+    @field_validator("name", "message")
+    @classmethod
+    def _required_not_blank(cls, v):
+        v = (v or "").strip()
+        if not v:
+            raise ValueError("must not be empty")
+        return v
+
+    @field_validator("company", mode="before")
+    @classmethod
+    def _norm_company(cls, v):
+        return (v or "").strip()
+
+    @field_validator("topic", mode="before")
+    @classmethod
+    def _norm_topic(cls, v):
+        v = (v or "").strip()
+        return v or "General"
 
 
 class Contact(BaseModel):

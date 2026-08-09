@@ -20,7 +20,7 @@ module.exports = {
         ink: '#0A0A0A',
         surface: '#121212',
         elevated: '#1A1A1A',
-        crimson: '#E63946',
+        crimson: '#CE1F2E',
         dim: '#A1A1AA',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

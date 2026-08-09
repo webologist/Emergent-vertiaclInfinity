@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { Search, Menu, X, ArrowUpRight } from "lucide-react";
 import { NAV } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
@@ -64,6 +65,7 @@ export default function Nav() {
 
           <div className="flex items-center gap-3">
             <button
+              onClick={() => toast("Search is coming soon — try the nav or reach us below.")}
               className="hidden h-9 w-9 items-center justify-center rounded-full border border-white/10 text-dim transition-colors duration-300 hover:border-crimson hover:text-white md:flex"
               data-testid="nav-search-btn"
               aria-label="Search"

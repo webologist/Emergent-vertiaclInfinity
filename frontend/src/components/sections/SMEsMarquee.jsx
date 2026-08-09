@@ -18,7 +18,7 @@ const MarqueeRow = ({ reverse }) => (
 
 export default function SMEsMarquee() {
   return (
-    <section className="relative overflow-hidden border-t border-white/10 py-24 md:py-32" data-testid="sme-section">
+    <section id="sme" className="relative overflow-hidden border-t border-white/10 py-24 md:py-32" data-testid="sme-section">
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <Reveal>

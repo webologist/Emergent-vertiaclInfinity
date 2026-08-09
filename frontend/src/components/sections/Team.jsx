@@ -4,7 +4,7 @@ import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
 
 export default function Team() {
   return (
-    <section className="relative border-t border-white/10 py-24 md:py-36" data-testid="team-section">
+    <section id="team" className="relative border-t border-white/10 py-24 md:py-36" data-testid="team-section">
       <div className="container-x">
         <Reveal>
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

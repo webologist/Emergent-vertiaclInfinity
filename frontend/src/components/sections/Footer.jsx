@@ -1,6 +1,21 @@
 import { ArrowUpRight, ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
 import { FOOTER } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
+
+const DEST = {
+  "Our Focused Areas": "#focus",
+  "Power For SMEs": "#sme",
+  "Drivers of our Growth": "#growth",
+  "Who we are": "#journey",
+  "Platform Modernization": "#focus",
+  "Product Engineering": "#focus",
+  "AI & Automation": "#focus",
+  "Experience Design": "#focus",
+  "Digital Commerce": "#focus",
+  "Sitemap": "#top",
+};
+const destFor = (l) => DEST[l] || "#contact";
 
 export default function Footer() {
   return (
@@ -38,7 +53,7 @@ export default function Footer() {
                   {col.links.map((l) => (
                     <li key={l}>
                       <button
-                        onClick={() => scrollToId("#contact")}
+                        onClick={() => scrollToId(destFor(l))}
                         className="text-left text-sm text-dim transition-colors duration-300 hover:text-crimson"
                         data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
                       >
@@ -79,7 +94,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container-x flex flex-col items-center justify-between gap-3 py-6 text-xs text-dim sm:flex-row">
           <span>{FOOTER.copyright}</span>
-          <button className="transition-colors duration-300 hover:text-white" data-testid="footer-legal-link">Legal</button>
+          <button className="transition-colors duration-300 hover:text-white" data-testid="footer-legal-link" onClick={() => toast("Legal & Privacy — full policy pages coming soon.")}>Legal</button>
         </div>
       </div>
     </footer>
