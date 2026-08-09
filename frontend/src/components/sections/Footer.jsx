@@ -1,4 +1,4 @@
-import { ArrowUpRight, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, ShieldCheck, Star } from "lucide-react";
 import { toast } from "sonner";
 import { FOOTER } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
@@ -41,6 +41,19 @@ export default function Footer() {
               Let's chat over coffee
               <ArrowUpRight size={15} className="text-crimson transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
+            <a
+              href="https://search.google.com/local/writereview?placeid=ChIJ910PJ2Cx5zsRhxiWfmuJSgw"
+              target="_blank"
+              rel="noreferrer"
+              className="group mt-4 flex w-max items-center gap-2 text-sm text-dim transition-colors duration-300 hover:text-crimson"
+              data-testid="footer-review-nudge"
+            >
+              <Star size={14} className="text-crimson" fill="currentColor" strokeWidth={0} />
+              Loved working with us?{" "}
+              <span className="font-semibold text-white underline decoration-crimson/50 underline-offset-4 transition-colors duration-300 group-hover:text-crimson">
+                Leave us a review
+              </span>
+            </a>
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
