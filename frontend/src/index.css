@@ -140,6 +140,14 @@ body {
   -webkit-text-stroke: 1px #CE1F2E;
   color: transparent;
 }
+.text-outline-white-soft {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.45);
+  color: transparent;
+}
+.text-outline-white {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.9);
+  color: transparent;
+}
 
 /* Vertical review marquee */
 @keyframes marquee-y {

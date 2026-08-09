@@ -89,18 +89,23 @@ export default function Hero() {
           </motion.button>
         </div>
 
-        {/* Stats row */}
+        {/* Stats badge */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3, duration: 0.9 }}
-          className="mt-16 grid max-w-2xl grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-6"
+          className="mt-16 flex flex-wrap gap-3"
           data-testid="hero-stats"
         >
           {HERO.stats.map((s) => (
-            <div key={s.label} className="px-4 first:pl-0">
-              <div className="font-display text-3xl font-bold text-white md:text-4xl">{s.value ?? `${new Date().getFullYear() - 2003}+`}</div>
-              <div className="mt-1 text-xs uppercase tracking-widest text-dim">{s.label}</div>
+            <div
+              key={s.label}
+              className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-surface/60 py-2.5 pl-3 pr-6 backdrop-blur-md"
+            >
+              <span className="flex h-9 items-center rounded-full bg-crimson px-4 font-display text-lg font-extrabold text-cwhite">
+                {s.value ?? `${new Date().getFullYear() - 2003}+`}
+              </span>
+              <span className="text-xs font-semibold uppercase tracking-widest text-white/80">{s.label}</span>
             </div>
           ))}
         </motion.div>
