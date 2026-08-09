@@ -12,10 +12,13 @@ export default function SMEsMarquee() {
       <div className="pointer-events-none absolute -right-40 bottom-0 h-80 w-80 rounded-full bg-black/25 blur-[130px]" aria-hidden="true" />
       <div className="container-x relative">
         <Reveal>
-          <span className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-cwhite">
-            <span className="h-2 w-2 rotate-45 bg-cwhite" />
+          <h2
+            className="flex items-center gap-4 font-display text-4xl font-extrabold tracking-tighter text-cwhite sm:text-5xl lg:text-6xl"
+            data-testid="sme-heading"
+          >
+            <span className="h-3 w-3 shrink-0 rotate-45 bg-cwhite/70" aria-hidden="true" />
             {SME.overline}
-          </span>
+          </h2>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-cwhite/90 md:text-xl">{SME.body}</p>
         </Reveal>
         <Reveal delay={0.12}>
