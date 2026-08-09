@@ -1,0 +1,98 @@
+{
+  "theme": "Dark Mode (Swiss Brutalist meets Tech Futurism)",
+  "color_palette": {
+    "background": "#0A0A0A",
+    "surface": "#121212",
+    "surface_elevated": "#1A1A1A",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#A1A1AA",
+    "accent": "#E63946",
+    "border": "rgba(255, 255, 255, 0.1)"
+  },
+  "typography": {
+    "font_imports": "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Manrope:wght@300;400;500;600&display=swap');",
+    "headings": {
+      "family": "'Outfit', sans-serif",
+      "style": "Bold, geometric, tracking-tighter for h1/h2, uppercase for overlines with tracking-widest."
+    },
+    "body": {
+      "family": "'Manrope', sans-serif",
+      "style": "Clean, highly legible, moderate tracking."
+    }
+  },
+  "layouts_and_grids": {
+    "hero": "Full viewport height. Massive kinetic text dominating the center. Background features an abstract particle or wavy metallic texture tinted dark. Navigation sticky at top.",
+    "services_bento": "Bento grid layout (Mode A). Mix of tall, wide, and square cards. 1px solid borders (border-white/10) with dark gradients.",
+    "team_grid": "Grid cols-2 md:cols-3. Images in grayscale with high contrast, revealing color or scaling up on hover.",
+    "footer": "Multi-column layout. Massive brand name at the bottom. Minimalistic lines."
+  },
+  "motion_and_interactions": {
+    "scroll": "Use Lenis for smooth momentum scrolling. This is critical for the premium feel.",
+    "hero_reveal": "Masked line-by-line reveal for the hero text. Use framer-motion (clip-path or overflow-hidden on wrapper, animate y-transform).",
+    "parallax": "Apply subtle y-axis parallax to images in the 'Journey' and 'Services' sections using framer-motion useScroll.",
+    "marquee": "Slow editorial marquee for the 'Power for SMEs' tags, large outlined text.",
+    "hover_states": "Interactive elements should have a slight scale down (0.98) or scale up (1.02), border color shift to accent (#E63946), and text color brightening."
+  },
+  "visual_enhancers": {
+    "glassmorphism": "Used for the sticky nav. backdrop-blur-xl, bg-black/60, border-b border-white/10.",
+    "noise_texture": "Apply a subtle SVG noise overlay across the entire site to remove digital flatness.",
+    "lines_and_borders": "Embrace 1px borders. Use them to construct the grid visually (e.g., separating sections and columns)."
+  },
+  "media_and_assets": {
+    "icons": "Use lucide-react for abstract tech icons. Minimal, 1px stroke weight where possible.",
+    "images": {
+      "hero_background": [
+        "https://images.unsplash.com/photo-1760978631985-590e3b5f4057"
+      ],
+      "service_cards": [
+        "https://images.unsplash.com/photo-1678366633407-7f49da199a42",
+        "https://images.unsplash.com/photo-1637946175559-22c4fe13fc54"
+      ],
+      "client_logos": [
+        "https://images.unsplash.com/photo-1760037028517-e5cc6e3ebd3e",
+        "https://images.unsplash.com/photo-1617727553252-65863c156eb0",
+        "https://images.unsplash.com/photo-1784653549607-d32a882488a1",
+        "https://images.unsplash.com/photo-1769984867572-10dea95bd4f1"
+      ],
+      "team_members": [
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+        "https://images.unsplash.com/photo-1618835962148-cf177563c6c0",
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+        "https://images.unsplash.com/photo-1609436132311-e4b0c9370469",
+        "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e",
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
+      ]
+    },
+    "image_instructions": "For client logos, apply CSS filter: grayscale(100%) brightness(200%) to make them pure white. For team members, use object-cover, high contrast grayscale by default, transitioning to color on hover."
+  },
+  "components_strategy": {
+    "ui_library": "Use Shadcn UI for forms, inputs, and buttons. Heavy custom styling to match the dark brutalist theme.",
+    "custom_sections": "Hero, Services Bento Grid, Journey Timeline, and Team Grid should be built with raw Tailwind divs for maximum layout flexibility.",
+    "google_map": "Embed an actual iframe for the Google Map in the Contact section, with CSS filter to invert or dark mode styling (filter: invert(90%) hue-rotate(180deg) contrast(80%))."
+  },
+  "instructions_to_main_agent": [
+    "Do not use generic 'Inter' for headings. Stick to 'Outfit'.",
+    "Avoid standard Bootstrap-style columns. Embrace asymmetry and generous padding (p-12 to p-32).",
+    "Implement Lenis for smooth scrolling in App.js or main entry point.",
+    "Use Framer Motion extensively for scroll reveals and the kinetic hero.",
+    "Never use pure black for cards; use the elevated surface colors.",
+    "Ensure all interactive elements have data-testid attributes for testing."
+  ],
+  "universal_guidelines_for_main_agent": [
+    "You tend to converge toward generic, 'on distribution' outputs. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Create depth through layered design elements with z-index hierarchy and 1px borders.",
+    "You MUST NOT apply universal transition (transition: all). Always add transitions for specific interactive elements.",
+    "You MUST NOT center align the app container (.App { text-align: center; }).",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures and noise overlays separate good from extraordinary.",
+    "NEVER use placeholder text for images. Always use the provided URLs.",
+    "Use sonner for toast notifications."
+  ],
+  "accessibility": {
+    "contrast": "Ensure text contrast meets APCA/WCAG standards. Off-white text on dark background achieves excellent contrast.",
+    "focus_states": "All focus states must be visible, using the accent crimson color as a ring.",
+    "reduced_motion": "Respect prefers-reduced-motion media query by disabling heavy framer-motion animations."
+  }
+}
