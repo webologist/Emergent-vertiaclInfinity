@@ -56,6 +56,10 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - Theme: self-tested via screenshots (light hero/sections/contact, dark hero/contact, localStorage persistence).
 
 ## Backlog
-- P1: Live Google Reviews (needs user's Google Places API key + Place ID). Currently MOCKED static card.
+- P1: LIVE Google Reviews — pipeline BUILT (GET /api/reviews, Places API New: Text Search → Place Details,
+  place_id cached in `places` collection, validated against CID 885671371509995655). Runs in "listing mode"
+  (real 4.9 rating + real Maps links via https://maps.google.com/?cid=885671371509995655) until user provides
+  GOOGLE_PLACES_API_KEY in backend/.env (Google Cloud → enable Places API (New) → server API key). Live path
+  implemented per integration playbook but NOT runtime-tested without key.
 - P2: Real case-study content swap; real destination pages for footer links; functional site search.
 - P3: Real team photos/client logos, blog pages, lead read/unread status.

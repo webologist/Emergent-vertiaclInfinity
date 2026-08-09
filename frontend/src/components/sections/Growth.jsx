@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Quote, Star, ArrowUpRight } from "lucide-react";
 import { GROWTH } from "@/data/content";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
+
+const API = process.env.REACT_APP_BACKEND_URL;
 
 const GoogleG = () => (
   <svg width="22" height="22" viewBox="0 0 48 48" aria-hidden="true">
@@ -13,6 +16,18 @@ const GoogleG = () => (
 );
 
 export default function Growth() {
+  const [rev, setRev] = useState(null);
+
+  useEffect(() => {
+    fetch(`${API}/api/reviews`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setRev)
+      .catch(() => setRev(null));
+  }, []);
+
+  const rating = rev?.rating ?? 4.9;
+  const topReview = rev?.live && rev.reviews?.length ? rev.reviews[0] : null;
+
   return (
     <section id="growth" className="relative border-t border-white/10 py-24 md:py-36" data-testid="growth-section">
       <div className="container-x">
@@ -70,30 +85,52 @@ export default function Growth() {
                 <span className="font-display text-lg font-bold">Google Reviews</span>
               </div>
               <div className="mt-6 flex items-end gap-3">
-                <span className="font-display text-6xl font-extrabold leading-none">{GROWTH.reviews.rating}</span>
+                <span className="font-display text-6xl font-extrabold leading-none" data-testid="reviews-rating">{Number(rating).toFixed(1)}</span>
                 <div className="mb-1.5">
                   <div className="flex gap-0.5 text-crimson">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} size={16} fill="currentColor" strokeWidth={0} />
                     ))}
                   </div>
-                  <div className="mt-1 text-xs text-dim">{GROWTH.reviews.count} {GROWTH.reviews.label}</div>
+                  <div className="mt-1 text-xs text-dim" data-testid="reviews-count">
+                    {rev?.live && rev.review_count != null ? `${rev.review_count} Google reviews` : "Verified listing on Google Maps"}
+                  </div>
                 </div>
               </div>
+              {topReview && (
+                <figure className="mt-6 border-t border-white/10 pt-5" data-testid="reviews-top-review">
+                  <blockquote className="text-sm leading-relaxed text-dim">
+                    "{topReview.text.length > 150 ? `${topReview.text.slice(0, 150)}…` : topReview.text}"
+                  </blockquote>
+                  <figcaption className="mt-2 flex items-center gap-2 text-xs text-white">
+                    {topReview.author_photo_uri && (
+                      <img src={topReview.author_photo_uri} alt="" className="h-5 w-5 rounded-full" loading="lazy" />
+                    )}
+                    {topReview.author} · {topReview.rating}/5
+                  </figcaption>
+                </figure>
+              )}
               <div className="mt-8 flex flex-col gap-3">
-                <button
-                  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-crimson hover:text-cwhite"
+                <a
+                  href={rev?.google_maps_uri || "https://maps.google.com/?cid=885671371509995655"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-ink transition-colors duration-300 hover:bg-crimson hover:text-cwhite"
                   data-testid="view-reviews-btn"
                 >
                   View all reviews
-                </button>
-                <button
+                </a>
+                <a
+                  href={rev?.write_review_uri || rev?.google_maps_uri || "https://maps.google.com/?cid=885671371509995655"}
+                  target="_blank"
+                  rel="noreferrer"
                   className="group flex items-center justify-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white transition-colors duration-300 hover:border-crimson"
                   data-testid="review-google-btn"
                 >
                   Review us on Google
                   <ArrowUpRight size={15} className="text-crimson transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </button>
+                </a>
+                {rev?.live && <span className="text-center text-[10px] text-dim">Live data provided by Google Maps</span>}
               </div>
             </div>
           </Reveal>

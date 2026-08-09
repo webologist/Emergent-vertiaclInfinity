@@ -12,6 +12,7 @@ from pydantic import BeforeValidator
 import uuid
 import bcrypt
 import jwt
+import httpx
 from datetime import datetime, timezone, timedelta
 
 
@@ -216,6 +217,96 @@ async def logout(response: Response):
 @api_router.get("/auth/me", response_model=UserOut)
 async def me(user: UserOut = Depends(get_current_user)):
     return user
+
+
+# ---- Google Places (live reviews) ----
+PLACES_CID = "885671371509995655"
+MAPS_URI_FALLBACK = f"https://maps.google.com/?cid={PLACES_CID}"
+PLACES_QUERY = "Vertical Infinity Pvt. Ltd., Borivali West, Mumbai, India"
+PLACES_DETAIL_FIELDS = "id,displayName,formattedAddress,rating,userRatingCount,reviews,googleMapsUri"
+
+FALLBACK_REVIEWS = {
+    "live": False,
+    "name": "Vertical Infinity Pvt. Ltd.",
+    "rating": 4.9,
+    "review_count": None,
+    "reviews": [],
+    "google_maps_uri": MAPS_URI_FALLBACK,
+    "write_review_uri": MAPS_URI_FALLBACK,
+}
+
+
+async def resolve_place_id(api_key: str) -> str:
+    doc = await db.places.find_one({"_id": "vertical-infinity"})
+    if doc and doc.get("place_id"):
+        return doc["place_id"]
+    async with httpx.AsyncClient(timeout=8.0) as http:
+        r = await http.post(
+            "https://places.googleapis.com/v1/places:searchText",
+            headers={
+                "X-Goog-Api-Key": api_key,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.googleMapsUri",
+                "Content-Type": "application/json",
+            },
+            json={"textQuery": PLACES_QUERY, "languageCode": "en", "regionCode": "IN", "pageSize": 5},
+        )
+    if r.status_code >= 400:
+        raise HTTPException(status_code=502, detail="Google Places search failed")
+    results = r.json().get("places", [])
+    chosen = next((p for p in results if PLACES_CID in (p.get("googleMapsUri") or "")), None)
+    if not chosen and results:
+        chosen = results[0]
+    if not chosen:
+        raise HTTPException(status_code=502, detail="Business not found on Google Places")
+    place_id = chosen["id"]
+    await db.places.update_one(
+        {"_id": "vertical-infinity"},
+        {"$set": {"place_id": place_id, "updated_at": now_iso()}},
+        upsert=True,
+    )
+    return place_id
+
+
+@api_router.get("/reviews")
+async def get_reviews():
+    api_key = os.environ.get("GOOGLE_PLACES_API_KEY", "").strip()
+    if not api_key:
+        return FALLBACK_REVIEWS
+    try:
+        place_id = await resolve_place_id(api_key)
+        async with httpx.AsyncClient(timeout=8.0) as http:
+            r = await http.get(
+                f"https://places.googleapis.com/v1/places/{place_id}",
+                headers={"X-Goog-Api-Key": api_key, "X-Goog-FieldMask": PLACES_DETAIL_FIELDS},
+            )
+        if r.status_code == 404:
+            await db.places.delete_one({"_id": "vertical-infinity"})
+            raise HTTPException(status_code=502, detail="Stored place_id is obsolete; retry")
+        if r.status_code >= 400:
+            raise HTTPException(status_code=502, detail="Google Places request failed")
+    except httpx.HTTPError:
+        return FALLBACK_REVIEWS
+    data = r.json()
+    reviews = []
+    for rev in data.get("reviews", []):
+        author = rev.get("authorAttribution") or {}
+        reviews.append({
+            "text": (rev.get("text") or {}).get("text", ""),
+            "rating": rev.get("rating"),
+            "publish_time": rev.get("publishTime"),
+            "author": author.get("displayName"),
+            "author_photo_uri": author.get("photoUri"),
+            "google_maps_uri": rev.get("googleMapsUri"),
+        })
+    return {
+        "live": True,
+        "name": (data.get("displayName") or {}).get("text"),
+        "rating": data.get("rating"),
+        "review_count": data.get("userRatingCount", 0),
+        "reviews": reviews,
+        "google_maps_uri": data.get("googleMapsUri") or MAPS_URI_FALLBACK,
+        "write_review_uri": f"https://search.google.com/local/writereview?placeid={place_id}",
+    }
 
 
 @api_router.post("/contact", response_model=Contact)
