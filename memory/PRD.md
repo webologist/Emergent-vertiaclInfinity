@@ -92,10 +92,11 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - Theme: self-tested via screenshots (light hero/sections/contact, dark hero/contact, localStorage persistence).
 
 ## Backlog
-- P1: LIVE Google Reviews — pipeline BUILT (GET /api/reviews, Places API New: Text Search → Place Details,
-  place_id cached in `places` collection, validated against CID 885671371509995655). Runs in "listing mode"
-  (real 4.9 rating + real Maps links via https://maps.google.com/?cid=885671371509995655) until user provides
-  GOOGLE_PLACES_API_KEY in backend/.env (Google Cloud → enable Places API (New) → server API key). Live path
-  implemented per integration playbook but NOT runtime-tested without key.
+- ✅ LIVE Google Reviews (2026-06): user's GOOGLE_PLACES_API_KEY set in backend/.env; /api/reviews returns
+  live=true, rating 4.9, 21 Google reviews, real place_id ChIJ910PJ2Cx5zsRhxiWfmuJSgw (cached in `places`).
+  NOTE: Google returns ZERO review text snippets for this listing even with FieldMask "*" (ratings are
+  star-only / no retrievable text) — scrolling feed intentionally falls back to PDF sample quotes while
+  showing LIVE rating+count. If text reviews appear on Google later, they stream automatically.
+  Key is server-side only; recommend user restricts it to Places API (New) in Cloud Console.
 - P2: Real case-study content swap; real destination pages for footer links; functional site search.
-- P3: Real team photos/client logos, blog pages, lead read/unread status.
+- P3: Real team photos/client logos, blog pages.
