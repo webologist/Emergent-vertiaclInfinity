@@ -53,6 +53,11 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - Case Studies section: built 2026-06, then REMOVED at user request (section, nav "Work" link, content, file deleted).
   Footer "Case Studies" link falls back to #contact.
 
+- Lead Alerts (2026-06): every new enquiry emails sunil@verticalinfinity.in via Emergent-managed Resend proxy
+  (EMERGENT_EMAIL_KEY + EMAIL_FROM_NAME + LEAD_ALERT_EMAIL in backend/.env, EMAIL_BASE_URL constant).
+  Sent as FastAPI BackgroundTask with reply-to = lead's email; failures only logged, never break /api/contact.
+  Verified: proxy 202, real submission → "Lead alert sent" log with email id.
+
 ## Verified
 - iteration_1: core site flows. iteration_2: auth/admin/case-studies/E2E (100% frontend; 2 backend
   security issues found → fixed and curl-verified).
