@@ -8,7 +8,6 @@ import Hero from "@/components/sections/Hero";
 import FocusedAreas from "@/components/sections/FocusedAreas";
 import SMEsMarquee from "@/components/sections/SMEsMarquee";
 import Growth from "@/components/sections/Growth";
-import CaseStudies from "@/components/sections/CaseStudies";
 import Journey from "@/components/sections/Journey";
 import Team from "@/components/sections/Team";
 import Contact from "@/components/sections/Contact";
@@ -41,7 +40,6 @@ function Home() {
         <FocusedAreas />
         <SMEsMarquee />
         <Growth />
-        <CaseStudies />
         <Journey />
         <Team />
         <Contact />

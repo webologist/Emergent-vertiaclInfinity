@@ -50,6 +50,9 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - Light theme DEFAULT + dark toggle (Sun/Moon in nav), full CSS-var theming, per-theme hero art,
   map dark filter only in dark mode, dynamic sonner theme. Verified via screenshots both themes.
 
+- Case Studies section: built 2026-06, then REMOVED at user request (section, nav "Work" link, content, file deleted).
+  Footer "Case Studies" link falls back to #contact.
+
 ## Verified
 - iteration_1: core site flows. iteration_2: auth/admin/case-studies/E2E (100% frontend; 2 backend
   security issues found → fixed and curl-verified).

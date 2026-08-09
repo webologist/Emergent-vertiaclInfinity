@@ -6,7 +6,6 @@ import { Logo } from "@/components/Logo";
 
 const DEST = {
   "Our Focused Areas": "#focus",
-  "Case Studies": "#work",
   "Power For SMEs": "#sme",
   "Drivers of our Growth": "#growth",
   "Who we are": "#journey",

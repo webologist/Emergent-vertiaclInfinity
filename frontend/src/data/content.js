@@ -4,7 +4,6 @@ export const NAV = {
   brand: "Vertical Infinity",
   links: [
     { label: "What we do", href: "#focus" },
-    { label: "Work", href: "#work" },
     { label: "Who we are", href: "#journey" },
     { label: "Get in touch", href: "#contact" },
   ],
@@ -116,54 +115,6 @@ export const TEAM = {
     { name: "Sara Fernandes", role: "Product Lead", img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&auto=format&fit=crop" },
     { name: "Vikram Rao", role: "AI & Automation", img: "https://images.unsplash.com/photo-1609436132311-e4b0c9370469?q=80&w=800&auto=format&fit=crop" },
     { name: "Neha Sharma", role: "Client Partner", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop" },
-  ],
-};
-
-export const CASE_STUDIES = {
-  overline: "Selected work",
-  title: "Proof, not promises.",
-  intro:
-    "A few of the platforms we've engineered end-to-end — from untangling legacy systems to shipping products that move the numbers that matter.",
-  items: [
-    {
-      no: "01",
-      client: "Meridian Health",
-      title: "Legacy ERP to a cloud platform — without a single day offline",
-      body: "A 14-year-old on-premise ERP was throttling a growing healthcare operator. We mapped every dependency, rebuilt the core as modular cloud services, and migrated in staged cut-overs so daily operations never stopped.",
-      img: "https://static.prod-images.emergentagent.com/jobs/dc85d5e8-cf2f-4435-a796-5396dc27e178/images/1eefe9f4fe29b1ce355e90f3b62813cf552fc6aab4ead10d1f45fcd9183f8a97.jpeg",
-      stats: [
-        { value: "3.4x", label: "Faster daily operations" },
-        { value: "99.98%", label: "Platform uptime" },
-        { value: "0", label: "Days of downtime" },
-      ],
-      tags: ["Legacy Modernization", "Cloud Migration"],
-    },
-    {
-      no: "02",
-      client: "Kadence",
-      title: "A D2C storefront rebuilt for speed — and conversion followed",
-      body: "Kadence's storefront looked premium but loaded like a legacy site. We re-platformed to a headless commerce stack, cut page weight by 70%, and redesigned checkout down to two steps.",
-      img: "https://static.prod-images.emergentagent.com/jobs/dc85d5e8-cf2f-4435-a796-5396dc27e178/images/4bc49629496689a4eec2517a2bca3ca542283100dde22f023886809c8c4bab53.jpeg",
-      stats: [
-        { value: "+68%", label: "Conversion rate" },
-        { value: "0.6s", label: "Load time, from 2.1s" },
-        { value: "+41%", label: "Average order value" },
-      ],
-      tags: ["eCommerce", "Product Development"],
-    },
-    {
-      no: "03",
-      client: "Orbital",
-      title: "AI-driven workflows that gave a team its week back",
-      body: "Orbital's ops team was drowning in copy-paste work across five disconnected tools. We built AI-assisted automation pipelines that route, reconcile, and report — with humans only approving the edge cases.",
-      img: "https://static.prod-images.emergentagent.com/jobs/dc85d5e8-cf2f-4435-a796-5396dc27e178/images/4800bc74f31235a504a7a88552f58579ba47c1546767d3fa7674a9b24b9683d8.jpeg",
-      stats: [
-        { value: "1,200+", label: "Hours saved per year" },
-        { value: "87%", label: "Fewer manual errors" },
-        { value: "6 wks", label: "Concept to launch" },
-      ],
-      tags: ["Workflow Automation", "AI"],
-    },
   ],
 };
 
