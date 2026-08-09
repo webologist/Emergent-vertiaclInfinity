@@ -1,0 +1,122 @@
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, Menu, X, ArrowUpRight } from "lucide-react";
+import { NAV } from "@/data/content";
+import { scrollToId } from "@/lib/scroll";
+
+const NavMark = () => (
+  <div className="flex items-center gap-2.5" data-testid="nav-brand">
+    <div className="relative h-7 w-7">
+      <div className="absolute inset-0 rounded-[7px] border border-white/25" />
+      <div className="absolute inset-[5px] rounded-[3px] bg-crimson" />
+    </div>
+    <span className="font-display text-[15px] font-bold tracking-tight leading-none">
+      Vertical<span className="text-crimson">.</span>Infinity
+    </span>
+  </div>
+);
+
+export default function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const go = (href) => {
+    setOpen(false);
+    scrollToId(href);
+  };
+
+  return (
+    <>
+      <motion.header
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 ${
+          scrolled ? "border-b border-white/10 bg-black/60 backdrop-blur-xl" : "border-b border-transparent"
+        }`}
+        data-testid="main-nav"
+      >
+        <nav className="container-x flex h-[68px] items-center justify-between">
+          <button onClick={() => go("#top")} className="cursor-pointer bg-transparent" data-testid="nav-home-btn">
+            <NavMark />
+          </button>
+
+          <div className="hidden items-center gap-9 md:flex">
+            {NAV.links.map((l) => (
+              <button
+                key={l.href}
+                onClick={() => go(l.href)}
+                data-testid={`nav-link-${l.href.slice(1)}`}
+                className="group relative text-sm text-dim transition-colors duration-300 hover:text-white"
+              >
+                {l.label}
+                <span className="absolute -bottom-1.5 left-0 h-px w-0 bg-crimson transition-all duration-300 group-hover:w-full" />
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              className="hidden h-9 w-9 items-center justify-center rounded-full border border-white/10 text-dim transition-colors duration-300 hover:border-crimson hover:text-white md:flex"
+              data-testid="nav-search-btn"
+              aria-label="Search"
+            >
+              <Search size={16} strokeWidth={1.6} />
+            </button>
+            <button
+              onClick={() => go("#contact")}
+              data-testid="nav-cta-btn"
+              className="group hidden items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-crimson hover:text-white md:flex"
+            >
+              Start a project
+              <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </button>
+            <button
+              onClick={() => setOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 md:hidden"
+              data-testid="nav-mobile-toggle"
+              aria-label="Menu"
+            >
+              {open ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </nav>
+      </motion.header>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-ink/95 backdrop-blur-xl md:hidden"
+            data-testid="mobile-menu"
+          >
+            <div className="container-x flex h-full flex-col justify-center gap-8">
+              {NAV.links.map((l, i) => (
+                <motion.button
+                  key={l.href}
+                  onClick={() => go(l.href)}
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.08 * i }}
+                  className="text-left font-display text-4xl font-bold"
+                  data-testid={`mobile-link-${l.href.slice(1)}`}
+                >
+                  {l.label}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

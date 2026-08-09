@@ -12,7 +12,16 @@ module.exports = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)'
       },
+      fontFamily: {
+        display: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        body: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
       colors: {
+        ink: '#0A0A0A',
+        surface: '#121212',
+        elevated: '#1A1A1A',
+        crimson: '#E63946',
+        dim: '#A1A1AA',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -55,6 +64,14 @@ module.exports = {
         }
       },
       keyframes: {
+        marquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
+        },
+        'marquee-reverse': {
+          from: { transform: 'translateX(-50%)' },
+          to: { transform: 'translateX(0)' },
+        },
         'accordion-down': {
           from: {
             height: '0'
@@ -73,6 +90,8 @@ module.exports = {
         }
       },
       animation: {
+        marquee: 'marquee 40s linear infinite',
+        'marquee-reverse': 'marquee-reverse 40s linear infinite',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out'
       }
