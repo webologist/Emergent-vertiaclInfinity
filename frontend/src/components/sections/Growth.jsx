@@ -70,17 +70,22 @@ export default function Growth() {
           </Reveal>
         </div>
 
-        {/* Branson quote (left) + reviews carousel (right) */}
-        <div className="mt-14 grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <Reveal>
-            <blockquote className="max-w-2xl font-display text-2xl font-semibold leading-snug tracking-tight text-white md:text-3xl" data-testid="branson-quote">
-              "{GROWTH.bransonQuote.text}"
-            </blockquote>
-            <p className="mt-3 text-sm text-dim" data-testid="branson-quote-author">– {GROWTH.bransonQuote.author}</p>
+        {/* Branson quote — centered, breaking over the divider */}
+        <div className="relative z-10 -mt-6 flex justify-center px-4 md:-mt-7">
+          <Reveal delay={0.15}>
+            <div className="max-w-2xl bg-ink px-4 text-center md:px-8">
+              <blockquote className="font-display text-xl font-semibold leading-snug tracking-tight text-white md:text-2xl" data-testid="branson-quote">
+                "{GROWTH.bransonQuote.text}"
+              </blockquote>
+              <p className="mt-3 text-sm text-dim" data-testid="branson-quote-author">– {GROWTH.bransonQuote.author}</p>
+            </div>
           </Reveal>
+        </div>
 
+        {/* Google reviews */}
+        <div className="mt-12 flex justify-center">
           <Reveal delay={0.1}>
-            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9" data-testid="google-reviews-card">
+            <div className="flex w-full max-w-xl flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9" data-testid="google-reviews-card">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <GoogleG />
