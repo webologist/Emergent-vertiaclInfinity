@@ -92,7 +92,13 @@ export const GROWTH = {
       text: "From strategy to launch, Vertical Infinity kept things simple and transparent. Highly recommend for anyone scaling a growing business.",
     },
   ],
-  clients: ["NIMBUS", "Orbital", "Kadence", "VERITAS", "Loop", "Meridian", "Foundry", "Aperture"],
+  clients: [
+    { name: "BlueChip", logo: "/clients/bluechip.jpg" },
+    { name: "CEAT", logo: "/clients/ceat.jpg" },
+    { name: "CFA Institute", logo: "/clients/cfa-institute.jpg" },
+    { name: "CFPA", logo: "/clients/cfpa.jpg" },
+    { name: "Circle of Wholeness", logo: "/clients/circle-of-wholeness.jpg" },
+  ],
   reviews: {
     rating: "5.0",
     count: "180+",
