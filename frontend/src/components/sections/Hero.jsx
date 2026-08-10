@@ -34,7 +34,7 @@ export default function Hero() {
 
       {/* Swimming fish particle field */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <FishParticles count={46} theme={theme} />
+        <FishParticles theme={theme} />
       </div>
 
       <motion.div style={{ y: contentY, opacity: fade }} className="container-x flex min-h-[100svh] flex-col justify-center pt-28 pb-24">
