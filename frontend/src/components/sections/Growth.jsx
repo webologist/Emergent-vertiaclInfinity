@@ -150,12 +150,12 @@ export default function Growth() {
 
         {/* Client wordmarks */}
         <div className="mt-12 border-y border-white/10 py-8">
-          <StaggerGroup className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 md:grid-cols-5">
+          <StaggerGroup className="flex flex-wrap justify-center gap-4 sm:gap-6">
             {GROWTH.clients.map((c) => (
               <motion.div
                 key={c.name}
                 variants={staggerItem}
-                className="flex h-20 items-center justify-center rounded-xl border border-white/10 bg-cwhite p-4 transition-colors duration-300 hover:border-crimson/50"
+                className="flex h-[150px] w-[220px] items-center justify-center rounded-xl border border-white/10 bg-cwhite p-6 transition-colors duration-300 hover:border-crimson/50 sm:h-[200px] sm:w-[300px]"
                 data-testid={`client-${c.name.toLowerCase().replace(/\s+/g, "-")}`}
               >
                 <img
