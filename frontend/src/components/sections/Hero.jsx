@@ -4,6 +4,7 @@ import { ArrowDown, ArrowUpRight, Sparkles } from "lucide-react";
 import { HERO, ASSETS } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
 import { useTheme } from "@/lib/theme";
+import { FishParticles } from "@/components/FishParticles";
 
 const lineVariant = {
   hidden: { y: "110%" },
@@ -30,6 +31,11 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60" />
       </motion.div>
+
+      {/* Swimming fish particle field */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <FishParticles count={46} theme={theme} />
+      </div>
 
       <motion.div style={{ y: contentY, opacity: fade }} className="container-x flex min-h-[100svh] flex-col justify-center pt-28 pb-24">
         {/* Overline */}
