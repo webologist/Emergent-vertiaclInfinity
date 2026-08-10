@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
 import { SME } from "@/data/content";
@@ -14,6 +15,11 @@ const BUBBLE_PHRASES = [
   "Baat karte hai",
   "Areee ho jayega",
 ];
+
+// Pills that navigate to a dedicated page instead of showing a bubble.
+const TAG_LINKS = {
+  "Project Development": "/product-development",
+};
 
 // Soft "pop" using the Web Audio API — no asset needed.
 function playPop() {
@@ -43,10 +49,15 @@ export default function SMEsMarquee() {
   const [activeTag, setActiveTag] = useState(null);
   const [phrase, setPhrase] = useState("");
   const dismissTimer = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => () => clearTimeout(dismissTimer.current), []);
 
   const handleTagClick = useCallback((tag) => {
+    if (TAG_LINKS[tag]) {
+      navigate(TAG_LINKS[tag]);
+      return;
+    }
     clearTimeout(dismissTimer.current);
     setActiveTag((prev) => {
       if (prev === tag) return null;
@@ -56,7 +67,7 @@ export default function SMEsMarquee() {
       dismissTimer.current = setTimeout(() => setActiveTag(null), 2600);
       return tag;
     });
-  }, []);
+  }, [navigate]);
 
   return (
     <section

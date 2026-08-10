@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Search, Menu, X, ArrowUpRight, Sun, Moon } from "lucide-react";
@@ -20,6 +21,8 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { theme, toggle } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -30,7 +33,15 @@ export default function Nav() {
 
   const go = (href) => {
     setOpen(false);
-    scrollToId(href);
+    const id = href.startsWith("#") ? href.slice(1) : href;
+    // Scroll within the current page if the target exists, else route home + hash.
+    if (document.getElementById(id)) {
+      scrollToId(href);
+    } else if (location.pathname !== "/") {
+      navigate(`/${href}`);
+    } else {
+      scrollToId(href);
+    }
   };
 
   return (

@@ -13,6 +13,7 @@ import Team from "@/components/sections/Team";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import Admin from "@/pages/Admin";
+import ProductDevelopment from "@/pages/ProductDevelopment";
 import { ThemeProvider, useTheme } from "@/lib/theme";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
@@ -26,6 +27,14 @@ function Home() {
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
+    // Scroll to hash target when arriving from an inner page (e.g. /#focus).
+    if (window.location.hash) {
+      const id = window.location.hash;
+      setTimeout(() => {
+        const el = document.getElementById(id.slice(1));
+        if (el) lenis.scrollTo(el, { offset: -10, duration: 1 });
+      }, 300);
+    }
     return () => {
       cancelAnimationFrame(raf);
       lenis.destroy();
@@ -64,6 +73,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/admin" element={<Admin />} />
+            <Route path="/product-development" element={<ProductDevelopment />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </BrowserRouter>

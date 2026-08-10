@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
-import { scrollToId } from "@/lib/scroll";
 
 // Floating scroll-to-top button, appears after the user scrolls down.
 export function ScrollToTop() {
@@ -14,12 +13,17 @@ export function ScrollToTop() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const toTop = () => {
+    if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.1 });
+    else window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <AnimatePresence>
       {visible && (
         <motion.button
           type="button"
-          onClick={() => scrollToId("#top")}
+          onClick={toTop}
           initial={{ opacity: 0, scale: 0.6, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.6, y: 20 }}

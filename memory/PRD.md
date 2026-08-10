@@ -100,3 +100,24 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
   Key is server-side only; recommend user restricts it to Places API (New) in Cloud Console.
 - P2: Real case-study content swap; real destination pages for footer links; functional site search.
 - P3: Real team photos/client logos, blog pages.
+
+## Changelog (2026-06 continued — fork)
+- Hero redesign: removed old bg image; added interactive "fish in water" particle field (CodePen alexsafayan
+  adaptation, theme-aware, reduced-motion safe) + glowing techno "8" mark on right (`/vi-8-hero.png`),
+  float+glow CSS. Headline size reduced, CTA stacked below sub, content constrained to left ~62% to avoid
+  overlap; fits 100svh at all resolutions. Brand logo replaced with `/vi-logo.png` (nav+footer+favicon).
+- SME section: pills are clickable — bubble with random Hinglish phrase, pop sound (Web Audio), auto-dismiss,
+  tappable-to-contact. EXCEPTION: "Project Development" pill routes to /product-development.
+  Shooting stars now travel bottom→top.
+- Growth section: shows 9 logos first + crimson "View all brands" toggle (no count), "Show less" smooth-scrolls
+  to grid top, logo hover tooltips (client name).
+- Footer: WIP red superscript on 9 service labels; "Domain, Hosting, Email" → https://services.zxis.com (ext);
+  Sitemap removed; added "Product Development" internal route link.
+- Floating scroll-to-top button (bottom-right, appears >600px, works with/without Lenis).
+- NEW PAGE /product-development (2026-06): SEO/AIO optimized inner page. React 19 head hoisting for
+  <title>/meta/canonical/OG + 3 JSON-LD blocks (Service, BreadcrumbList, FAQPage). Sections: hero+breadcrumb,
+  value props, animated Discover→Design→Build→Launch→Scale SVG process flow (`components/diagrams/PDDiagrams.jsx`),
+  budget-ladder diagram, outcomes, FAQ (<details>), embedded contact form (posts to /api/contact, topics
+  New Project/MVP/Custom App/Not sure). Multiple CTAs → #contact / #process. Linked from: Focus "Product
+  Development" card, SME "Project Development" pill, Footer. Nav updated (useNavigate/useLocation) to route
+  home+hash from inner pages; Home scrolls to hash on arrival. All entry points + form self-tested (screenshots).

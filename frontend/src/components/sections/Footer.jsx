@@ -1,8 +1,13 @@
 import { ArrowUpRight, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { FOOTER } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
 import { Logo } from "@/components/Logo";
+
+const ROUTE_LINKS = {
+  "Product Development": "/product-development",
+};
 
 const DEST = {
   "Our Focused Areas": "#focus",
@@ -79,7 +84,15 @@ export default function Footer() {
                 <ul className="mt-4 space-y-3">
                   {col.links.map((l) => (
                     <li key={l}>
-                      {EXTERNAL_LINKS[l] ? (
+                      {ROUTE_LINKS[l] ? (
+                        <Link
+                          to={ROUTE_LINKS[l]}
+                          className="text-left text-sm text-dim transition-colors duration-300 hover:text-crimson"
+                          data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
+                        >
+                          {l}
+                        </Link>
+                      ) : EXTERNAL_LINKS[l] ? (
                         <a
                           href={EXTERNAL_LINKS[l]}
                           target="_blank"

@@ -38,6 +38,7 @@ export const FOCUS = {
       title: "Product Development",
       body: "We turn your idea into a market-ready product without burning your budget or compromising your code. From initial concept to full technical execution, we build step-by-step while you retain 100% ownership of your IP.",
       icon: "Boxes",
+      href: "/product-development",
     },
     {
       no: "03",
@@ -161,7 +162,7 @@ export const FOOTER = {
     },
     {
       heading: "Services",
-      links: ["Platform Modernization", "Product Engineering", "AI & Automation", "Experience Design"],
+      links: ["Product Development", "Platform Modernization", "Product Engineering", "AI & Automation", "Experience Design"],
     },
     {
       heading: "More",
