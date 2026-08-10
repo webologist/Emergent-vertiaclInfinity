@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Star, ArrowUpRight, Plus } from "lucide-react";
+import { Star, ArrowUpRight, Plus, ChevronDown } from "lucide-react";
 import { GROWTH } from "@/data/content";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
 import { scrollToId } from "@/lib/scroll";
 
 const API = process.env.REACT_APP_BACKEND_URL;
+const INITIAL_COUNT = 9;
 
 const GoogleG = () => (
   <svg width="22" height="22" viewBox="0 0 48 48" aria-hidden="true">
@@ -18,6 +19,7 @@ const GoogleG = () => (
 
 export default function Growth() {
   const [rev, setRev] = useState(null);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     fetch(`${API}/api/reviews`)
@@ -27,6 +29,8 @@ export default function Growth() {
   }, []);
 
   const rating = rev?.rating ?? 4.9;
+  const hiddenCount = Math.max(GROWTH.clients.length - INITIAL_COUNT, 0);
+  const visibleClients = showAll ? GROWTH.clients : GROWTH.clients.slice(0, INITIAL_COUNT);
 
   return (
     <section id="growth" className="relative border-t border-white/10 py-24 md:py-36" data-testid="growth-section">
@@ -44,10 +48,13 @@ export default function Growth() {
         {/* Client wordmarks */}
         <div className="mt-12 border-y border-white/10 py-8">
           <StaggerGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-            {GROWTH.clients.map((c) => (
+            {visibleClients.map((c, i) => (
               <motion.div
                 key={c.name}
                 variants={staggerItem}
+                initial={i >= INITIAL_COUNT ? { opacity: 0, y: 20 } : undefined}
+                animate={i >= INITIAL_COUNT ? { opacity: 1, y: 0 } : undefined}
+                transition={i >= INITIAL_COUNT ? { duration: 0.5, ease: [0.22, 1, 0.36, 1] } : undefined}
                 className="flex h-[150px] w-full items-center justify-center rounded-xl border border-white/10 bg-cwhite p-6 transition-colors duration-300 hover:border-crimson/50 sm:h-[200px]"
                 data-testid={`client-${c.name.toLowerCase().replace(/\s+/g, "-")}`}
               >
@@ -61,6 +68,34 @@ export default function Growth() {
               </motion.div>
             ))}
           </StaggerGroup>
+
+          {/* Expand / collapse CTA */}
+          {hiddenCount > 0 && (
+            <Reveal delay={0.1}>
+              <div className="mt-10 flex flex-col items-center">
+                <button
+                  onClick={() => setShowAll((v) => !v)}
+                  className="group relative flex items-center gap-3 overflow-hidden rounded-full bg-crimson px-8 py-3.5 text-sm font-semibold uppercase tracking-[0.15em] text-cwhite shadow-lg shadow-crimson/20 transition-all duration-300 hover:shadow-crimson/40"
+                  data-testid="toggle-clients-btn"
+                >
+                  <span className="absolute inset-0 -translate-x-full bg-white/15 transition-transform duration-500 group-hover:translate-x-0" aria-hidden="true" />
+                  <span className="relative z-10">
+                    {showAll ? "Show less" : `View all ${GROWTH.clients.length} brands`}
+                  </span>
+                  <ChevronDown
+                    size={17}
+                    className={`relative z-10 transition-transform duration-300 ${showAll ? "rotate-180" : "group-hover:translate-y-0.5"}`}
+                  />
+                </button>
+                {!showAll && (
+                  <span className="mt-3 text-xs text-dim" data-testid="hidden-clients-hint">
+                    +{hiddenCount} more brands who trust us
+                  </span>
+                )}
+              </div>
+            </Reveal>
+          )}
+
           <Reveal delay={0.1}>
             <button
               onClick={() => scrollToId("#contact")}
