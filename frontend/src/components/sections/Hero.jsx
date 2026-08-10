@@ -67,7 +67,7 @@ export default function Hero() {
         </motion.div>
 
         {/* Kinetic masked headline */}
-        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tighter text-white text-[clamp(2.1rem,7vw,6.2rem)]">
+        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tighter text-white text-[clamp(2.1rem,6vw,5.4rem)] lg:max-w-[62%]">
           {HERO.lines.map((line, i) => (
             <span key={i} className="block overflow-hidden">
               <motion.span
@@ -84,12 +84,12 @@ export default function Hero() {
         </h1>
 
         {/* Sub + CTA */}
-        <div className="mt-10 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mt-10 flex flex-col gap-8 sm:flex-row sm:items-center lg:max-w-[62%]">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.9 }}
-            className="max-w-xl text-base leading-relaxed text-dim md:text-lg"
+            className="max-w-md text-base leading-relaxed text-dim md:text-lg"
             data-testid="hero-sub"
           >
             {HERO.sub}
@@ -115,7 +115,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3, duration: 0.9 }}
-          className="mt-16 flex flex-wrap gap-3"
+          className="mt-16 flex flex-wrap gap-3 lg:max-w-[62%]"
           data-testid="hero-stats"
         >
           {HERO.stats.map((s) => (
