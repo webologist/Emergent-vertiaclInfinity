@@ -12,33 +12,35 @@ export default function Journey() {
         </Reveal>
 
         <div className="mt-14 flex flex-col gap-8">
-          <div className="grid gap-8 md:grid-cols-2 md:items-stretch">
+          <div className="border-t border-white/10 py-8 md:border-t-0 md:pt-0" data-testid="journey-chapter-01">
             <Reveal>
-              <div className="h-full border-t border-white/10 py-8 md:border-t-0 md:pt-0" data-testid="journey-chapter-01">
-                <h3 className="font-display text-2xl font-bold tracking-tight md:text-3xl">{JOURNEY.chapters[0].title}</h3>
-                <div className="mt-5 max-w-md space-y-4 text-base leading-relaxed text-dim">
-                  {JOURNEY.chapters[0].body.map((p, i) => (
-                    <p key={i}>{p}</p>
-                  ))}
-                </div>
-              </div>
+              <h3 className="font-display text-2xl font-bold tracking-tight md:text-3xl">{JOURNEY.chapters[0].title}</h3>
             </Reveal>
 
             <Reveal delay={0.05}>
               <div
-                className="relative h-full overflow-hidden rounded-2xl border border-crimson/50 bg-surface p-8 md:p-10"
+                className="relative mb-6 mt-5 w-full overflow-hidden rounded-2xl border border-crimson/50 bg-surface p-8 md:float-right md:ml-10 md:mt-1 md:w-[360px] md:p-9"
                 data-testid="journey-chapter-02"
               >
                 <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-crimson/15 blur-[100px]" aria-hidden="true" />
                 <h3 className="font-display text-2xl font-bold tracking-tight text-crimson md:text-3xl">{JOURNEY.chapters[1].title}</h3>
-                <p className="mt-5 max-w-md font-display text-lg font-semibold leading-snug text-white md:text-xl">
+                <p className="mt-5 font-display text-lg font-semibold leading-snug text-white md:text-xl">
                   Your growth is the true measure of our success.
                 </p>
-                <p className="mt-4 max-w-md text-base leading-relaxed text-dim">
+                <p className="mt-4 text-base leading-relaxed text-dim">
                   {JOURNEY.chapters[1].body.replace("Your growth is the true measure of our success. ", "")}
                 </p>
               </div>
             </Reveal>
+
+            <Reveal delay={0.1}>
+              <div className="mt-5 space-y-4 text-base leading-relaxed text-dim">
+                {JOURNEY.chapters[0].body.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
+            </Reveal>
+            <div className="clear-both" />
           </div>
 
           <Reveal delay={0.1}>
