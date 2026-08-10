@@ -126,7 +126,7 @@ export const TEAM = {
   title: "Team",
   members: [
     { name: "Sunil Patel", role: "Root Admin", img: "/team/root-admin.png" },
-    { name: "Vibhuti", role: "Resource Manager", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&auto=format&fit=crop" },
+    { name: "Vibhuti", role: "Resource Manager", img: "/team/resource-manager.png" },
     { name: "Aparna", role: "Traffic Engine", img: "/team/traffic-engine.png" },
     { name: "Pranab", role: "Code Node", img: "/team/code-node.webp" },
     { name: "Tejas", role: "Master Protocol", img: "/team/master-protocol.webp" },
