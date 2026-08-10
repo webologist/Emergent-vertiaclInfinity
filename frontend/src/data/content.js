@@ -125,12 +125,12 @@ export const TEAM = {
   overline: "The humans behind it",
   title: "Team",
   members: [
-    { name: "Sunil", role: "Founder & CEO", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" },
-    { name: "Priya Nair", role: "Head of Design", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&auto=format&fit=crop" },
-    { name: "Rohan Kapoor", role: "Principal Engineer", img: "https://images.unsplash.com/photo-1618835962148-cf177563c6c0?q=80&w=800&auto=format&fit=crop" },
-    { name: "Sara Fernandes", role: "Product Lead", img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&auto=format&fit=crop" },
-    { name: "Vikram Rao", role: "AI & Automation", img: "https://images.unsplash.com/photo-1609436132311-e4b0c9370469?q=80&w=800&auto=format&fit=crop" },
-    { name: "Neha Sharma", role: "Client Partner", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop" },
+    { name: "Sunil Patel", role: "Root Admin", img: "/team/root-admin.png" },
+    { name: "Vibhuti", role: "Resource Manager", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&auto=format&fit=crop" },
+    { name: "Aparna", role: "Traffic Engine", img: "/team/traffic-engine.png" },
+    { name: "Pranab", role: "Code Node", img: "/team/code-node.webp" },
+    { name: "Tejas", role: "Master Protocol", img: "/team/master-protocol.webp" },
+    { name: "Krish", role: "Pixel Node", img: "/team/pixel-node.webp" },
   ],
 };
 
