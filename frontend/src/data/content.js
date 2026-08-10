@@ -168,7 +168,12 @@ export const FOOTER = {
       links: ["Digital Commerce", "Performance Services", "Managed Support", "Sitemap"],
     },
   ],
-  badges: ["Udyam / MSME", "GeM Registered", "Make in India", "Startup India"],
+  badges: [
+    { name: "Udyam / MSME", logo: "/badges/msme.jpg" },
+    { name: "GeM Registered", logo: "/badges/gem.jpg" },
+    { name: "Make in India", logo: "/badges/make-in-india.jpg" },
+    { name: "Startup India", logo: "/badges/startup-india.jpg" },
+  ],
   copyright: "© 2003–2026 Vertical Infinity Pvt. Ltd. All rights reserved.",
 };
 

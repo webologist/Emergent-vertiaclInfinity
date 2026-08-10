@@ -1,4 +1,4 @@
-import { ArrowUpRight, ShieldCheck, Star } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
 import { toast } from "sonner";
 import { FOOTER } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
@@ -79,16 +79,15 @@ export default function Footer() {
         </div>
 
         {/* Badges */}
-        <div className="mt-16 flex flex-wrap gap-3 border-t border-white/10 pt-8">
+        <div className="mt-16 flex flex-wrap items-center gap-4 border-t border-white/10 pt-8">
           {FOOTER.badges.map((b) => (
-            <span
-              key={b}
-              className="flex items-center gap-2 rounded-full border border-white/10 bg-surface px-4 py-2 text-xs text-dim"
-              data-testid={`badge-${b.split(" ")[0].toLowerCase()}`}
+            <div
+              key={b.name}
+              className="flex h-16 items-center justify-center rounded-lg bg-cwhite px-4 py-2"
+              data-testid={`badge-${b.name.split(" ")[0].toLowerCase().replace(/[^a-z0-9]/g, "")}`}
             >
-              <ShieldCheck size={13} className="text-crimson" />
-              {b}
-            </span>
+              <img src={b.logo} alt={b.name} className="h-full w-auto max-w-[130px] object-contain" loading="lazy" />
+            </div>
           ))}
         </div>
       </div>
