@@ -285,7 +285,7 @@ async def get_reviews():
             raise HTTPException(status_code=502, detail="Stored place_id is obsolete; retry")
         if r.status_code >= 400:
             raise HTTPException(status_code=502, detail="Google Places request failed")
-    except httpx.HTTPError:
+    except (httpx.HTTPError, HTTPException):
         return FALLBACK_REVIEWS
     data = r.json()
     reviews = []
