@@ -18,6 +18,18 @@ const DEST = {
 };
 const destFor = (l) => DEST[l] || "#contact";
 
+const WIP_LINKS = new Set([
+  "Case Studies",
+  "Social Responsibility",
+  "Platform Modernization",
+  "Product Engineering",
+  "AI & Automation",
+  "Experience Design",
+  "Digital Commerce",
+  "Performance Services",
+  "Managed Support",
+]);
+
 export default function Footer() {
   return (
     <footer className="relative border-t border-white/10 bg-ink pt-20" data-testid="footer">
@@ -69,6 +81,9 @@ export default function Footer() {
                         data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
                       >
                         {l}
+                        {WIP_LINKS.has(l) && (
+                          <sup className="ml-0.5 align-super text-[9px] font-bold uppercase tracking-wider text-crimson">WIP</sup>
+                        )}
                       </button>
                     </li>
                   ))}
