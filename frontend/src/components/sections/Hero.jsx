@@ -46,7 +46,7 @@ export default function Hero() {
         </motion.div>
 
         {/* Kinetic masked headline */}
-        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tighter text-white text-[clamp(2.7rem,10vw,8.5rem)]">
+        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tighter text-white text-[clamp(2.1rem,7vw,6.2rem)]">
           {HERO.lines.map((line, i) => (
             <span key={i} className="block overflow-hidden">
               <motion.span
