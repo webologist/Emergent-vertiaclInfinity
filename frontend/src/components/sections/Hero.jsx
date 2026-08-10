@@ -52,7 +52,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <motion.div style={{ y: contentY, opacity: fade }} className="container-x flex min-h-[100svh] flex-col justify-center pt-28 pb-24">
+      <motion.div style={{ y: contentY, opacity: fade }} className="container-x flex min-h-[100svh] flex-col justify-center pt-24 pb-20">
         {/* Overline */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -67,7 +67,7 @@ export default function Hero() {
         </motion.div>
 
         {/* Kinetic masked headline */}
-        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tighter text-white text-[clamp(2.1rem,6vw,5.4rem)] lg:max-w-[62%]">
+        <h1 className="font-display font-extrabold uppercase leading-[0.95] tracking-tighter text-white text-[clamp(1.8rem,4.6vw,4.2rem)] lg:max-w-[62%]">
           {HERO.lines.map((line, i) => (
             <span key={i} className="block overflow-hidden">
               <motion.span
@@ -84,7 +84,7 @@ export default function Hero() {
         </h1>
 
         {/* Sub + CTA */}
-        <div className="mt-10 flex flex-col gap-8 sm:flex-row sm:items-center lg:max-w-[62%]">
+        <div className="mt-8 flex flex-col items-start gap-6 lg:max-w-[62%]">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -115,7 +115,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3, duration: 0.9 }}
-          className="mt-16 flex flex-wrap gap-3 lg:max-w-[62%]"
+          className="mt-10 flex flex-wrap gap-3 lg:max-w-[62%]"
           data-testid="hero-stats"
         >
           {HERO.stats.map((s) => (
