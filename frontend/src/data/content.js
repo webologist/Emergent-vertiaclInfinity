@@ -125,7 +125,7 @@ export const TEAM = {
   overline: "The humans behind it",
   title: "Team",
   members: [
-    { name: "Arjun Mehta", role: "Founder & CEO", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" },
+    { name: "Sunil", role: "Founder & CEO", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" },
     { name: "Priya Nair", role: "Head of Design", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&auto=format&fit=crop" },
     { name: "Rohan Kapoor", role: "Principal Engineer", img: "https://images.unsplash.com/photo-1618835962148-cf177563c6c0?q=80&w=800&auto=format&fit=crop" },
     { name: "Sara Fernandes", role: "Product Lead", img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&auto=format&fit=crop" },
