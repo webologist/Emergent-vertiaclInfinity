@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Star, ArrowUpRight, Plus, ChevronDown } from "lucide-react";
 import { GROWTH } from "@/data/content";
@@ -20,6 +20,7 @@ const GoogleG = () => (
 export default function Growth() {
   const [rev, setRev] = useState(null);
   const [showAll, setShowAll] = useState(false);
+  const gridRef = useRef(null);
 
   useEffect(() => {
     fetch(`${API}/api/reviews`)
@@ -31,6 +32,20 @@ export default function Growth() {
   const rating = rev?.rating ?? 4.9;
   const hiddenCount = Math.max(GROWTH.clients.length - INITIAL_COUNT, 0);
   const visibleClients = showAll ? GROWTH.clients : GROWTH.clients.slice(0, INITIAL_COUNT);
+
+  const toggleClients = () => {
+    setShowAll((v) => {
+      const next = !v;
+      if (!next && gridRef.current) {
+        const el = gridRef.current;
+        requestAnimationFrame(() => {
+          if (window.__lenis) window.__lenis.scrollTo(el, { offset: -100, duration: 1.1 });
+          else el.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+      return next;
+    });
+  };
 
   return (
     <section id="growth" className="relative border-t border-white/10 py-24 md:py-36" data-testid="growth-section">
@@ -46,7 +61,7 @@ export default function Growth() {
         </Reveal>
 
         {/* Client wordmarks */}
-        <div className="mt-12 border-y border-white/10 py-8">
+        <div ref={gridRef} className="mt-12 scroll-mt-28 border-y border-white/10 py-8">
           <StaggerGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {visibleClients.map((c, i) => (
               <motion.div
@@ -55,16 +70,22 @@ export default function Growth() {
                 initial={i >= INITIAL_COUNT ? { opacity: 0, y: 20 } : undefined}
                 animate={i >= INITIAL_COUNT ? { opacity: 1, y: 0 } : undefined}
                 transition={i >= INITIAL_COUNT ? { duration: 0.5, ease: [0.22, 1, 0.36, 1] } : undefined}
-                className="flex h-[150px] w-full items-center justify-center rounded-xl border border-white/10 bg-cwhite p-6 transition-colors duration-300 hover:border-crimson/50 sm:h-[200px]"
+                className="group relative flex h-[150px] w-full items-center justify-center rounded-xl border border-white/10 bg-cwhite p-6 transition-colors duration-300 hover:border-crimson/50 sm:h-[200px]"
                 data-testid={`client-${c.name.toLowerCase().replace(/\s+/g, "-")}`}
               >
                 <img
                   src={c.logo}
                   alt={c.name}
-                  className="h-full w-full object-contain grayscale contrast-125 transition-[filter] duration-500 hover:grayscale-0"
+                  className="h-full w-full object-contain grayscale contrast-125 transition-[filter] duration-500 group-hover:grayscale-0"
                   loading="lazy"
                   draggable={false}
                 />
+                <span
+                  className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-full bg-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-cwhite opacity-0 shadow-lg transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+                  data-testid={`client-tooltip-${c.name.toLowerCase().replace(/\s+/g, "-")}`}
+                >
+                  {c.name}
+                </span>
               </motion.div>
             ))}
           </StaggerGroup>
@@ -74,13 +95,13 @@ export default function Growth() {
             <Reveal delay={0.1}>
               <div className="mt-10 flex flex-col items-center">
                 <button
-                  onClick={() => setShowAll((v) => !v)}
+                  onClick={toggleClients}
                   className="group relative flex items-center gap-3 overflow-hidden rounded-full bg-crimson px-8 py-3.5 text-sm font-semibold uppercase tracking-[0.15em] text-cwhite shadow-lg shadow-crimson/20 transition-all duration-300 hover:shadow-crimson/40"
                   data-testid="toggle-clients-btn"
                 >
                   <span className="absolute inset-0 -translate-x-full bg-white/15 transition-transform duration-500 group-hover:translate-x-0" aria-hidden="true" />
                   <span className="relative z-10">
-                    {showAll ? "Show less" : `View all ${GROWTH.clients.length} brands`}
+                    {showAll ? "Show less" : "View all brands"}
                   </span>
                   <ChevronDown
                     size={17}
