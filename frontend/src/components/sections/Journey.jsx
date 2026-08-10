@@ -16,7 +16,11 @@ export default function Journey() {
             <Reveal>
               <div className="h-full border-t border-white/10 py-8 md:border-t-0 md:pt-0" data-testid="journey-chapter-01">
                 <h3 className="font-display text-2xl font-bold tracking-tight md:text-3xl">{JOURNEY.chapters[0].title}</h3>
-                <p className="mt-5 max-w-md text-base leading-relaxed text-dim">{JOURNEY.chapters[0].body}</p>
+                <div className="mt-5 max-w-md space-y-4 text-base leading-relaxed text-dim">
+                  {JOURNEY.chapters[0].body.map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
               </div>
             </Reveal>
 

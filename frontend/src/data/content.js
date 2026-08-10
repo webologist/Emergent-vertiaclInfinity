@@ -106,7 +106,11 @@ export const JOURNEY = {
     {
       no: "01",
       title: "Who We Are",
-      body: "At Vertical Infinity, we blend sharp design, custom engineering, and lightning speed to help ambitious businesses scale. We've stripped away the typical agency friction — no bloated price tags, no rigid processes, no technical headaches. Instead, you get full ownership of your digital assets, transparent collaboration, and a long-term partner who stays in your corner long after launch.",
+      body: [
+        "At Vertical Infinity, we blend sharp design, custom engineering, and lightning speed to help ambitious businesses scale. We believe that exceptional digital products shouldn't come weighed down by industry bureaucracy, inflated retainers, or rigid, outdated processes. We've stripped away the typical agency friction to give you a streamlined, transparent experience focused entirely on driving measurable growth for your business.",
+        "Instead of hand-offs, hidden fees, and technical headaches, we deliver complete clarity at every stage. You retain full, uncompromised ownership of all your digital assets, source code, and infrastructure—ensuring your team stays in full control of your future. We operate as an agile, high-velocity extension of your core team, providing open collaboration, honest communication, and execution built to adapt to your evolving needs.",
+        "Launch day isn't our finish line—it's just the baseline. We build for the long haul, acting as a dedicated technical and strategic partner who stays in your corner long after deployment to refine, scale, and support your platform as your business expands.",
+      ],
     },
     {
       no: "02",
