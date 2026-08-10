@@ -5,7 +5,7 @@ export function ShootingStars({ count = 8, className = "" }) {
     () =>
       Array.from({ length: count }, (_, i) => ({
         id: i,
-        top: Math.random() * 65,
+        top: Math.random() * 55 + 40,
         left: Math.random() * 85 + 5,
         width: 70 + Math.random() * 110,
         duration: 2.8 + Math.random() * 3.5,
