@@ -1,8 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { MessageCircle } from "lucide-react";
 import { SME } from "@/data/content";
 import { Reveal } from "@/components/Reveal";
 import { ShootingStars } from "@/components/ShootingStars";
+import { scrollToId } from "@/lib/scroll";
 
 const BUBBLE_PHRASES = [
   "Lets Talk",
@@ -13,14 +15,47 @@ const BUBBLE_PHRASES = [
   "Areee ho jayega",
 ];
 
+// Soft "pop" using the Web Audio API — no asset needed.
+function playPop() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(420, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.09);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.24);
+    osc.onended = () => ctx.close();
+  } catch (e) {
+    /* audio not available — silently ignore */
+  }
+}
+
 export default function SMEsMarquee() {
   const [activeTag, setActiveTag] = useState(null);
   const [phrase, setPhrase] = useState("");
+  const dismissTimer = useRef(null);
+
+  useEffect(() => () => clearTimeout(dismissTimer.current), []);
 
   const handleTagClick = useCallback((tag) => {
-    const next = BUBBLE_PHRASES[Math.floor(Math.random() * BUBBLE_PHRASES.length)];
-    setPhrase(next);
-    setActiveTag((prev) => (prev === tag ? null : tag));
+    clearTimeout(dismissTimer.current);
+    setActiveTag((prev) => {
+      if (prev === tag) return null;
+      const next = BUBBLE_PHRASES[Math.floor(Math.random() * BUBBLE_PHRASES.length)];
+      setPhrase(next);
+      playPop();
+      dismissTimer.current = setTimeout(() => setActiveTag(null), 2600);
+      return tag;
+    });
   }, []);
 
   return (
@@ -52,23 +87,25 @@ export default function SMEsMarquee() {
                 <div key={tag} className="relative">
                   <AnimatePresence>
                     {isActive && (
-                      <motion.div
+                      <motion.button
+                        type="button"
                         key={phrase}
-                        initial={{ opacity: 0, y: 8, scale: 0.7 }}
+                        onClick={() => scrollToId("#contact")}
+                        initial={{ opacity: 0, y: 12, scale: 0.6 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 6, scale: 0.8 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 22 }}
-                        className="absolute bottom-full left-1/2 z-20 mb-3 -translate-x-1/2 whitespace-nowrap"
+                        exit={{ opacity: 0, y: 8, scale: 0.7 }}
+                        transition={{ type: "spring", stiffness: 480, damping: 20 }}
+                        className="group absolute bottom-full left-1/2 z-30 mb-4 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-2xl bg-cwhite px-6 py-3.5 text-lg font-extrabold text-crimson shadow-2xl ring-2 ring-crimson/10 transition-transform duration-200 hover:scale-105 sm:text-xl"
                         data-testid={`sme-tag-bubble-${slug}`}
+                        aria-label={`${phrase} — go to contact form`}
                       >
-                        <span className="relative block rounded-2xl bg-cwhite px-4 py-2 text-sm font-bold text-crimson shadow-xl">
-                          {phrase}
-                          <span
-                            className="absolute left-1/2 top-full h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-cwhite"
-                            aria-hidden="true"
-                          />
-                        </span>
-                      </motion.div>
+                        {phrase}
+                        <MessageCircle size={20} className="text-crimson transition-transform duration-200 group-hover:translate-x-0.5" />
+                        <span
+                          className="absolute left-1/2 top-full h-4 w-4 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-cwhite"
+                          aria-hidden="true"
+                        />
+                      </motion.button>
                     )}
                   </AnimatePresence>
                   <button
