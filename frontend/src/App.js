@@ -14,6 +14,7 @@ import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import Admin from "@/pages/Admin";
 import { ThemeProvider, useTheme } from "@/lib/theme";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 function Home() {
   useEffect(() => {
@@ -45,6 +46,7 @@ function Home() {
         <Contact />
       </main>
       <Footer />
+      <ScrollToTop />
     </>
   );
 }
