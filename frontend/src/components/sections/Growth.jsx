@@ -110,7 +110,7 @@ export default function Growth() {
                 </button>
                 {!showAll && (
                   <span className="mt-3 text-xs text-dim" data-testid="hidden-clients-hint">
-                    +{hiddenCount} more brands who trust us
+                    More brands who trust us
                   </span>
                 )}
               </div>
