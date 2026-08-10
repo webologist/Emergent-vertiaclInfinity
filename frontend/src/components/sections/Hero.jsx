@@ -27,7 +27,6 @@ export default function Hero() {
     <section id="top" ref={ref} className="relative min-h-[100svh] w-full overflow-hidden" data-testid="hero-section">
       {/* Parallax background */}
       <motion.div style={{ y: bgY, scale: bgScale }} className="absolute inset-0 -z-10">
-        <img src={theme === "dark" ? ASSETS.heroBg : ASSETS.heroBgLight} alt="" className="h-full w-full object-cover object-right" draggable={false} />
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60" />
       </motion.div>
