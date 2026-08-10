@@ -79,14 +79,14 @@ export default function Footer() {
         </div>
 
         {/* Badges */}
-        <div className="mt-16 flex flex-wrap items-center gap-4 border-t border-white/10 pt-8">
+        <div className="mt-16 flex flex-wrap items-center gap-5 border-t border-white/10 pt-8">
           {FOOTER.badges.map((b) => (
             <div
               key={b.name}
-              className="flex h-16 items-center justify-center rounded-lg bg-cwhite px-4 py-2"
+              className="flex items-center justify-center rounded-lg bg-cwhite p-3"
               data-testid={`badge-${b.name.split(" ")[0].toLowerCase().replace(/[^a-z0-9]/g, "")}`}
             >
-              <img src={b.logo} alt={b.name} className="h-full w-auto max-w-[130px] object-contain" loading="lazy" />
+              <img src={b.logo} alt={b.name} className="h-auto w-full max-w-[220px] object-contain" loading="lazy" />
             </div>
           ))}
         </div>
