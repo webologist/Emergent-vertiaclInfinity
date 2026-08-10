@@ -70,28 +70,6 @@ export const GROWTH = {
     text: "The key is to set realistic customer expectations, and then not to just meet them, but to exceed them — preferably in unexpected and helpful ways.",
     author: "Richard Branson",
   },
-  fallbackReviews: [
-    {
-      author: "Anonymous",
-      rating: 5,
-      text: "This company is great. They have really helped us with our digital marketing and website design. The team is very knowledgeable and responsive.",
-    },
-    {
-      author: "Anonymous",
-      rating: 5,
-      text: "We have been working with Vertical Infinity for over a year now and they have exceeded our expectations. They are a true partner and have helped us grow our business significantly.",
-    },
-    {
-      author: "Anonymous",
-      rating: 5,
-      text: "Sharp team, fast turnaround, and they actually understand SME budgets. Our new site paid for itself within the first quarter.",
-    },
-    {
-      author: "Anonymous",
-      rating: 5,
-      text: "From strategy to launch, Vertical Infinity kept things simple and transparent. Highly recommend for anyone scaling a growing business.",
-    },
-  ],
   clients: [
     { name: "BlueChip", logo: "/clients/bluechip.jpg" },
     { name: "CEAT", logo: "/clients/ceat.jpg" },

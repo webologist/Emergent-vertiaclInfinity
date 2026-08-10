@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Star, ArrowUpRight, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { Star, ArrowUpRight, Plus } from "lucide-react";
 import { GROWTH } from "@/data/content";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
 import { scrollToId } from "@/lib/scroll";
@@ -16,112 +16,6 @@ const GoogleG = () => (
   </svg>
 );
 
-function ReviewsCarousel({ reviews }) {
-  const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
-
-  useEffect(() => {
-    if (reviews.length <= 1) return;
-    const timer = setInterval(() => {
-      setDirection(1);
-      setIndex((i) => (i + 1) % reviews.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [reviews.length]);
-
-  const go = (dir) => {
-    setDirection(dir);
-    setIndex((i) => (i + dir + reviews.length) % reviews.length);
-  };
-
-  const r = reviews[index];
-
-  return (
-    <div
-      className="flex h-full flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9"
-      data-testid="reviews-carousel"
-    >
-      <div className="relative min-h-[168px] touch-pan-y overflow-hidden">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.figure
-            key={index}
-            initial={{ opacity: 0, x: direction >= 0 ? 32 : -32 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: direction >= 0 ? -32 : 32 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            drag="x"
-            dragElastic={0.35}
-            dragConstraints={{ left: 0, right: 0 }}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -60 || info.velocity.x < -400) go(1);
-              else if (info.offset.x > 60 || info.velocity.x > 400) go(-1);
-            }}
-            whileDrag={{ cursor: "grabbing" }}
-            className="cursor-grab active:cursor-grabbing"
-            data-testid={`review-card-${index}`}
-          >
-            <div className="flex items-center gap-3">
-              {r.author_photo_uri ? (
-                <img src={r.author_photo_uri} alt="" className="h-10 w-10 rounded-full" loading="lazy" draggable={false} />
-              ) : (
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-crimson/15 text-sm font-bold text-crimson">
-                  {(r.author || "G")[0]}
-                </span>
-              )}
-              <div>
-                <div className="text-sm font-semibold text-white">{r.author || "Google user"}</div>
-                <div className="flex gap-0.5 text-crimson">
-                  {[...Array(r.rating || 5)].map((_, s) => (
-                    <Star key={s} size={12} fill="currentColor" strokeWidth={0} />
-                  ))}
-                </div>
-              </div>
-            </div>
-            <blockquote className="mt-4 text-sm leading-relaxed text-dim">"{r.text}"</blockquote>
-          </motion.figure>
-        </AnimatePresence>
-      </div>
-
-      <div className="mt-6 flex items-center justify-between">
-        <div className="flex gap-2">
-          {reviews.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => {
-                setDirection(i > index ? 1 : -1);
-                setIndex(i);
-              }}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === index ? "w-6 bg-crimson" : "w-1.5 bg-white/20"
-              }`}
-              data-testid={`review-dot-${i}`}
-              aria-label={`Go to review ${i + 1}`}
-            />
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => go(-1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 text-white transition-colors duration-300 hover:border-crimson hover:text-crimson"
-            data-testid="review-prev-btn"
-            aria-label="Previous review"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <button
-            onClick={() => go(1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 text-white transition-colors duration-300 hover:border-crimson hover:text-crimson"
-            data-testid="review-next-btn"
-            aria-label="Next review"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Growth() {
   const [rev, setRev] = useState(null);
 
@@ -133,7 +27,6 @@ export default function Growth() {
   }, []);
 
   const rating = rev?.rating ?? 4.9;
-  const reviewList = rev?.live && rev.reviews?.length ? rev.reviews : GROWTH.fallbackReviews;
 
   return (
     <section id="growth" className="relative border-t border-white/10 py-24 md:py-36" data-testid="growth-section">
@@ -192,10 +85,10 @@ export default function Growth() {
           </Reveal>
         </div>
 
-        {/* Google reviews — summary card (left) + carousel (right) */}
-        <div className="mt-12 grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-stretch">
+        {/* Google reviews */}
+        <div className="mt-12 flex justify-center">
           <Reveal delay={0.1}>
-            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9" data-testid="google-reviews-card">
+            <div className="flex w-full max-w-md flex-col rounded-2xl border border-white/10 bg-elevated p-8 md:p-9" data-testid="google-reviews-card">
               <div className="flex items-center gap-3">
                 <GoogleG />
                 <span className="font-display text-lg font-bold">Google Reviews</span>
@@ -217,7 +110,7 @@ export default function Growth() {
                 </div>
               </div>
 
-              <div className="mt-8 flex flex-1 flex-col justify-end gap-3">
+              <div className="mt-8 flex flex-col gap-3">
                 <a
                   href={rev?.google_maps_uri || "https://maps.google.com/?cid=885671371509995655"}
                   target="_blank"
@@ -240,10 +133,6 @@ export default function Growth() {
                 {rev?.live && <span className="text-center text-[10px] text-dim">Live data provided by Google Maps</span>}
               </div>
             </div>
-          </Reveal>
-
-          <Reveal delay={0.15}>
-            <ReviewsCarousel reviews={reviewList} />
           </Reveal>
         </div>
       </div>
