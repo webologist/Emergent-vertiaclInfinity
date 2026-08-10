@@ -1,5 +1,6 @@
 import { SME } from "@/data/content";
 import { Reveal } from "@/components/Reveal";
+import { ShootingStars } from "@/components/ShootingStars";
 
 export default function SMEsMarquee() {
   return (
@@ -8,6 +9,7 @@ export default function SMEsMarquee() {
       className="relative overflow-hidden border-t border-cwhite/15 bg-crimson py-24 text-cwhite transition-colors duration-500 dark:bg-[#8F121F] md:py-32"
       data-testid="sme-section"
     >
+      <ShootingStars count={9} />
       <div className="pointer-events-none absolute -left-40 top-1/3 h-[28rem] w-[28rem] rounded-full bg-cwhite/10 blur-[150px]" aria-hidden="true" />
       <div className="pointer-events-none absolute -right-40 bottom-0 h-80 w-80 rounded-full bg-black/25 blur-[130px]" aria-hidden="true" />
       <div className="container-x relative">
