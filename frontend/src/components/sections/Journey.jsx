@@ -40,7 +40,7 @@ export default function Journey() {
           <Reveal delay={0.1}>
             <div className="py-8" data-testid="journey-chapter-03">
               <h3 className="font-display text-2xl font-bold tracking-tight md:text-3xl">{JOURNEY.chapters[2].title}</h3>
-              <p className="mt-5 max-w-3xl text-base leading-relaxed text-dim">{JOURNEY.chapters[2].body}</p>
+              <p className="mt-5 w-full text-base leading-relaxed text-dim">{JOURNEY.chapters[2].body}</p>
             </div>
           </Reveal>
         </div>
