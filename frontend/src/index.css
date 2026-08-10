@@ -191,6 +191,23 @@ body {
   100% { transform: rotate(-55deg) translateX(320px); opacity: 0; }
 }
 
+/* Glowing techno "8" hero mark */
+.vi-8-float {
+  animation: vi-8-float 7s ease-in-out infinite;
+}
+.vi-8-glow {
+  animation: vi-8-glow 4.5s ease-in-out infinite;
+}
+@keyframes vi-8-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+@keyframes vi-8-glow {
+  0%, 100% { opacity: 0.35; transform: scale(0.95); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

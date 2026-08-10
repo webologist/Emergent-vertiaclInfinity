@@ -37,6 +37,22 @@ export default function Hero() {
         <FishParticles theme={theme} />
       </div>
 
+      {/* Right-side glowing techno "8" mark */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 -z-[5] hidden w-1/2 items-center justify-end overflow-hidden md:flex" aria-hidden="true">
+        <div className="relative flex h-full items-center justify-center pr-[2vw] lg:pr-[4vw]">
+          <div className="vi-8-glow absolute h-[62%] w-[62%] rounded-full bg-crimson/25 blur-[90px]" />
+          <motion.img
+            src="/vi-8-hero.png"
+            alt=""
+            className="vi-8-float relative h-[78%] max-h-[760px] w-auto object-contain opacity-90 drop-shadow-[0_0_45px_rgba(20,200,255,0.35)]"
+            draggable={false}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 0.9, scale: 1 }}
+            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          />
+        </div>
+      </div>
+
       <motion.div style={{ y: contentY, opacity: fade }} className="container-x flex min-h-[100svh] flex-col justify-center pt-28 pb-24">
         {/* Overline */}
         <motion.div
