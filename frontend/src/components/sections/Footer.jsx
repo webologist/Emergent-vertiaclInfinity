@@ -18,6 +18,10 @@ const DEST = {
 };
 const destFor = (l) => DEST[l] || "#contact";
 
+const EXTERNAL_LINKS = {
+  "Domain, Hosting, Email": "https://services.zxis.com",
+};
+
 const WIP_LINKS = new Set([
   "Case Studies",
   "Social Responsibility",
@@ -75,16 +79,28 @@ export default function Footer() {
                 <ul className="mt-4 space-y-3">
                   {col.links.map((l) => (
                     <li key={l}>
-                      <button
-                        onClick={() => scrollToId(destFor(l))}
-                        className="text-left text-sm text-dim transition-colors duration-300 hover:text-crimson"
-                        data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
-                      >
-                        {l}
-                        {WIP_LINKS.has(l) && (
-                          <sup className="ml-0.5 align-super text-[9px] font-bold uppercase tracking-wider text-crimson">WIP</sup>
-                        )}
-                      </button>
+                      {EXTERNAL_LINKS[l] ? (
+                        <a
+                          href={EXTERNAL_LINKS[l]}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-left text-sm text-dim transition-colors duration-300 hover:text-crimson"
+                          data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
+                        >
+                          {l}
+                        </a>
+                      ) : (
+                        <button
+                          onClick={() => scrollToId(destFor(l))}
+                          className="text-left text-sm text-dim transition-colors duration-300 hover:text-crimson"
+                          data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
+                        >
+                          {l}
+                          {WIP_LINKS.has(l) && (
+                            <sup className="ml-0.5 align-super text-[9px] font-bold uppercase tracking-wider text-crimson">WIP</sup>
+                          )}
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ul>
