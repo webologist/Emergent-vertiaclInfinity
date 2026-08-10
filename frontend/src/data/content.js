@@ -32,6 +32,7 @@ export const FOCUS = {
       title: "Workflow Automation",
       body: "Manual tasks and disconnected tools slow your business down. We build custom automated workflows that eliminate repetitive work, reduce human error, and keep your business running smoothly — saving your team hours every week.",
       icon: "Workflow",
+      href: "/workflow-automation",
     },
     {
       no: "02",
@@ -45,6 +46,7 @@ export const FOCUS = {
       title: "Legacy Modernization",
       body: "Outdated software makes your business vulnerable and slow. We inspect your tech stack to pinpoint what needs immediate patching, what requires a full rebuild, and how to update safely without breaking daily operations.",
       icon: "RefreshCcw",
+      href: "/legacy-modernization",
     },
   ],
 };
@@ -162,7 +164,7 @@ export const FOOTER = {
     },
     {
       heading: "Services",
-      links: ["Product Development", "Platform Modernization", "Product Engineering", "AI & Automation", "Experience Design"],
+      links: ["Product Development", "Workflow Automation", "Legacy Modernization", "AI & Automation", "Experience Design"],
     },
     {
       heading: "More",

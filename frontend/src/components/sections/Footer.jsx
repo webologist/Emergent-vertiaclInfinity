@@ -7,6 +7,8 @@ import { Logo } from "@/components/Logo";
 
 const ROUTE_LINKS = {
   "Product Development": "/product-development",
+  "Workflow Automation": "/workflow-automation",
+  "Legacy Modernization": "/legacy-modernization",
 };
 
 const DEST = {

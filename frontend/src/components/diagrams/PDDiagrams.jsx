@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { Compass, PenTool, Code2, Rocket, TrendingUp } from "lucide-react";
+import { Compass, PenTool, Code2, Rocket, TrendingUp, ArrowRight } from "lucide-react";
 
-const STEPS = [
+const DEFAULT_STEPS = [
   { icon: Compass, title: "Discover", desc: "We map your goals, users and constraints, then agree on a clear, budget-aware scope." },
   { icon: PenTool, title: "Design", desc: "Wireframes and interface design you can see and feel — no surprises later." },
   { icon: Code2, title: "Build", desc: "We engineer in small, visible steps. You watch it come to life every week." },
@@ -9,13 +9,13 @@ const STEPS = [
   { icon: TrendingUp, title: "Scale", desc: "Launch day is the baseline. We stay on to refine, grow and support your platform." },
 ];
 
-// Animated end-to-end product journey — Discover → Scale.
-export function ProcessFlow() {
+// Animated end-to-end journey flow — configurable steps.
+export function ProcessFlow({ steps = DEFAULT_STEPS }) {
+  const cols = steps.length;
   return (
     <div className="relative" data-testid="process-flow-diagram">
       {/* Desktop: horizontal flow */}
       <div className="relative hidden md:block">
-        {/* animated connector line */}
         <div className="absolute left-0 right-0 top-9 mx-[10%] h-[3px] overflow-hidden rounded-full bg-white/10">
           <motion.div
             initial={{ scaleX: 0 }}
@@ -26,8 +26,8 @@ export function ProcessFlow() {
             className="h-full w-full bg-gradient-to-r from-crimson via-crimson to-crimson/40"
           />
         </div>
-        <div className="grid grid-cols-5 gap-4">
-          {STEPS.map((s, i) => (
+        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+          {steps.map((s, i) => (
             <motion.div
               key={s.title}
               initial={{ opacity: 0, y: 24 }}
@@ -62,7 +62,7 @@ export function ProcessFlow() {
           />
         </div>
         <div className="space-y-8">
-          {STEPS.map((s, i) => (
+          {steps.map((s, i) => (
             <motion.div
               key={s.title}
               initial={{ opacity: 0, x: 24 }}
@@ -89,18 +89,12 @@ export function ProcessFlow() {
   );
 }
 
-const TIERS = [
-  { label: "Starter", h: 42, note: "Lean MVP to validate fast" },
-  { label: "Growth", h: 74, note: "Full product, more features" },
-  { label: "Scale", h: 100, note: "Enterprise-grade platform" },
-];
-
-// Simple animated "grows with your budget" ladder diagram.
-export function BudgetLadder() {
+// Generic animated bar-ladder diagram.
+export function LadderDiagram({ tiers, caption, testid = "ladder-diagram" }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-surface p-8 md:p-10" data-testid="budget-ladder-diagram">
+    <div className="rounded-3xl border border-white/10 bg-surface p-8 md:p-10" data-testid={testid}>
       <div className="flex items-end justify-between gap-4" style={{ height: 220 }}>
-        {TIERS.map((t, i) => (
+        {tiers.map((t, i) => (
           <div key={t.label} className="flex h-full flex-1 flex-col items-center justify-end">
             <motion.div
               initial={{ height: 0, opacity: 0.4 }}
@@ -116,9 +110,75 @@ export function BudgetLadder() {
           </div>
         ))}
       </div>
-      <p className="mt-8 text-center text-sm text-dim">
-        Start where your budget is today — every tier is a real, working product you can grow from.
-      </p>
+      {caption && <p className="mt-8 text-center text-sm text-dim">{caption}</p>}
+    </div>
+  );
+}
+
+const BUDGET_TIERS = [
+  { label: "Starter", h: 42, note: "Lean MVP to validate fast" },
+  { label: "Growth", h: 74, note: "Full product, more features" },
+  { label: "Scale", h: 100, note: "Enterprise-grade platform" },
+];
+export function BudgetLadder() {
+  return (
+    <LadderDiagram
+      tiers={BUDGET_TIERS}
+      caption="Start where your budget is today — every tier is a real, working product you can grow from."
+      testid="budget-ladder-diagram"
+    />
+  );
+}
+
+// Before → After comparison diagram (great for automation).
+export function BeforeAfter({ before, after, beforeTitle = "Before", afterTitle = "After" }) {
+  return (
+    <div className="grid items-center gap-4 md:grid-cols-[1fr_auto_1fr]" data-testid="before-after-diagram">
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.6 }}
+        className="rounded-2xl border border-white/10 bg-surface p-6"
+      >
+        <div className="text-xs font-semibold uppercase tracking-widest text-dim">{beforeTitle}</div>
+        <ul className="mt-4 space-y-3">
+          {before.map((b) => (
+            <li key={b} className="flex items-start gap-2 text-sm text-dim">
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-dim/60" />
+              {b}
+            </li>
+          ))}
+        </ul>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.6 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-crimson text-cwhite md:rotate-0"
+      >
+        <ArrowRight size={20} />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.6, delay: 0.15 }}
+        className="rounded-2xl border border-crimson/40 bg-surface p-6 shadow-lg shadow-crimson/10"
+      >
+        <div className="text-xs font-semibold uppercase tracking-widest text-crimson">{afterTitle}</div>
+        <ul className="mt-4 space-y-3">
+          {after.map((a) => (
+            <li key={a} className="flex items-start gap-2 text-sm text-white">
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-crimson" />
+              {a}
+            </li>
+          ))}
+        </ul>
+      </motion.div>
     </div>
   );
 }

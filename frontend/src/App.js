@@ -14,6 +14,8 @@ import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import Admin from "@/pages/Admin";
 import ProductDevelopment from "@/pages/ProductDevelopment";
+import WorkflowAutomation from "@/pages/WorkflowAutomation";
+import LegacyModernization from "@/pages/LegacyModernization";
 import { ThemeProvider, useTheme } from "@/lib/theme";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
@@ -74,6 +76,8 @@ function App() {
           <Routes>
             <Route path="/admin" element={<Admin />} />
             <Route path="/product-development" element={<ProductDevelopment />} />
+            <Route path="/workflow-automation" element={<WorkflowAutomation />} />
+            <Route path="/legacy-modernization" element={<LegacyModernization />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </BrowserRouter>

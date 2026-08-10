@@ -43,7 +43,7 @@ export default function FocusedAreas() {
                   <p className="mt-4 text-sm leading-relaxed text-dim">{s.body}</p>
                 </div>
                 <div className="mt-10 flex items-center gap-2 text-sm font-semibold text-white">
-                  <span className="text-dim transition-colors duration-300 group-hover:text-white">{s.href ? "Explore Product Development" : "Learn more"}</span>
+                  <span className="text-dim transition-colors duration-300 group-hover:text-white">{s.href ? `Explore ${s.title}` : "Learn more"}</span>
                   <ArrowRight size={16} className="text-crimson transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
               </motion.article>
