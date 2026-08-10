@@ -98,6 +98,11 @@ export const GROWTH = {
     { name: "CFA Institute", logo: "/clients/cfa-institute.jpg" },
     { name: "CFPA", logo: "/clients/cfpa.jpg" },
     { name: "Circle of Wholeness", logo: "/clients/circle-of-wholeness.jpg" },
+    { name: "IC3 Institute", logo: "/clients/ic3-institute.jpg" },
+    { name: "ICICI Prudential", logo: "/clients/icici-prudential.jpg" },
+    { name: "IndusInd Bank", logo: "/clients/indusind-bank.jpg" },
+    { name: "Ghatkopar Jolly Gymkhana", logo: "/clients/jolly-gymkhana.jpg" },
+    { name: "Manipal Cigna", logo: "/clients/manipal-cigna.jpg" },
   ],
   reviews: {
     rating: "5.0",
