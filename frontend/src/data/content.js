@@ -113,6 +113,7 @@ export const GROWTH = {
     { name: "Shree Ramkrishna Oil Mills", logo: "/clients/wooden-churner.jpg" },
     { name: "Zista EdVentures", logo: "/clients/zista-edventures.jpg" },
     { name: "Yes Bank", logo: "/clients/yes-bank.jpg" },
+    { name: "All About Ideas", logo: "/clients/all-about-ideas.jpg" },
   ],
   reviews: {
     rating: "5.0",
