@@ -28,7 +28,7 @@ export default function Team() {
                 <img
                   src={m.img}
                   alt={m.name}
-                  className="h-full w-full object-cover grayscale contrast-125 transition-[filter,transform] duration-700 ease-out group-hover:grayscale-0 group-hover:scale-105"
+                  className="h-full w-full object-contain grayscale contrast-125 transition-[filter,transform] duration-700 ease-out group-hover:grayscale-0 group-hover:scale-105"
                   draggable={false}
                   loading="lazy"
                 />
