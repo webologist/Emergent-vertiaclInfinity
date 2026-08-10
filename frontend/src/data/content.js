@@ -11,8 +11,8 @@ export const NAV = {
 
 export const HERO = {
   overline: "AI-Enabled Digital Agency",
-  lines: ["Software that", "moves business", "forward."],
-  accentWord: "forward.",
+  lines: ["AI-Enabled", "Digital Partner.", "That Moves", "Businesses Forward."],
+  accentWord: "Businesses Forward.",
   sub: "We help SaaS, Education, Media & Publishing, and eCommerce organizations build high-performing digital platforms, connect complex systems, and scale with confidence.",
   cta: "Let's Chat Over Coffee",
   ctaHref: "#contact",
