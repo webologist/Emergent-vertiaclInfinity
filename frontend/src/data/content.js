@@ -165,7 +165,7 @@ export const FOOTER = {
     },
     {
       heading: "More",
-      links: ["Digital Commerce", "Performance Services", "Managed Support", "Sitemap"],
+      links: ["Digital Commerce", "Performance Services", "Managed Support"],
     },
   ],
   badges: [
