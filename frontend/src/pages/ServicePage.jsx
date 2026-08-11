@@ -80,7 +80,7 @@ export default function ServicePage({ config }) {
       <main data-testid={`${cfg.slug}-page`}>
         {/* HERO */}
         <section className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-28" data-testid={`${cfg.slug}-hero`}>
-          <div className="pointer-events-none absolute -right-40 top-10 -z-10 hidden h-[520px] w-[520px] items-center justify-center md:flex" aria-hidden="true">
+          <div className="pointer-events-none absolute right-[6%] top-16 -z-10 hidden h-[440px] w-[440px] items-center justify-center lg:right-[10%] md:flex" aria-hidden="true">
             <div className="vi-8-glow absolute h-[70%] w-[70%] rounded-full bg-crimson/20 blur-[100px]" />
             <img src="/vi-8-hero.png" alt="" className="vi-8-float h-full w-auto object-contain opacity-70" draggable={false} />
           </div>

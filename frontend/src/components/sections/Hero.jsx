@@ -37,8 +37,8 @@ export default function Hero() {
       </div>
 
       {/* Right-side glowing techno "8" mark */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 -z-[5] hidden w-1/2 items-center justify-end overflow-hidden md:flex" aria-hidden="true">
-        <div className="relative flex h-full items-center justify-center pr-[2vw] lg:pr-[4vw]">
+      <div className="pointer-events-none absolute inset-y-0 right-0 -z-[5] hidden w-1/2 items-center justify-start overflow-hidden md:flex" aria-hidden="true">
+        <div className="relative flex h-full items-center justify-center pl-[9vw] lg:pl-[6vw] xl:pl-[3vw]">
           <div className="vi-8-glow absolute h-[62%] w-[62%] rounded-full bg-crimson/25 blur-[90px]" />
           <motion.img
             src="/vi-8-hero.png"
