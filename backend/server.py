@@ -4,10 +4,10 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import html
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr, field_validator
-from typing import List, Optional, Annotated, Any
-from bson import ObjectId
+from typing import List, Optional, Annotated
 from pydantic import BeforeValidator
 import uuid
 import bcrypt
@@ -315,7 +315,11 @@ EMAIL_BASE_URL = "https://integrations.emergentagent.com"
 
 
 def lead_alert_html(contact: "Contact") -> str:
-    company = contact.company or "—"
+    name = html.escape(contact.name)
+    email = html.escape(contact.email)
+    topic = html.escape(contact.topic)
+    company = html.escape(contact.company) if contact.company else "—"
+    message = html.escape(contact.message)
     return f"""
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f2;padding:32px 0;font-family:Arial,Helvetica,sans-serif;">
   <tr><td align="center">
@@ -325,14 +329,14 @@ def lead_alert_html(contact: "Contact") -> str:
         <span style="color:#a1a1aa;font-size:12px;float:right;padding-top:4px;">New enquiry</span>
       </td></tr>
       <tr><td style="padding:28px 32px;">
-        <p style="margin:0 0 18px;font-size:15px;color:#111;"><strong>{contact.name}</strong> just sent an enquiry via the website.</p>
+        <p style="margin:0 0 18px;font-size:15px;color:#111;"><strong>{name}</strong> just sent an enquiry via the website.</p>
         <table width="100%" cellpadding="6" cellspacing="0" style="font-size:14px;color:#333;border-top:1px solid #eee;">
-          <tr><td width="110" style="color:#888;">Topic</td><td><span style="background:#CE1F2E;color:#fff;padding:2px 10px;border-radius:99px;font-size:12px;">{contact.topic}</span></td></tr>
-          <tr><td style="color:#888;">Email</td><td><a href="mailto:{contact.email}" style="color:#CE1F2E;">{contact.email}</a></td></tr>
+          <tr><td width="110" style="color:#888;">Topic</td><td><span style="background:#CE1F2E;color:#fff;padding:2px 10px;border-radius:99px;font-size:12px;">{topic}</span></td></tr>
+          <tr><td style="color:#888;">Email</td><td><a href="mailto:{email}" style="color:#CE1F2E;">{email}</a></td></tr>
           <tr><td style="color:#888;">Company</td><td>{company}</td></tr>
-          <tr><td style="color:#888;vertical-align:top;">Message</td><td style="line-height:1.55;">{contact.message}</td></tr>
+          <tr><td style="color:#888;vertical-align:top;">Message</td><td style="line-height:1.55;">{message}</td></tr>
         </table>
-        <p style="margin:22px 0 0;font-size:12px;color:#888;">Reply to this email to answer {contact.name} directly, or open your Lead Inbox.</p>
+        <p style="margin:22px 0 0;font-size:12px;color:#888;">Reply to this email to answer {name} directly, or open your Lead Inbox.</p>
       </td></tr>
     </table>
   </td></tr>

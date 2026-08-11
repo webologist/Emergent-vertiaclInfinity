@@ -29,7 +29,10 @@ export default function FocusedAreas() {
                 key={s.no}
                 variants={staggerItem}
                 onClick={s.href ? () => navigate(s.href) : undefined}
-                className={`group relative flex flex-col justify-between bg-surface p-8 transition-colors duration-500 hover:bg-elevated md:p-10 md:min-h-[420px] ${s.href ? "cursor-pointer" : ""}`}
+                onKeyDown={s.href ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(s.href); } } : undefined}
+                role={s.href ? "link" : undefined}
+                tabIndex={s.href ? 0 : undefined}
+                className={`group relative flex flex-col justify-between bg-surface p-8 transition-colors duration-500 hover:bg-elevated md:p-10 md:min-h-[420px] ${s.href ? "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-crimson" : ""}`}
                 data-testid={`service-card-${s.no}`}
               >
                 <div className="absolute right-8 top-8 font-display text-sm text-dim/50 transition-colors duration-300 group-hover:text-crimson">

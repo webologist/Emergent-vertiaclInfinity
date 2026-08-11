@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-const ORIGIN = "https://clean-tech-hero.emergent.host";
+const ORIGIN = "https://verticalinfinity.in";
 
 function buildJsonLd(cfg) {
   const canonical = `${ORIGIN}${cfg.path}`;
@@ -61,6 +61,20 @@ export default function ServicePage({ config }) {
     window.scrollTo(0, 0);
   }, [cfg.path]);
 
+  // Inject JSON-LD into <head> (React 19 hoists title/meta/link but not scripts).
+  useEffect(() => {
+    const nodes = jsonLd.map((obj) => {
+      const el = document.createElement("script");
+      el.type = "application/ld+json";
+      el.setAttribute("data-sp-jsonld", cfg.slug);
+      el.textContent = JSON.stringify(obj);
+      document.head.appendChild(el);
+      return el;
+    });
+    return () => nodes.forEach((n) => n.remove());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cfg.path]);
+
   return (
     <>
       <title>{cfg.title}</title>
@@ -71,9 +85,6 @@ export default function ServicePage({ config }) {
       <meta property="og:description" content={cfg.ogDescription} />
       <meta property="og:url" content={canonical} />
       <meta name="twitter:card" content="summary_large_image" />
-      {jsonLd.map((obj, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }} />
-      ))}
 
       <Nav />
 

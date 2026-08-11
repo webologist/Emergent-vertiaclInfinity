@@ -193,6 +193,28 @@ class TestAuthentication:
 class TestContactCRUD:
     """Public contact creation and authenticated list/delete persistence."""
 
+    def test_lead_alert_html_escapes_user_supplied_markup(self):
+        if "/app/backend" not in sys.path:
+            sys.path.insert(0, "/app/backend")
+        from server import Contact, lead_alert_html
+
+        contact = Contact(
+            name="<img src=x onerror=alert(1)>",
+            email="test.escape@example.com",
+            company="<b>TEST_Company</b>",
+            message="<script>alert(1)</script><b>hi</b>",
+            topic="<i>Security</i>",
+        )
+        rendered = lead_alert_html(contact)
+        assert "<img src=x onerror=alert(1)>" not in rendered
+        assert "<script>alert(1)</script>" not in rendered
+        assert "<b>TEST_Company</b>" not in rendered
+        assert "<i>Security</i>" not in rendered
+        assert "&lt;img src=x onerror=alert(1)&gt;" in rendered
+        assert "&lt;script&gt;alert(1)&lt;/script&gt;&lt;b&gt;hi&lt;/b&gt;" in rendered
+        assert "&lt;b&gt;TEST_Company&lt;/b&gt;" in rendered
+        assert "&lt;i&gt;Security&lt;/i&gt;" in rendered
+
     def test_public_create_list_delete_and_verify_persistence(
         self, api_client, authenticated_client, tracked_contact_ids
     ):
@@ -231,6 +253,67 @@ class TestContactCRUD:
         assert after_delete.status_code == 200
         assert all(item["id"] != created["id"] for item in after_delete.json())
 
+    def test_html_payload_succeeds_and_persists_raw_lead_fields(
+        self, api_client, authenticated_client, tracked_contact_ids
+    ):
+        marker = uuid.uuid4().hex[:10]
+        payload = {
+            "name": "<img src=x onerror=alert(1)>",
+            "email": f"test.html.{marker}@example.com",
+            "company": "<b>TEST_Company</b>",
+            "message": "<script>alert(1)</script><b>hi</b>",
+            "topic": "<i>Security</i>",
+        }
+        response = api_client.post(f"{BASE_URL}/api/contact", json=payload, timeout=20)
+        assert response.status_code == 200, response.text
+        created = response.json()
+        tracked_contact_ids.append(created["id"])
+        assert created["status"] == "new"
+        for field, value in payload.items():
+            assert created[field] == value
+
+        listed_response = authenticated_client.get(f"{BASE_URL}/api/contact", timeout=20)
+        assert listed_response.status_code == 200, listed_response.text
+        listed = next((item for item in listed_response.json() if item["id"] == created["id"]), None)
+        assert listed is not None
+        assert listed["status"] == "new"
+        for field, value in payload.items():
+            assert listed[field] == value
+
+        delete_response = authenticated_client.delete(f"{BASE_URL}/api/contact/{created['id']}", timeout=20)
+        assert delete_response.status_code == 200
+        tracked_contact_ids.remove(created["id"])
+
+    def test_valid_contact_without_optional_fields_defaults_and_persists(
+        self, api_client, authenticated_client, tracked_contact_ids
+    ):
+        marker = uuid.uuid4().hex[:10]
+        payload = {
+            "name": f"TEST_Minimal_{marker}",
+            "email": f"test.minimal.{marker}@example.com",
+            "message": "TEST_Valid lead with optional fields omitted.",
+        }
+        response = api_client.post(f"{BASE_URL}/api/contact", json=payload, timeout=20)
+        assert response.status_code == 200, response.text
+        created = response.json()
+        tracked_contact_ids.append(created["id"])
+        assert created["company"] == ""
+        assert created["topic"] == "General"
+        assert created["status"] == "new"
+
+        listed_response = authenticated_client.get(f"{BASE_URL}/api/contact", timeout=20)
+        assert listed_response.status_code == 200
+        listed = next((item for item in listed_response.json() if item["id"] == created["id"]), None)
+        assert listed is not None
+        assert listed["name"] == payload["name"]
+        assert listed["company"] == ""
+        assert listed["topic"] == "General"
+        assert listed["status"] == "new"
+
+        delete_response = authenticated_client.delete(f"{BASE_URL}/api/contact/{created['id']}", timeout=20)
+        assert delete_response.status_code == 200
+        tracked_contact_ids.remove(created["id"])
+
     def test_delete_unknown_contact_is_404(self, authenticated_client):
         unknown_id = str(uuid.uuid4())
         response = authenticated_client.delete(f"{BASE_URL}/api/contact/{unknown_id}", timeout=20)
@@ -251,6 +334,19 @@ class TestContactCRUD:
         assert response.status_code == 422
         detail = response.json().get("detail")
         assert isinstance(detail, list) and any(error.get("loc", [])[-1:] == [field] for error in detail)
+
+    def test_public_contact_rejects_invalid_email(self, api_client):
+        payload = {
+            "name": "TEST_Invalid_Email",
+            "email": "not-an-email",
+            "company": "TEST_Company",
+            "message": "TEST_Message",
+            "topic": "General",
+        }
+        response = api_client.post(f"{BASE_URL}/api/contact", json=payload, timeout=20)
+        assert response.status_code == 422
+        detail = response.json().get("detail")
+        assert isinstance(detail, list) and any(error.get("loc", [])[-1:] == ["email"] for error in detail)
 
     @pytest.mark.parametrize(("field", "expected"), [("company", ""), ("topic", "General")])
     def test_public_contact_normalizes_nullable_optional_fields(
@@ -372,13 +468,13 @@ class TestBruteForceLockoutLast:
     """Run last: five fake-account failures cause subsequent requests to be rate limited."""
 
     def test_five_failed_attempts_trigger_429_lockout(self, api_client):
-        email = "lockme@test.com"
+        email = f"test_lockout_{uuid.uuid4().hex[:10]}@example.com"
         mongo_url = backend_env.get("MONGO_URL")
         db_name = backend_env.get("DB_NAME")
         mongo = MongoClient(mongo_url, serverSelectionTimeoutMS=5000)
         db = mongo[db_name]
         try:
-            db.login_attempts.delete_many({"identifier": {"$regex": f":{re.escape(email)}$"}})
+            db.login_attempts.delete_many({"identifier": email})
             for attempt_number in range(1, 6):
                 response = api_client.post(
                     f"{BASE_URL}/api/auth/login",
@@ -395,5 +491,5 @@ class TestBruteForceLockoutLast:
             assert locked.status_code == 429
             assert locked.json() == {"detail": "Too many failed attempts. Try again in 15 minutes."}
         finally:
-            db.login_attempts.delete_many({"identifier": {"$regex": f":{re.escape(email)}$"}})
+            db.login_attempts.delete_many({"identifier": email})
             mongo.close()

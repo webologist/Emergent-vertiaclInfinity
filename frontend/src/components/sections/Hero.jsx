@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowUpRight, Sparkles } from "lucide-react";
-import { HERO, ASSETS } from "@/data/content";
+import { HERO } from "@/data/content";
 import { scrollToId } from "@/lib/scroll";
 import { useTheme } from "@/lib/theme";
 import { FishParticles } from "@/components/FishParticles";

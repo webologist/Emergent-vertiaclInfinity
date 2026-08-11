@@ -1,0 +1,52 @@
+{
+  "summary": "Regression-tested the contact/email escaping fixes, admin auth, service-page SEO, card navigation/accessibility, and embedded service contact form against the public preview URL. All requested backend contact/auth behaviors passed, the frontend production build passed, canonical and og:url are corrected, all card/form flows passed, but the three JSON-LD scripts are rendered under body DIVs rather than document.head on both sampled service pages. The optional auth playbook also found wildcard non-credentialed CORS instead of explicit credentialed origins.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "CORS preflight /api/auth/login",
+        "issue": "Auth playbook requirement fails: preflight from the configured frontend/production origin returns Access-Control-Allow-Origin: * and no Access-Control-Allow-Credentials header, because CORS_ORIGINS='*'. Same-origin preview auth works, but explicit credentialed cross-origin auth is not enabled."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Service-page JSON-LD SEO metadata",
+        "issue": "On /product-development and /ai-automation, document.head contains 0 JSON-LD scripts instead of the required 3. The correct Service, BreadcrumbList, and FAQPage payloads exist in the document and use verticalinfinity.in, but all three script elements remain inside body DIVs.",
+        "affected_selectors": [
+          "document.head script[type='application/ld+json']",
+          "script[type='application/ld+json']"
+        ]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Insert and clean up the three JSON-LD script nodes in document.head (or use a head-management solution); do not rely on React 19 metadata hoisting for script elements. Recheck both sampled service routes and SPA transitions.",
+    "If cross-origin cookie auth is required, replace CORS_ORIGINS='*' with an explicit allowlist including https://verticalinfinity.in and the deployed frontend origin, with credentials enabled.",
+    "Re-run the frontend SEO and CORS checks after fixes."
+  ],
+  "critical_code_review_comments": [
+    "ServicePage.jsx correctly changes ORIGIN for canonical, og:url, Service URL, organization URL, and breadcrumbs, but React 19's native metadata hoisting covers title/meta/link rather than arbitrary application/ld+json scripts; the current map at lines 74-76 therefore leaves scripts in the body.",
+    "server.py intentionally disables allow_credentials whenever '*' is configured. This avoids an invalid wildcard-plus-credentials response, but does not satisfy the auth playbook's explicit-origin credentialed CORS requirement."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/iteration_4.json"
+  ],
+  "success_rate": {
+    "backend": "96% overall (24/25); 100% of requested contact/auth regressions",
+    "frontend": "83% of requested regression areas; JSON-LD head placement failed on 2/2 sampled service pages"
+  },
+  "seed_data_creation": "Created transient TEST_ contact leads, HTML/script payload leads, a seed-update admin probe, a unique lockout identity, and one UI form lead. All were deleted; verified 0 matching test contacts, users, and login-attempt records remain.",
+  "should_call_test_agent_after_fix": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Passing backend coverage: valid/minimal contact creation with status new and persistence; raw HTML/script payload creation and authenticated retrieval; lead_alert_html escaping assertions; whitespace and invalid-email 422 validation; unauthenticated lead-list 401; admin login with secure httpOnly access/refresh token cookies; authenticated lead retrieval; bcrypt $2b$ hash; indexes; five-failure lockout; seed_admin stale-password update. Passing frontend coverage: canonical and og:url use verticalinfinity.in on both sample pages; all three JSON-LD payload contents use the production domain; card 02 click plus real Tab-to-card/Enter navigation; cards 01/03 routing; product contact success toast/Sent state/field reset; production build. Only JSON-LD head placement and optional credentialed CORS remain.",
+  "rca_of_the_issue": "JSON-LD RCA: React leaves the application/ld+json script elements where ServicePage renders them in the component tree; only title/meta/link receive native metadata hoisting, so document.head has zero scripts while body has all three. CORS RCA: backend/.env configures CORS_ORIGINS='*', and server.py sets allow_credentials to false for wildcard origins, yielding '*' without credential support."
+}
