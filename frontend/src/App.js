@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import "@/App.css";
 import Lenis from "lenis";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import Nav from "@/components/sections/Nav";
 import Hero from "@/components/sections/Hero";
@@ -70,12 +70,28 @@ function ThemedToaster() {
   return <Toaster position="bottom-right" theme={theme} richColors />;
 }
 
+// Fires a GA4 page_view on each SPA route change.
+function AnalyticsTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "page_view", {
+        page_path: location.pathname + location.search,
+        page_location: window.location.href,
+        page_title: document.title,
+      });
+    }
+  }, [location.pathname, location.search]);
+  return null;
+}
+
 function App() {
   return (
     <ThemeProvider>
       <div className="App bg-ink font-body text-white antialiased">
         <div className="noise-overlay" aria-hidden="true" />
         <BrowserRouter>
+          <AnalyticsTracker />
           <Routes>
             <Route path="/admin" element={<Admin />} />
             <Route path="/product-development" element={<ProductDevelopment />} />
