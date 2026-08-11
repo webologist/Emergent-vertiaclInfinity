@@ -121,3 +121,12 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
   New Project/MVP/Custom App/Not sure). Multiple CTAs → #contact / #process. Linked from: Focus "Product
   Development" card, SME "Project Development" pill, Footer. Nav updated (useNavigate/useLocation) to route
   home+hash from inner pages; Home scrolls to hash on arrival. All entry points + form self-tested (screenshots).
+- MORE SERVICE PAGES (2026-06): refactored into reusable data-driven `pages/ServicePage.jsx` + shared diagrams
+  (`components/diagrams/PDDiagrams.jsx`: ProcessFlow(steps), LadderDiagram, BudgetLadder, BeforeAfter).
+  Live routes: /product-development, /workflow-automation, /legacy-modernization, /ai-automation,
+  /experience-design, /digital-commerce, /performance-services, /managed-support. Each: full SEO
+  (title/meta/canonical/OG via React 19 head hoist) + 3 JSON-LD (Service, BreadcrumbList, FAQPage), hero+
+  breadcrumb, values, animated process flow, highlight diagram, outcomes, FAQ, embedded contact form
+  (POST /api/contact). Linked from Focus cards (01/02/03) + Footer Services/More columns (react-router Link
+  via ROUTE_LINKS). Footer WIP superscript now only on Case Studies + Social Responsibility. Bottom "Legal"
+  link removed. All 8 pages self-tested (render + JSON-LD + footer links + Legal removed).

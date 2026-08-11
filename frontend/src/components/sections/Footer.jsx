@@ -9,6 +9,11 @@ const ROUTE_LINKS = {
   "Product Development": "/product-development",
   "Workflow Automation": "/workflow-automation",
   "Legacy Modernization": "/legacy-modernization",
+  "AI & Automation": "/ai-automation",
+  "Experience Design": "/experience-design",
+  "Digital Commerce": "/digital-commerce",
+  "Performance Services": "/performance-services",
+  "Managed Support": "/managed-support",
 };
 
 const DEST = {
@@ -34,11 +39,6 @@ const WIP_LINKS = new Set([
   "Social Responsibility",
   "Platform Modernization",
   "Product Engineering",
-  "AI & Automation",
-  "Experience Design",
-  "Digital Commerce",
-  "Performance Services",
-  "Managed Support",
 ]);
 
 export default function Footer() {
@@ -150,7 +150,6 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container-x flex flex-col items-center justify-between gap-3 py-6 text-xs text-dim sm:flex-row">
           <span>{FOOTER.copyright}</span>
-          <button className="transition-colors duration-300 hover:text-white" data-testid="footer-legal-link" onClick={() => toast("Legal & Privacy — full policy pages coming soon.")}>Legal</button>
         </div>
       </div>
     </footer>

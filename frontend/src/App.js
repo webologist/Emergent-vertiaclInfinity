@@ -16,6 +16,11 @@ import Admin from "@/pages/Admin";
 import ProductDevelopment from "@/pages/ProductDevelopment";
 import WorkflowAutomation from "@/pages/WorkflowAutomation";
 import LegacyModernization from "@/pages/LegacyModernization";
+import AiAutomation from "@/pages/AiAutomation";
+import ExperienceDesign from "@/pages/ExperienceDesign";
+import DigitalCommerce from "@/pages/DigitalCommerce";
+import PerformanceServices from "@/pages/PerformanceServices";
+import ManagedSupport from "@/pages/ManagedSupport";
 import { ThemeProvider, useTheme } from "@/lib/theme";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
@@ -78,6 +83,11 @@ function App() {
             <Route path="/product-development" element={<ProductDevelopment />} />
             <Route path="/workflow-automation" element={<WorkflowAutomation />} />
             <Route path="/legacy-modernization" element={<LegacyModernization />} />
+            <Route path="/ai-automation" element={<AiAutomation />} />
+            <Route path="/experience-design" element={<ExperienceDesign />} />
+            <Route path="/digital-commerce" element={<DigitalCommerce />} />
+            <Route path="/performance-services" element={<PerformanceServices />} />
+            <Route path="/managed-support" element={<ManagedSupport />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </BrowserRouter>
