@@ -60,17 +60,20 @@ export default function Nav() {
             <NavMark />
           </button>
 
-          <div className="hidden items-center gap-9 md:flex">
+          <div className="hidden items-center gap-10 md:flex">
             {NAV.links.map((l) => (
-              <button
+              <motion.button
                 key={l.href}
                 onClick={() => go(l.href)}
                 data-testid={`nav-link-${l.href.slice(1)}`}
-                className="group relative text-sm text-dim transition-colors duration-300 hover:text-white"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                className="group relative text-base font-medium text-dim transition-colors duration-300 hover:text-white"
               >
                 {l.label}
-                <span className="absolute -bottom-1.5 left-0 h-px w-0 bg-crimson transition-all duration-300 group-hover:w-full" />
-              </button>
+                <span className="absolute -bottom-1.5 left-0 h-0.5 w-0 rounded-full bg-crimson transition-all duration-300 group-hover:w-full" />
+              </motion.button>
             ))}
           </div>
 
