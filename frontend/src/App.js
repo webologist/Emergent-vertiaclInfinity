@@ -9,7 +9,6 @@ import FocusedAreas from "@/components/sections/FocusedAreas";
 import SMEsMarquee from "@/components/sections/SMEsMarquee";
 import Growth from "@/components/sections/Growth";
 import Journey from "@/components/sections/Journey";
-import Team from "@/components/sections/Team";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import Admin from "@/pages/Admin";
@@ -58,7 +57,6 @@ function Home() {
         <SMEsMarquee />
         <Growth />
         <Journey />
-        <Team />
         <Contact />
       </main>
       <Footer />
