@@ -130,3 +130,6 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
   (POST /api/contact). Linked from Focus cards (01/02/03) + Footer Services/More columns (react-router Link
   via ROUTE_LINKS). Footer WIP superscript now only on Case Studies + Social Responsibility. Bottom "Legal"
   link removed. All 8 pages self-tested (render + JSON-LD + footer links + Legal removed).
+
+## 2026-06 — Contact update
+- WhatsApp number changed to +91 8691948779 in `frontend/src/data/content.js` (renders in Get in touch section). Verified in preview; redeploy required for production.

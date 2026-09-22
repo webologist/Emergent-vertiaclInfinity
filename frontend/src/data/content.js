@@ -145,7 +145,7 @@ export const CONTACT = {
   overline: "We are always open",
   title: "Contact Human",
   address: "A803, Mandapeshwar Kripa, S.V.P. Road, Borivali West, Mumbai — 400103, INDIA",
-  whatsapp: "+91 8950909589",
+  whatsapp: "+91 8691948779",
   email: "hello@verticalinfinity.in",
   mapQuery: "Mandapeshwar Kripa, S.V.P. Road, Borivali West, Mumbai 400103",
   topics: ["General", "New Project", "Automation", "Modernization", "Careers"],
