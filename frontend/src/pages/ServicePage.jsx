@@ -84,7 +84,10 @@ export default function ServicePage({ config }) {
       <meta property="og:title" content={cfg.ogTitle} />
       <meta property="og:description" content={cfg.ogDescription} />
       <meta property="og:url" content={canonical} />
+      <meta property="og:image" content={`${ORIGIN}/vi-8-hero.png`} />
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={cfg.ogTitle} />
+      <meta name="twitter:description" content={cfg.ogDescription} />
 
       <Nav />
 

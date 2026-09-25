@@ -50,6 +50,7 @@ function Home() {
 
   return (
     <>
+      <link rel="canonical" href="https://verticalinfinity.in/" />
       <Nav />
       <main>
         <Hero />

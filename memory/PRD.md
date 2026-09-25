@@ -133,3 +133,9 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 
 ## 2026-06 — Contact update
 - WhatsApp number changed to +91 8691948779 in `frontend/src/data/content.js` (renders in Get in touch section). Verified in preview; redeploy required for production.
+
+## 2026-09-25 — Vercel compatibility (additive) + SEO/AIO
+- Vercel: `/app/api/index.py` ASGI entry, root `/app/requirements.txt`, `/app/vercel.json` (rewrites /api → function, SPA fallback, maxDuration 30). server.py: SMTP lead alert path when `SMTP_HOST` set (aiosmtplib STARTTLS), awaited with 15s timeout when `VERCEL` env set; `ensure_startup()` idempotent seed called at startup + login. Frontend REACT_APP_BACKEND_URL falls back to "". Tested: iteration_6 (49/50, CORS intentional).
+- GA4 ID switched to G-9S5PLRJSEV (index.html; SPA page_view tracker unchanged).
+- SEO/AIO: static robots/OG/Twitter meta + Organization/ProfessionalService/WebSite JSON-LD in index.html; homepage canonical via React; robots.txt (AI crawlers allowed, /admin & /api disallowed, sitemap ref); llms.txt; sitemap lastmod; og:image + twitter tags on service pages; noindex on /admin. Verified via DOM inspection.
+- Not done (needs user): Google Search Console verification token, prerendering/SSR for non-JS crawlers.

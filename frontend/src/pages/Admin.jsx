@@ -186,6 +186,10 @@ export default function Admin() {
 
   useEffect(() => {
     document.title = "Lead Inbox — Vertical Infinity";
+    const robots = document.createElement("meta");
+    robots.name = "robots";
+    robots.content = "noindex, nofollow";
+    document.head.appendChild(robots);
     (async () => {
       try {
         const { data } = await withRefresh(() => api.get("/api/auth/me"));
@@ -194,6 +198,7 @@ export default function Admin() {
         setUser(false);
       }
     })();
+    return () => robots.remove();
   }, []);
 
   useEffect(() => {
