@@ -8,6 +8,7 @@ import Nav from "@/components/sections/Nav";
 import Footer from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import GoogleReviews from "@/components/sections/GoogleReviews";
+import RelatedServices from "@/components/sections/RelatedServices";
 import { Reveal } from "@/components/Reveal";
 import { ProcessFlow } from "@/components/diagrams/PDDiagrams";
 import { scrollToId } from "@/lib/scroll";
@@ -261,6 +262,8 @@ export default function ServicePage({ config }) {
             </div>
           </div>
         </section>
+
+        <RelatedServices slug={cfg.slug} />
 
         <GoogleReviews slug={cfg.slug} />
 

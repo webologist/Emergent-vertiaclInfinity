@@ -151,3 +151,6 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - `GoogleReviews` section (live 4.9★/count badge via /api/reviews, Read/Write review links; optional curated review cards from `GOOGLE_REVIEWS` in content.js — currently EMPTY because Places API returns no review bodies; user must paste real reviews) on homepage + all 8 service pages. Old card removed from Growth.
 - Legal pages `/privacy-policy`, `/terms-of-service` (data in `data/legal.js`, renderer `pages/LegalPage.jsx`), footer bottom-bar links, sitemap/llms/prerender updated. Template text — not legal advice.
 - Tests: iteration_8 all pass.
+
+## 2026-09-25 — Related services
+- `RelatedServices` section (3 curated cross-links per service, `data/services.js` SERVICE_INDEX + RELATED_SERVICES) inserted after FAQ on all 8 service pages. Self-tested (desktop/mobile, navigation, no errors).
