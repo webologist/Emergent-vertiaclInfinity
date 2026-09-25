@@ -139,3 +139,10 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - GA4 ID switched to G-9S5PLRJSEV (index.html; SPA page_view tracker unchanged).
 - SEO/AIO: static robots/OG/Twitter meta + Organization/ProfessionalService/WebSite JSON-LD in index.html; homepage canonical via React; robots.txt (AI crawlers allowed, /admin & /api disallowed, sitemap ref); llms.txt; sitemap lastmod; og:image + twitter tags on service pages; noindex on /admin. Verified via DOM inspection.
 - Not done (needs user): Google Search Console verification token, prerendering/SSR for non-JS crawlers.
+
+## 2026-09-25 — Prerender + anti-spam + WhatsApp CTA
+- Build-time prerender (SSG): `frontend/scripts/prerender.mjs` (postbuild, esbuild + react-dom/server + StaticRouter) writes static HTML for / and 8 service pages into build/ (per-route title/meta/canonical/JSON-LD). Fail-safe: any error keeps plain SPA build. `index.js` hydrates when #root has content. App.js exports router-less `AppInner`; page configs exported. Verified: raw HTML has full content, hydration clean, no console errors, no duplicate JSON-LD.
+- Anti-spam: honeypot `website` field (both forms, silently dropped) + per-IP rate limit 5/10min via Mongo `contact_rate` TTL collection (429 → friendly toast).
+- WhatsApp click-to-chat (wa.me + pre-filled greeting, new tab) and mailto link in Get in touch.
+- Search Console: no token provided — verify via the Google Analytics method (GA4 tag already installed).
+- Tests: iteration_7 all pass.
