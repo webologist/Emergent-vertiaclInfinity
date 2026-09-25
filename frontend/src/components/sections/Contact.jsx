@@ -8,7 +8,7 @@ import { Reveal } from "@/components/Reveal";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = `${process.env.REACT_APP_BACKEND_URL || ""}/api`;
 
 const DETAILS = [
   { icon: MapPin, label: "Registered Office", value: CONTACT.address },

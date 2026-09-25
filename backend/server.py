@@ -13,6 +13,9 @@ import uuid
 import bcrypt
 import jwt
 import httpx
+import asyncio
+import aiosmtplib
+from email.message import EmailMessage
 from datetime import datetime, timezone, timedelta
 
 
@@ -148,6 +151,32 @@ async def get_current_user(request: Request) -> UserOut:
 
 
 # ---- Routes ----
+_startup_done = False
+
+
+async def ensure_startup():
+    global _startup_done
+    if _startup_done:
+        return
+    await db.users.create_index("email", unique=True)
+    await db.login_attempts.create_index("identifier")
+    admin_email = os.environ["ADMIN_EMAIL"].lower()
+    admin_password = os.environ["ADMIN_PASSWORD"]
+    existing = await db.users.find_one({"email": admin_email})
+    if existing is None:
+        await db.users.insert_one({
+            "id": str(uuid.uuid4()),
+            "email": admin_email,
+            "password_hash": hash_password(admin_password),
+            "name": "Admin",
+            "role": "admin",
+            "created_at": now_iso(),
+        })
+    elif not verify_password(admin_password, existing["password_hash"]):
+        await db.users.update_one({"email": admin_email}, {"$set": {"password_hash": hash_password(admin_password)}})
+    _startup_done = True
+
+
 @api_router.get("/")
 async def root():
     return {"message": "Vertical Infinity API is live"}
@@ -155,6 +184,7 @@ async def root():
 
 @api_router.post("/auth/login", response_model=UserOut)
 async def login(payload: LoginRequest, response: Response):
+    await ensure_startup()
     email = payload.email.lower().strip()
     identifier = email
     attempt = await db.login_attempts.find_one({"identifier": identifier})
@@ -332,23 +362,51 @@ def lead_alert_html(contact: "Contact") -> str:
 """
 
 
+async def send_lead_alert_smtp(contact: "Contact"):
+    smtp_user = os.environ["SMTP_USER"]
+    msg = EmailMessage()
+    msg["Subject"] = f"New enquiry — {contact.name} ({contact.topic})"
+    msg["From"] = f'{os.environ["EMAIL_FROM_NAME"]} <{smtp_user}>'
+    msg["To"] = os.environ["LEAD_ALERT_EMAIL"]
+    msg["Reply-To"] = contact.email
+    msg.set_content("New enquiry received. Open this email in an HTML-capable client.")
+    msg.add_alternative(lead_alert_html(contact), subtype="html")
+    await aiosmtplib.send(
+        msg,
+        hostname=os.environ["SMTP_HOST"],
+        port=int(os.environ.get("SMTP_PORT", "587")),
+        username=smtp_user,
+        password=os.environ["SMTP_PASSWORD"],
+        start_tls=True,
+        timeout=15,
+    )
+    logger.info(f"Lead alert sent via SMTP for {contact.id}")
+
+
+async def send_lead_alert_emergent(contact: "Contact"):
+    payload = {
+        "to": [os.environ["LEAD_ALERT_EMAIL"]],
+        "subject": f"New enquiry — {contact.name} ({contact.topic})",
+        "html": lead_alert_html(contact),
+        "from_name": os.environ["EMAIL_FROM_NAME"],
+        "contact_email": contact.email,
+    }
+    async with httpx.AsyncClient(timeout=30) as http:
+        resp = await http.post(
+            f"{EMAIL_BASE_URL}/api/v1/email/send",
+            headers={"X-Email-Key": os.environ["EMERGENT_EMAIL_KEY"]},
+            json=payload,
+        )
+    resp.raise_for_status()
+    logger.info(f"Lead alert sent for {contact.id}: {resp.json().get('id')}")
+
+
 async def send_lead_alert(contact: "Contact"):
     try:
-        payload = {
-            "to": [os.environ["LEAD_ALERT_EMAIL"]],
-            "subject": f"New enquiry — {contact.name} ({contact.topic})",
-            "html": lead_alert_html(contact),
-            "from_name": os.environ["EMAIL_FROM_NAME"],
-            "contact_email": contact.email,
-        }
-        async with httpx.AsyncClient(timeout=30) as http:
-            resp = await http.post(
-                f"{EMAIL_BASE_URL}/api/v1/email/send",
-                headers={"X-Email-Key": os.environ["EMERGENT_EMAIL_KEY"]},
-                json=payload,
-            )
-        resp.raise_for_status()
-        logger.info(f"Lead alert sent for {contact.id}: {resp.json().get('id')}")
+        if os.environ.get("SMTP_HOST"):
+            await send_lead_alert_smtp(contact)
+        else:
+            await send_lead_alert_emergent(contact)
     except Exception as e:
         logger.error(f"Lead alert email failed for {contact.id}: {e}")
 
@@ -358,7 +416,13 @@ async def create_contact(payload: ContactCreate, background_tasks: BackgroundTas
     contact = Contact(**payload.model_dump())
     doc = contact.model_dump()
     await db.contacts.insert_one(doc)
-    background_tasks.add_task(send_lead_alert, contact)
+    if os.environ.get("VERCEL"):
+        try:
+            await asyncio.wait_for(send_lead_alert(contact), timeout=15)
+        except Exception as e:
+            logger.error(f"Lead alert email timed out/failed for {contact.id}: {e}")
+    else:
+        background_tasks.add_task(send_lead_alert, contact)
     return contact
 
 
@@ -421,22 +485,7 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def seed_admin():
-    await db.users.create_index("email", unique=True)
-    await db.login_attempts.create_index("identifier")
-    admin_email = os.environ["ADMIN_EMAIL"].lower()
-    admin_password = os.environ["ADMIN_PASSWORD"]
-    existing = await db.users.find_one({"email": admin_email})
-    if existing is None:
-        await db.users.insert_one({
-            "id": str(uuid.uuid4()),
-            "email": admin_email,
-            "password_hash": hash_password(admin_password),
-            "name": "Admin",
-            "role": "admin",
-            "created_at": now_iso(),
-        })
-    elif not verify_password(admin_password, existing["password_hash"]):
-        await db.users.update_one({"email": admin_email}, {"$set": {"password_hash": hash_password(admin_password)}})
+    await ensure_startup()
 
 
 @app.on_event("shutdown")

@@ -13,7 +13,7 @@ import { scrollToId } from "@/lib/scroll";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = `${process.env.REACT_APP_BACKEND_URL || ""}/api`;
 const ORIGIN = "https://verticalinfinity.in";
 
 function buildJsonLd(cfg) {

@@ -5,7 +5,7 @@ import { GROWTH } from "@/data/content";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
 import { scrollToId } from "@/lib/scroll";
 
-const API = process.env.REACT_APP_BACKEND_URL;
+const API = process.env.REACT_APP_BACKEND_URL || "";
 const INITIAL_COUNT = 9;
 
 const GoogleG = () => (

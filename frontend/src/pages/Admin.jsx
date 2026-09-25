@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { ArrowLeft, Inbox, LogOut, RefreshCcw, Trash2, Mail, Building2, Loader2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
-const api = axios.create({ baseURL: process.env.REACT_APP_BACKEND_URL, withCredentials: true });
+const api = axios.create({ baseURL: process.env.REACT_APP_BACKEND_URL || "", withCredentials: true });
 
 async function withRefresh(fn) {
   try {
