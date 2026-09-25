@@ -164,3 +164,6 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 
 ## 2026-09-25 — Code review fixes
 - Tests load admin creds from env/backend/.env; place_id initialised; ServicePage JSON-LD memoised with proper deps; content-based list keys; dev-only console logging; Contact split into ContactDetails/ContactForm. Skipped (false positives/intentional): mount-only effect deps (Lenis, FishParticles, Admin), `is None` comparisons, cookie-name strings flagged as secrets, test-suite complexity.
+
+## 2026-09-25 — Google sign-in (admin)
+- Emergent-managed Google Auth on /admin alongside password login. POST /api/auth/google/session exchanges session_id server-side, enforces allowlist (ADMIN_GOOGLE_EMAILS env + ADMIN_EMAIL → 403 otherwise), issues the same JWT httpOnly cookies. Callback detected via useLocation().hash; errors shown on login card. Tests: iteration_9 all pass (17/17). Real Google login must be confirmed manually by the user.

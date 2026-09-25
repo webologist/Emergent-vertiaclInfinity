@@ -1,0 +1,40 @@
+{
+  "summary": "Iteration 9: Full backend + frontend testing of new Emergent-managed Google sign-in on /admin, plus password-login regression and protected-endpoint regression. 12/12 backend pytest cases pass and 5/5 frontend Playwright flows pass via public REACT_APP_BACKEND_URL. No source modifications; only new test file added.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "tests_executed": [
+    "BE POST /api/auth/google/session {session_id:'bogus'} -> 401 {detail:'Invalid or expired sign-in session'}",
+    "BE POST /api/auth/google/session {} -> 422 (Pydantic validation)",
+    "BE POST /api/auth/google/session {session_id:''} -> 422 (min_length=1)",
+    "BE POST /api/auth/login admin creds -> 200, both access_token and refresh_token cookies set with HttpOnly flag",
+    "BE POST /api/auth/login with wrong creds (non-existent email to avoid admin lockout) -> 401",
+    "BE GET /api/auth/me with cookie -> 200, returns admin user",
+    "BE POST /api/auth/refresh -> 200",
+    "BE POST /api/auth/logout -> 200 and subsequent /api/auth/me -> 401 (cookies cleared)",
+    "BE GET /api/contact without auth -> 401; with auth -> 200 (list)",
+    "BE GET /api/finder/insights without auth -> 401; with auth -> 200",
+    "FE /admin: admin-login-page renders with email/password inputs, submit and admin-google-signin-btn ('Sign in with Google')",
+    "FE Google button click -> https://auth.emergentagent.com/?redirect=<encoded window.location.origin>/admin (route intercepted; assert exact URL and URL-encoded redirect param match)",
+    "FE /admin#session_id=bogus123 -> spinner then login card with admin-google-error text 'Invalid or expired sign-in session'; URL hash cleared to /admin (react-router replace)",
+    "FE Password login regression: form submit -> admin-inbox-page renders; admin-lead-count shows '3 leads'; Finder insights panel present ([data-testid*='finder'])",
+    "FE Sign out: admin-logout-btn -> returns to admin-login-page",
+    "FE Console errors: only 5x expected 401s from /api/auth/me pre-login probe (unauthenticated state); no unexpected JS errors"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_google_auth.py",
+    "/app/test_reports/pytest/pytest_google_auth.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py::allowed_google_emails() reads ADMIN_EMAIL via os.environ[...] without a default; will KeyError at request time if the env var is ever unset. Consider os.environ.get('ADMIN_EMAIL','').lower() with a startup assertion, but not blocking today because backend/.env seeds it.",
+    "Admin.jsx line 231 uses window.location.hash directly inside the mount effect while sessionId is derived from useLocation().hash; both agree on first render so the flow works. If a future refactor moves the /admin route inside a Suspense or deferred boundary, this dual-read could diverge. Non-blocking.",
+    "google_session endpoint issues session cookies before returning UserOut but does not enforce role='admin' on the *stored* user (it uses user.get('role','admin'))—since access is already gated by allowlist this is safe, but a defensive `role='admin'` write on both branches would be cleaner."
+  ],
+  "updated_files": ["/app/backend/tests/test_google_auth.py"],
+  "success_rate": {"backend": "100% (12/12)", "frontend": "100% (5/5 flows)"},
+  "test_credentials": "admin@verticalinfinity.in / VInfinity!2026 (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "None — used existing seeded admin and existing 3 leads; no contact submissions this iteration (respecting rate limit).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Google sign-in surrounding flow fully verified (invalid session_id 401/422 behavior, encoded redirect URL, error surfacing on /admin, hash clearing). Real Google OAuth completion cannot be automated — allowlist logic path (403 for non-whitelisted emails) is only exercised by code review, not by an end-to-end request. Password login + protected endpoints regression is green. test_google_auth.py is safe to re-run repeatedly; wrong-password test uses a non-existent email to avoid tripping the 5-attempt admin lockout."
+}
