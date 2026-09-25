@@ -146,3 +146,8 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - WhatsApp click-to-chat (wa.me + pre-filled greeting, new tab) and mailto link in Get in touch.
 - Search Console: no token provided — verify via the Google Analytics method (GA4 tag already installed).
 - Tests: iteration_7 all pass.
+
+## 2026-09-25 — Google reviews section + legal pages
+- `GoogleReviews` section (live 4.9★/count badge via /api/reviews, Read/Write review links; optional curated review cards from `GOOGLE_REVIEWS` in content.js — currently EMPTY because Places API returns no review bodies; user must paste real reviews) on homepage + all 8 service pages. Old card removed from Growth.
+- Legal pages `/privacy-policy`, `/terms-of-service` (data in `data/legal.js`, renderer `pages/LegalPage.jsx`), footer bottom-bar links, sitemap/llms/prerender updated. Template text — not legal advice.
+- Tests: iteration_8 all pass.
