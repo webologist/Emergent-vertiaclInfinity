@@ -14,6 +14,7 @@ import bcrypt
 import jwt
 import httpx
 import asyncio
+import hashlib
 import aiosmtplib
 from email.message import EmailMessage
 from datetime import datetime, timezone, timedelta
@@ -446,6 +447,68 @@ async def create_contact(payload: ContactCreate, request: Request, background_ta
     else:
         background_tasks.add_task(send_lead_alert, contact)
     return contact
+
+
+FINDER_SITUATIONS = {"idea", "manual", "legacy", "ai", "ux", "sell", "slow", "care"}
+FINDER_PRIORITIES = {"speed", "cost", "reliability", "growth"}
+FINDER_SERVICES = {
+    "product-development", "workflow-automation", "legacy-modernization", "ai-automation",
+    "experience-design", "digital-commerce", "performance-services", "managed-support",
+}
+
+
+class FinderEvent(BaseModel):
+    situation: str
+    priority: str
+    service: str
+
+
+@api_router.post("/finder", status_code=204)
+async def record_finder(payload: FinderEvent, request: Request):
+    if payload.situation not in FINDER_SITUATIONS or payload.priority not in FINDER_PRIORITIES or payload.service not in FINDER_SERVICES:
+        raise HTTPException(status_code=422, detail="Unknown finder value")
+    await db.finder_events.insert_one({
+        "id": str(uuid.uuid4()),
+        "situation": payload.situation,
+        "priority": payload.priority,
+        "service": payload.service,
+        "ip_hash": hashlib.sha256(client_ip(request).encode()).hexdigest()[:16],
+        "created_at": datetime.now(timezone.utc),
+    })
+    return Response(status_code=204)
+
+
+async def _count_by(field: str, since: Optional[datetime] = None):
+    match = {"created_at": {"$gte": since}} if since else {}
+    rows = await db.finder_events.aggregate([
+        {"$match": match},
+        {"$group": {"_id": f"${field}", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+    ]).to_list(50)
+    return [{"key": r["_id"], "count": r["count"]} for r in rows]
+
+
+@api_router.get("/finder/insights")
+async def finder_insights(days: int = 30, user: UserOut = Depends(get_current_user)):
+    days = max(1, min(days, 365))
+    since = datetime.now(timezone.utc) - timedelta(days=days)
+    total_all = await db.finder_events.count_documents({})
+    total_window = await db.finder_events.count_documents({"created_at": {"$gte": since}})
+    recent = await db.finder_events.find(
+        {}, {"_id": 0, "id": 1, "situation": 1, "priority": 1, "service": 1, "created_at": 1}
+    ).sort("created_at", -1).to_list(20)
+    for r in recent:
+        r["created_at"] = r["created_at"].isoformat()
+    return {
+        "days": days,
+        "total_all_time": total_all,
+        "total_window": total_window,
+        "by_service": await _count_by("service", since),
+        "by_situation": await _count_by("situation", since),
+        "by_priority": await _count_by("priority", since),
+        "recent": recent,
+    }
+
 
 
 @api_router.get("/contact", response_model=List[Contact])

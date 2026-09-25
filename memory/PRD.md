@@ -158,3 +158,6 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 ## 2026-09-25 — Service finder + deploy check
 - `ServiceFinder` ("Which service do I need?") 2-step helper on homepage after What We Do (data in `data/serviceHelper.js`, GA event `service_finder_result`). Self-tested desktop/mobile.
 - Deployment check: fixed BLOCKER (.gitignore was excluding .env files) → PASS.
+
+## 2026-09-25 — Finder insights
+- POST /api/finder (public, enum-validated, stores hashed IP) → `finder_events`; GET /api/finder/insights?days= (admin) → totals, by_service/by_situation/by_priority, recent 20. Admin inbox shows `FinderInsights` panel (7/30/90d). Self-tested via curl + browser e2e.

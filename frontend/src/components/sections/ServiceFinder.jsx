@@ -101,9 +101,14 @@ export default function ServiceFinder() {
 
   const pick = (p) => {
     setPriority(p);
-    if (typeof window.gtag === "function") {
-      window.gtag("event", "service_finder_result", { situation: situation.id, priority: p.id, service: situation.service });
-    }
+    const payload = { situation: situation.id, priority: p.id, service: situation.service };
+    if (typeof window.gtag === "function") window.gtag("event", "service_finder_result", payload);
+    fetch(`${process.env.REACT_APP_BACKEND_URL || ""}/api/finder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => {});
   };
   const reset = () => {
     setSituation(null);

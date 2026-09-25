@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { ArrowLeft, Inbox, LogOut, RefreshCcw, Trash2, Mail, Building2, Loader2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { FinderInsights } from "@/components/admin/FinderInsights";
 
 const api = axios.create({ baseURL: process.env.REACT_APP_BACKEND_URL || "", withCredentials: true });
 
@@ -322,6 +323,8 @@ export default function Admin() {
             ))}
           </div>
         )}
+
+        <FinderInsights api={api} withRefresh={withRefresh} />
       </main>
     </div>
   );
