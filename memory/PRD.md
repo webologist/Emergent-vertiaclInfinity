@@ -154,3 +154,7 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 
 ## 2026-09-25 — Related services
 - `RelatedServices` section (3 curated cross-links per service, `data/services.js` SERVICE_INDEX + RELATED_SERVICES) inserted after FAQ on all 8 service pages. Self-tested (desktop/mobile, navigation, no errors).
+
+## 2026-09-25 — Service finder + deploy check
+- `ServiceFinder` ("Which service do I need?") 2-step helper on homepage after What We Do (data in `data/serviceHelper.js`, GA event `service_finder_result`). Self-tested desktop/mobile.
+- Deployment check: fixed BLOCKER (.gitignore was excluding .env files) → PASS.

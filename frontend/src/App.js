@@ -22,6 +22,7 @@ import PerformanceServices from "@/pages/PerformanceServices";
 import ManagedSupport from "@/pages/ManagedSupport";
 import LegalPage from "@/pages/LegalPage";
 import GoogleReviews from "@/components/sections/GoogleReviews";
+import ServiceFinder from "@/components/sections/ServiceFinder";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE } from "@/data/legal";
 import { ThemeProvider, useTheme } from "@/lib/theme";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -58,6 +59,7 @@ function Home() {
       <main>
         <Hero />
         <FocusedAreas />
+        <ServiceFinder />
         <SMEsMarquee />
         <Growth />
         <Journey />
