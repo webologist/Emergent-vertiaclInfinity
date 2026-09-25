@@ -41,7 +41,7 @@ function playPop() {
     osc.stop(ctx.currentTime + 0.24);
     osc.onended = () => ctx.close();
   } catch (e) {
-    /* audio not available — silently ignore */
+    if (process.env.NODE_ENV === "development") console.warn("Pop sound unavailable:", e);
   }
 }
 

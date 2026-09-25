@@ -3,12 +3,15 @@ import os
 import time
 import pytest
 import requests
+from dotenv import dotenv_values
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://clean-tech-hero.preview.emergentagent.com').rstrip('/')
+_frontend_env = dotenv_values("/app/frontend/.env")
+_backend_env = dotenv_values("/app/backend/.env")
+BASE_URL = (os.environ.get('REACT_APP_BACKEND_URL') or _frontend_env["REACT_APP_BACKEND_URL"]).rstrip('/')
 API = f"{BASE_URL}/api"
 
-ADMIN_EMAIL = "admin@verticalinfinity.in"
-ADMIN_PASSWORD = "VInfinity!2026"
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL") or _backend_env["ADMIN_EMAIL"]
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or _backend_env["ADMIN_PASSWORD"]
 
 
 @pytest.fixture(scope="module")

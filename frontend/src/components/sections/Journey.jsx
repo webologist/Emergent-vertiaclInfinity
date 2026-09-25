@@ -35,8 +35,8 @@ export default function Journey() {
 
             <Reveal delay={0.1}>
               <div className="mt-5 space-y-4 text-base leading-relaxed text-dim">
-                {JOURNEY.chapters[0].body.map((p, i) => (
-                  <p key={i}>{p}</p>
+                {JOURNEY.chapters[0].body.map((p) => (
+                  <p key={p.slice(0, 40)}>{p}</p>
                 ))}
               </div>
             </Reveal>

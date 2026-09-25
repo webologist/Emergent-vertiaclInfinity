@@ -12,8 +12,9 @@ from dotenv import dotenv_values
 
 _frontend_env = dotenv_values("/app/frontend/.env")
 BASE_URL = (os.environ.get('REACT_APP_BACKEND_URL') or _frontend_env.get('REACT_APP_BACKEND_URL', '')).rstrip('/')
-ADMIN_EMAIL = "admin@verticalinfinity.in"
-ADMIN_PASSWORD = "VInfinity!2026"
+_backend_env = dotenv_values("/app/backend/.env")
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL") or _backend_env["ADMIN_EMAIL"]
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or _backend_env["ADMIN_PASSWORD"]
 
 
 @pytest.fixture

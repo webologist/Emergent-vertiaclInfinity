@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
@@ -57,7 +57,7 @@ export function buildJsonLd(cfg) {
 export default function ServicePage({ config }) {
   const cfg = config;
   const canonical = `${ORIGIN}${cfg.path}`;
-  const jsonLd = buildJsonLd(cfg);
+  const jsonLd = useMemo(() => buildJsonLd(cfg), [cfg]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -75,8 +75,7 @@ export default function ServicePage({ config }) {
       return el;
     });
     return () => nodes.forEach((n) => n.remove());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cfg.path]);
+  }, [cfg.slug, jsonLd]);
 
   return (
     <>
@@ -111,8 +110,8 @@ export default function ServicePage({ config }) {
             <Reveal>
               <span className="overline">{cfg.hero.overline}</span>
               <h1 className="mt-4 max-w-4xl font-display text-4xl font-extrabold uppercase leading-[0.98] tracking-tighter sm:text-5xl lg:text-6xl">
-                {cfg.hero.titleParts.map((p, i) => (
-                  <span key={i} className={p.accent ? "text-crimson" : ""}>{p.text}</span>
+                {cfg.hero.titleParts.map((p) => (
+                  <span key={p.text} className={p.accent ? "text-crimson" : ""}>{p.text}</span>
                 ))}
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-relaxed text-dim md:text-lg">{cfg.hero.sub}</p>
@@ -251,7 +250,7 @@ export default function ServicePage({ config }) {
             </Reveal>
             <div className="mx-auto mt-12 max-w-3xl divide-y divide-white/10 border-y border-white/10">
               {cfg.faqs.map((f, i) => (
-                <details key={i} className="group py-5" data-testid={`${cfg.slug}-faq-${i}`}>
+                <details key={f.q} className="group py-5" data-testid={`${cfg.slug}-faq-${i}`}>
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-base font-semibold md:text-lg">
                     {f.q}
                     <ChevronRight size={18} className="shrink-0 text-crimson transition-transform duration-300 group-open:rotate-90" />
@@ -312,7 +311,7 @@ function ServiceContactForm({ topics, slug }) {
       setForm({ name: "", email: "", company: "", message: "", topic: topics[0], website: "" });
       setTimeout(() => setStatus("idle"), 2500);
     } catch (err) {
-      console.error(err);
+      if (process.env.NODE_ENV === "development") console.error(err);
       setStatus("idle");
       toast.error(
         err?.response?.status === 429

@@ -161,3 +161,6 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 
 ## 2026-09-25 — Finder insights
 - POST /api/finder (public, enum-validated, stores hashed IP) → `finder_events`; GET /api/finder/insights?days= (admin) → totals, by_service/by_situation/by_priority, recent 20. Admin inbox shows `FinderInsights` panel (7/30/90d). Self-tested via curl + browser e2e.
+
+## 2026-09-25 — Code review fixes
+- Tests load admin creds from env/backend/.env; place_id initialised; ServicePage JSON-LD memoised with proper deps; content-based list keys; dev-only console logging; Contact split into ContactDetails/ContactForm. Skipped (false positives/intentional): mount-only effect deps (Lenis, FishParticles, Admin), `is None` comparisons, cookie-name strings flagged as secrets, test-suite complexity.

@@ -297,6 +297,7 @@ async def get_reviews():
     api_key = os.environ.get("GOOGLE_PLACES_API_KEY", "").strip()
     if not api_key:
         return FALLBACK_REVIEWS
+    place_id = None
     try:
         place_id = await resolve_place_id(api_key)
         async with httpx.AsyncClient(timeout=8.0) as http:

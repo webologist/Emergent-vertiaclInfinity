@@ -69,7 +69,7 @@ export default function Hero() {
         {/* Kinetic masked headline */}
         <h1 className="font-display font-extrabold uppercase leading-[0.95] tracking-tighter text-white text-[clamp(1.8rem,4.6vw,4.2rem)] lg:max-w-[62%]">
           {HERO.lines.map((line, i) => (
-            <span key={i} className="block overflow-hidden">
+            <span key={line} className="block overflow-hidden">
               <motion.span
                 className={`inline-block ${line === HERO.accentWord ? "text-crimson" : ""}`}
                 custom={i}

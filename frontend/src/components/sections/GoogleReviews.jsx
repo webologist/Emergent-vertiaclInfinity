@@ -15,8 +15,8 @@ export const GoogleG = ({ size = 22 }) => (
 
 const Stars = ({ n = 5, size = 14 }) => (
   <div className="flex gap-0.5 text-crimson" aria-label={`${n} out of 5 stars`}>
-    {[...Array(5)].map((_, i) => (
-      <Star key={i} size={size} fill={i < n ? "currentColor" : "none"} strokeWidth={i < n ? 0 : 1.5} className={i < n ? "" : "opacity-40"} />
+    {["s1", "s2", "s3", "s4", "s5"].map((k, i) => (
+      <Star key={k} size={size} fill={i < n ? "currentColor" : "none"} strokeWidth={i < n ? 0 : 1.5} className={i < n ? "" : "opacity-40"} />
     ))}
   </div>
 );
