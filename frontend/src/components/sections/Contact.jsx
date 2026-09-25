@@ -10,14 +10,21 @@ import { Textarea } from "@/components/ui/textarea";
 
 const API = `${process.env.REACT_APP_BACKEND_URL || ""}/api`;
 
+const WA_TEXT = encodeURIComponent("Hi Vertical Infinity, I'd like to discuss a project.");
 const DETAILS = [
   { icon: MapPin, label: "Registered Office", value: CONTACT.address },
-  { icon: MessageCircle, label: "WhatsApp", value: CONTACT.whatsapp },
-  { icon: Mail, label: "Email", value: CONTACT.email },
+  {
+    icon: MessageCircle,
+    label: "WhatsApp",
+    value: CONTACT.whatsapp,
+    href: `https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}?text=${WA_TEXT}`,
+    external: true,
+  },
+  { icon: Mail, label: "Email", value: CONTACT.email, href: `mailto:${CONTACT.email}` },
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", company: "", message: "", topic: "General" });
+  const [form, setForm] = useState({ name: "", email: "", company: "", message: "", topic: "General", website: "" });
   const [status, setStatus] = useState("idle"); // idle | loading | done
 
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -33,12 +40,16 @@ export default function Contact() {
       await axios.post(`${API}/contact`, form);
       setStatus("done");
       toast.success("Message received — we'll be in touch over coffee soon.");
-      setForm({ name: "", email: "", company: "", message: "", topic: "General" });
+      setForm({ name: "", email: "", company: "", message: "", topic: "General", website: "" });
       setTimeout(() => setStatus("idle"), 2500);
     } catch (err) {
       console.error(err);
       setStatus("idle");
-      toast.error("Something went wrong. Please try again.");
+      toast.error(
+        err?.response?.status === 429
+          ? "Too many messages from your network right now — please try again in a few minutes."
+          : "Something went wrong. Please try again.",
+      );
     }
   };
 
@@ -68,7 +79,21 @@ export default function Contact() {
                     </div>
                     <div>
                       <div className="text-xs uppercase tracking-widest text-dim">{d.label}</div>
-                      <div className="mt-1 text-sm text-white">{d.value}</div>
+                      <div className="mt-1 text-sm text-white">
+                        {d.href ? (
+                          <a
+                            href={d.href}
+                            target={d.external ? "_blank" : undefined}
+                            rel={d.external ? "noopener noreferrer" : undefined}
+                            className="underline decoration-white/20 underline-offset-4 transition-colors hover:text-crimson hover:decoration-crimson"
+                            data-testid={`contact-${d.label.toLowerCase()}-link`}
+                          >
+                            {d.value}
+                          </a>
+                        ) : (
+                          d.value
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -111,6 +136,17 @@ export default function Contact() {
                 ))}
               </div>
 
+              <input
+                type="text"
+                name="website"
+                value={form.website}
+                onChange={update("website")}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="absolute -left-[9999px] h-0 w-0 opacity-0"
+                data-testid="contact-honeypot-input"
+              />
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Name*">
                   <Input value={form.name} onChange={update("name")} placeholder="Jane Doe" data-testid="contact-name-input" className="border-white/15 bg-transparent focus-visible:ring-crimson" />

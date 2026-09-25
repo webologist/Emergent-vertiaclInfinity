@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 const API = `${process.env.REACT_APP_BACKEND_URL || ""}/api`;
 const ORIGIN = "https://verticalinfinity.in";
 
-function buildJsonLd(cfg) {
+export function buildJsonLd(cfg) {
   const canonical = `${ORIGIN}${cfg.path}`;
   const service = {
     "@context": "https://schema.org",
@@ -63,7 +63,8 @@ export default function ServicePage({ config }) {
 
   // Inject JSON-LD into <head> (React 19 hoists title/meta/link but not scripts).
   useEffect(() => {
-    const nodes = jsonLd.map((obj) => {
+    const existing = Array.from(document.head.querySelectorAll(`script[data-sp-jsonld="${cfg.slug}"]`));
+    const nodes = existing.length ? existing : jsonLd.map((obj) => {
       const el = document.createElement("script");
       el.type = "application/ld+json";
       el.setAttribute("data-sp-jsonld", cfg.slug);
@@ -287,7 +288,7 @@ export default function ServicePage({ config }) {
 }
 
 function ServiceContactForm({ topics, slug }) {
-  const [form, setForm] = useState({ name: "", email: "", company: "", message: "", topic: topics[0] });
+  const [form, setForm] = useState({ name: "", email: "", company: "", message: "", topic: topics[0], website: "" });
   const [status, setStatus] = useState("idle");
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -302,17 +303,32 @@ function ServiceContactForm({ topics, slug }) {
       await axios.post(`${API}/contact`, form);
       setStatus("done");
       toast.success("Got it — we'll be in touch soon.");
-      setForm({ name: "", email: "", company: "", message: "", topic: topics[0] });
+      setForm({ name: "", email: "", company: "", message: "", topic: topics[0], website: "" });
       setTimeout(() => setStatus("idle"), 2500);
     } catch (err) {
       console.error(err);
       setStatus("idle");
-      toast.error("Something went wrong. Please try again.");
+      toast.error(
+        err?.response?.status === 429
+          ? "Too many messages from your network right now — please try again in a few minutes."
+          : "Something went wrong. Please try again.",
+      );
     }
   };
 
   return (
-    <form onSubmit={submit} className="flex flex-col rounded-2xl bg-cwhite p-7 text-ink md:p-9" data-testid={`${slug}-contact-form`}>
+    <form onSubmit={submit} className="relative flex flex-col rounded-2xl bg-cwhite p-7 text-ink md:p-9" data-testid={`${slug}-contact-form`}>
+      <input
+        type="text"
+        name="website"
+        value={form.website}
+        onChange={update("website")}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute -left-[9999px] h-0 w-0 opacity-0"
+        data-testid={`${slug}-honeypot-input`}
+      />
       <div className="mb-6 flex flex-wrap gap-2">
         {topics.map((t) => (
           <button

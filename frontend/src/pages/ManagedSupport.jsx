@@ -5,7 +5,7 @@ import {
 import ServicePage from "@/pages/ServicePage";
 import { BeforeAfter } from "@/components/diagrams/PDDiagrams";
 
-const config = {
+export const config = {
   slug: "managed-support",
   path: "/managed-support",
   breadcrumb: "Managed Support",

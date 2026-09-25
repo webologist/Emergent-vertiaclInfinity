@@ -12,7 +12,7 @@ const PHASES = [
   { label: "Scale", h: 100, note: "Future-ready platform" },
 ];
 
-const config = {
+export const config = {
   slug: "legacy-modernization",
   path: "/legacy-modernization",
   breadcrumb: "Legacy Modernization",

@@ -5,7 +5,7 @@ import {
 import ServicePage from "@/pages/ServicePage";
 import { BudgetLadder } from "@/components/diagrams/PDDiagrams";
 
-const config = {
+export const config = {
   slug: "product-development",
   path: "/product-development",
   breadcrumb: "Product Development",

@@ -11,7 +11,7 @@ const TIERS = [
   { label: "Scale", h: 100, note: "High-volume, global-ready" },
 ];
 
-const config = {
+export const config = {
   slug: "digital-commerce",
   path: "/digital-commerce",
   breadcrumb: "Digital Commerce",

@@ -11,7 +11,7 @@ const TIERS = [
   { label: "Predict", h: 100, note: "AI anticipates & recommends" },
 ];
 
-const config = {
+export const config = {
   slug: "ai-automation",
   path: "/ai-automation",
   breadcrumb: "AI & Automation",

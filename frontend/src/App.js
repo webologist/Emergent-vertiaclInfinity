@@ -88,24 +88,31 @@ function AnalyticsTracker() {
 
 function App() {
   return (
+    <BrowserRouter>
+      <AppInner />
+    </BrowserRouter>
+  );
+}
+
+// Router-agnostic tree: wrapped by BrowserRouter on the client and StaticRouter at prerender time.
+export function AppInner() {
+  return (
     <ThemeProvider>
       <div className="App bg-ink font-body text-white antialiased">
         <div className="noise-overlay" aria-hidden="true" />
-        <BrowserRouter>
-          <AnalyticsTracker />
-          <Routes>
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/product-development" element={<ProductDevelopment />} />
-            <Route path="/workflow-automation" element={<WorkflowAutomation />} />
-            <Route path="/legacy-modernization" element={<LegacyModernization />} />
-            <Route path="/ai-automation" element={<AiAutomation />} />
-            <Route path="/experience-design" element={<ExperienceDesign />} />
-            <Route path="/digital-commerce" element={<DigitalCommerce />} />
-            <Route path="/performance-services" element={<PerformanceServices />} />
-            <Route path="/managed-support" element={<ManagedSupport />} />
-            <Route path="*" element={<Home />} />
-          </Routes>
-        </BrowserRouter>
+        <AnalyticsTracker />
+        <Routes>
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/product-development" element={<ProductDevelopment />} />
+          <Route path="/workflow-automation" element={<WorkflowAutomation />} />
+          <Route path="/legacy-modernization" element={<LegacyModernization />} />
+          <Route path="/ai-automation" element={<AiAutomation />} />
+          <Route path="/experience-design" element={<ExperienceDesign />} />
+          <Route path="/digital-commerce" element={<DigitalCommerce />} />
+          <Route path="/performance-services" element={<PerformanceServices />} />
+          <Route path="/managed-support" element={<ManagedSupport />} />
+          <Route path="*" element={<Home />} />
+        </Routes>
         <ThemedToaster />
       </div>
     </ThemeProvider>

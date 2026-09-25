@@ -49,6 +49,7 @@ class ContactCreate(BaseModel):
     company: Optional[str] = Field(default="", max_length=160)
     message: str = Field(..., max_length=4000)
     topic: Optional[str] = Field(default="General", max_length=80)
+    website: Optional[str] = Field(default="", max_length=200)  # honeypot — must stay empty
 
     @field_validator("name", "message")
     @classmethod
@@ -89,6 +90,8 @@ ACCESS_TTL_MIN = 15
 REFRESH_TTL_DAYS = 7
 MAX_LOGIN_ATTEMPTS = 5
 LOCKOUT_MINUTES = 15
+CONTACT_RATE_LIMIT = 5
+CONTACT_RATE_WINDOW_SEC = 600
 
 
 def hash_password(password: str) -> str:
@@ -160,6 +163,8 @@ async def ensure_startup():
         return
     await db.users.create_index("email", unique=True)
     await db.login_attempts.create_index("identifier")
+    await db.contact_rate.create_index("created_at", expireAfterSeconds=CONTACT_RATE_WINDOW_SEC)
+    await db.contact_rate.create_index("ip")
     admin_email = os.environ["ADMIN_EMAIL"].lower()
     admin_password = os.environ["ADMIN_PASSWORD"]
     existing = await db.users.find_one({"email": admin_email})
@@ -411,9 +416,26 @@ async def send_lead_alert(contact: "Contact"):
         logger.error(f"Lead alert email failed for {contact.id}: {e}")
 
 
+def client_ip(request: Request) -> str:
+    fwd = request.headers.get("x-forwarded-for", "")
+    if fwd:
+        return fwd.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
 @api_router.post("/contact", response_model=Contact)
-async def create_contact(payload: ContactCreate, background_tasks: BackgroundTasks):
-    contact = Contact(**payload.model_dump())
+async def create_contact(payload: ContactCreate, request: Request, background_tasks: BackgroundTasks):
+    await ensure_startup()
+    contact = Contact(**payload.model_dump(exclude={"website"}))
+    if payload.website:
+        logger.warning(f"Honeypot triggered from {client_ip(request)} — dropped")
+        return contact
+    ip = client_ip(request)
+    window_start = datetime.now(timezone.utc) - timedelta(seconds=CONTACT_RATE_WINDOW_SEC)
+    recent = await db.contact_rate.count_documents({"ip": ip, "created_at": {"$gte": window_start}})
+    if recent >= CONTACT_RATE_LIMIT:
+        raise HTTPException(status_code=429, detail="Too many messages. Please try again in a few minutes.")
+    await db.contact_rate.insert_one({"ip": ip, "created_at": datetime.now(timezone.utc)})
     doc = contact.model_dump()
     await db.contacts.insert_one(doc)
     if os.environ.get("VERCEL"):

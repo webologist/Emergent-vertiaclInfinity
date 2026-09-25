@@ -13,11 +13,18 @@ const queryClient = new QueryClient({
   },
 });
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
+const container = document.getElementById("root");
+const tree = (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <App />
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
+
+// Prerendered builds ship real HTML in #root — hydrate it; otherwise mount fresh (dev server).
+if (container.hasChildNodes()) {
+  ReactDOM.hydrateRoot(container, tree, { onRecoverableError: () => {} });
+} else {
+  ReactDOM.createRoot(container).render(tree);
+}
