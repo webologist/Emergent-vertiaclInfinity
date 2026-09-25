@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ArrowLeft, Inbox, LogOut, RefreshCcw, Trash2, Mail, Building2, Loader2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { FinderInsights } from "@/components/admin/FinderInsights";
+import { TeamAccess } from "@/components/admin/TeamAccess";
 
 const api = axios.create({ baseURL: process.env.REACT_APP_BACKEND_URL || "", withCredentials: true });
 
@@ -380,6 +381,7 @@ export default function Admin() {
         )}
 
         <FinderInsights api={api} withRefresh={withRefresh} />
+        <TeamAccess api={api} withRefresh={withRefresh} currentEmail={user.email} />
       </main>
     </div>
   );

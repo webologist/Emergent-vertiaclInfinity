@@ -166,6 +166,7 @@ async def ensure_startup():
     await db.login_attempts.create_index("identifier")
     await db.contact_rate.create_index("created_at", expireAfterSeconds=CONTACT_RATE_WINDOW_SEC)
     await db.contact_rate.create_index("ip")
+    await db.allowed_admins.create_index("email", unique=True)
     admin_email = os.environ["ADMIN_EMAIL"].lower()
     admin_password = os.environ["ADMIN_PASSWORD"]
     existing = await db.users.find_one({"email": admin_email})
@@ -222,11 +223,52 @@ def issue_session_cookies(response: Response, user_id: str, email: str):
                         samesite="none", max_age=REFRESH_TTL_DAYS * 86400, path="/")
 
 
-def allowed_google_emails() -> set:
+def env_google_emails() -> set:
     raw = os.environ.get("ADMIN_GOOGLE_EMAILS", "")
     allowed = {e.strip().lower() for e in raw.split(",") if e.strip()}
     allowed.add(os.environ["ADMIN_EMAIL"].lower())
     return allowed
+
+
+async def allowed_google_emails() -> set:
+    allowed = env_google_emails()
+    async for doc in db.allowed_admins.find({}, {"_id": 0, "email": 1}):
+        allowed.add(doc["email"])
+    return allowed
+
+
+class AccessEntry(BaseModel):
+    email: EmailStr
+
+
+@api_router.get("/admin/access")
+async def list_access(user: UserOut = Depends(get_current_user)):
+    env_set = env_google_emails()
+    items = [{"email": e, "source": "env", "added_by": None, "created_at": None} for e in sorted(env_set)]
+    rows = await db.allowed_admins.find({}, {"_id": 0}).sort("created_at", 1).to_list(200)
+    items += [{**r, "source": "list"} for r in rows if r["email"] not in env_set]
+    return items
+
+
+@api_router.post("/admin/access", status_code=201)
+async def add_access(payload: AccessEntry, user: UserOut = Depends(get_current_user)):
+    email = payload.email.lower().strip()
+    if email in await allowed_google_emails():
+        raise HTTPException(status_code=409, detail="That account already has access")
+    doc = {"email": email, "added_by": user.email, "created_at": now_iso()}
+    await db.allowed_admins.insert_one(dict(doc))
+    return {**doc, "source": "list"}
+
+
+@api_router.delete("/admin/access/{email}")
+async def remove_access(email: str, user: UserOut = Depends(get_current_user)):
+    email = email.lower().strip()
+    if email in env_google_emails():
+        raise HTTPException(status_code=400, detail="This account is configured in the environment and cannot be removed here")
+    result = await db.allowed_admins.delete_one({"email": email})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Account not found")
+    return {"ok": True}
 
 
 @api_router.post("/auth/google/session", response_model=UserOut)
@@ -244,7 +286,7 @@ async def google_session(payload: GoogleSessionRequest, response: Response):
         raise HTTPException(status_code=401, detail="Invalid or expired sign-in session")
     data = r.json()
     email = (data.get("email") or "").lower().strip()
-    if not email or email not in allowed_google_emails():
+    if not email or email not in await allowed_google_emails():
         logger.warning(f"Google sign-in rejected for non-whitelisted account: {email or '<none>'}")
         raise HTTPException(status_code=403, detail="This Google account is not authorised for the Lead Inbox")
     user = await db.users.find_one({"email": email}, {"_id": 0})
