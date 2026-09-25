@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import { ArrowLeft, Inbox, LogOut, RefreshCcw, Trash2, Mail, Building2, Loader2 } from "lucide-react";
@@ -28,7 +29,22 @@ function formatApiErrorDetail(detail) {
   return String(detail);
 }
 
-const LoginCard = ({ onSuccess }) => {
+const GoogleG = () => (
+  <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
+    <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.5 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z" />
+    <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6C44 38.1 46.5 31.9 46.5 24.5z" />
+    <path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z" />
+    <path fill="#34A853" d="M24 48c6.3 0 11.7-2.1 15.6-5.7l-7.7-6c-2.1 1.4-4.8 2.3-7.9 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.1C6.5 42.6 14.6 48 24 48z" />
+  </svg>
+);
+
+// REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+const startGoogleSignIn = () => {
+  const redirectUrl = window.location.origin + "/admin";
+  window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+};
+
+const LoginCard = ({ onSuccess, googleError = "" }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -97,6 +113,20 @@ const LoginCard = ({ onSuccess }) => {
             {busy && <Loader2 size={15} className="animate-spin" />}
             Sign in
           </button>
+          <div className="flex items-center gap-3 text-[11px] uppercase tracking-widest text-dim">
+            <span className="h-px flex-1 bg-white/10" /> or <span className="h-px flex-1 bg-white/10" />
+          </div>
+          <button
+            type="button"
+            onClick={startGoogleSignIn}
+            className="flex w-full items-center justify-center gap-2.5 rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white transition-colors duration-300 hover:border-crimson"
+            data-testid="admin-google-signin-btn"
+          >
+            <GoogleG /> Sign in with Google
+          </button>
+          {googleError && (
+            <p className="text-xs text-crimson" role="alert" data-testid="admin-google-error">{googleError}</p>
+          )}
         </form>
         <a href="/" className="mt-6 flex items-center gap-2 text-xs text-dim transition-colors duration-300 hover:text-white" data-testid="admin-back-link">
           <ArrowLeft size={13} /> Back to site
@@ -172,6 +202,12 @@ export default function Admin() {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [googleError, setGoogleError] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const googleProcessed = useRef(false);
+  // Read the fragment from useLocation (reactive) — not window.location.hash.
+  const sessionId = location.hash?.includes("session_id=") ? new URLSearchParams(location.hash.slice(1)).get("session_id") : null;
 
   const loadLeads = useCallback(async () => {
     setLoading(true);
@@ -191,16 +227,35 @@ export default function Admin() {
     robots.name = "robots";
     robots.content = "noindex, nofollow";
     document.head.appendChild(robots);
-    (async () => {
-      try {
-        const { data } = await withRefresh(() => api.get("/api/auth/me"));
-        setUser(data);
-      } catch {
-        setUser(false);
-      }
-    })();
+    // Returning from Google: the callback effect below establishes the session first.
+    if (!window.location.hash?.includes("session_id=")) {
+      (async () => {
+        try {
+          const { data } = await withRefresh(() => api.get("/api/auth/me"));
+          setUser(data);
+        } catch {
+          setUser(false);
+        }
+      })();
+    }
     return () => robots.remove();
   }, []);
+
+  useEffect(() => {
+    if (!sessionId || googleProcessed.current) return;
+    googleProcessed.current = true;
+    (async () => {
+      try {
+        const { data } = await api.post("/api/auth/google/session", { session_id: sessionId });
+        setUser(data);
+      } catch (err) {
+        setGoogleError(formatApiErrorDetail(err.response?.data?.detail) || "Google sign-in failed. Please try again.");
+        setUser(false);
+      } finally {
+        navigate("/admin", { replace: true });
+      }
+    })();
+  }, [sessionId, navigate]);
 
   useEffect(() => {
     if (user) loadLeads();
@@ -245,7 +300,7 @@ export default function Admin() {
     );
   }
 
-  if (user === false) return <LoginCard onSuccess={setUser} />;
+  if (user === false) return <LoginCard onSuccess={setUser} googleError={googleError} />;
 
   return (
     <div className="min-h-screen pb-24" data-testid="admin-inbox-page">

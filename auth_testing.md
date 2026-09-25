@@ -1,20 +1,5 @@
-# Auth Testing Playbook
-
-Step 1: MongoDB Verification
-```
-mongosh
-use test_database
-db.users.find({role: "admin"}).pretty()
-db.users.findOne({role: "admin"}, {password_hash: 1})
-```
-Verify: bcrypt hash starts with `$2b$`, indexes exist on users.email (unique), login_attempts.identifier.
-
-Step 2: API Testing
-```
-curl -c cookies.txt -X POST http://localhost:8001/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@verticalinfinity.in","password":"VInfinity!2026"}'
-cat cookies.txt
-curl -b cookies.txt http://localhost:8001/api/auth/me
-curl -b cookies.txt http://localhost:8001/api/contact
-```
-
-Login should return the user object and set `access_token` + `refresh_token` cookies. The `/me` call should return the same user using those cookies. `/api/contact` GET must be 401 without cookies.
+# Auth testing notes (Vertical Infinity admin)
+- Admin session model: JWT httpOnly cookies `access_token` (15m) + `refresh_token` (7d), issued by BOTH password login (`POST /api/auth/login`) and Google sign-in (`POST /api/auth/google/session` {session_id}).
+- Google flow: /admin "Sign in with Google" → https://auth.emergentagent.com/?redirect=<origin>/admin → returns to /admin#session_id=... → frontend POSTs session_id → backend fetches https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data (X-Session-ID) → email must be in ADMIN_GOOGLE_EMAILS (comma list) or equal ADMIN_EMAIL, else 403.
+- Cannot complete real Google OAuth in automation; test: invalid session_id → 401 shown on login card; allowlist logic unit-tested via mocked httpx.
+- Protected checks: GET /api/auth/me, GET /api/contact, GET /api/finder/insights with cookies or `Authorization: Bearer <access_token JWT>`.

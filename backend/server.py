@@ -200,7 +200,7 @@ async def login(payload: LoginRequest, response: Response):
             raise HTTPException(status_code=429, detail="Too many failed attempts. Try again in 15 minutes.")
         await db.login_attempts.delete_one({"identifier": identifier})
     user = await db.users.find_one({"email": email})
-    if not user or not verify_password(payload.password, user["password_hash"]):
+    if not user or not user.get("password_hash") or not verify_password(payload.password, user["password_hash"]):
         await db.login_attempts.update_one(
             {"identifier": identifier},
             {"$inc": {"count": 1}, "$set": {"last_attempt": now_iso()}},
@@ -208,10 +208,59 @@ async def login(payload: LoginRequest, response: Response):
         )
         raise HTTPException(status_code=401, detail="Invalid email or password")
     await db.login_attempts.delete_one({"identifier": identifier})
-    set_access_cookie(response, create_access_token(user["id"], email))
-    response.set_cookie("refresh_token", create_refresh_token(user["id"]), httponly=True, secure=True,
-                        samesite="none", max_age=REFRESH_TTL_DAYS * 86400, path="/")
+    issue_session_cookies(response, user["id"], email)
     return UserOut(id=user["id"], email=user["email"], name=user["name"], role=user["role"])
+
+
+class GoogleSessionRequest(BaseModel):
+    session_id: str = Field(..., min_length=1, max_length=500)
+
+
+def issue_session_cookies(response: Response, user_id: str, email: str):
+    set_access_cookie(response, create_access_token(user_id, email))
+    response.set_cookie("refresh_token", create_refresh_token(user_id), httponly=True, secure=True,
+                        samesite="none", max_age=REFRESH_TTL_DAYS * 86400, path="/")
+
+
+def allowed_google_emails() -> set:
+    raw = os.environ.get("ADMIN_GOOGLE_EMAILS", "")
+    allowed = {e.strip().lower() for e in raw.split(",") if e.strip()}
+    allowed.add(os.environ["ADMIN_EMAIL"].lower())
+    return allowed
+
+
+@api_router.post("/auth/google/session", response_model=UserOut)
+async def google_session(payload: GoogleSessionRequest, response: Response):
+    await ensure_startup()
+    try:
+        async with httpx.AsyncClient(timeout=15) as http:
+            r = await http.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": payload.session_id},
+            )
+    except httpx.HTTPError:
+        raise HTTPException(status_code=502, detail="Could not reach the sign-in service")
+    if r.status_code != 200:
+        raise HTTPException(status_code=401, detail="Invalid or expired sign-in session")
+    data = r.json()
+    email = (data.get("email") or "").lower().strip()
+    if not email or email not in allowed_google_emails():
+        logger.warning(f"Google sign-in rejected for non-whitelisted account: {email or '<none>'}")
+        raise HTTPException(status_code=403, detail="This Google account is not authorised for the Lead Inbox")
+    user = await db.users.find_one({"email": email}, {"_id": 0})
+    if user is None:
+        user = {
+            "id": str(uuid.uuid4()),
+            "email": email,
+            "name": data.get("name") or "Admin",
+            "role": "admin",
+            "created_at": now_iso(),
+        }
+        await db.users.insert_one({**user, "auth_provider": "google", "picture": data.get("picture")})
+    else:
+        await db.users.update_one({"email": email}, {"$set": {"picture": data.get("picture"), "last_google_login": now_iso()}})
+    issue_session_cookies(response, user["id"], email)
+    return UserOut(id=user["id"], email=user["email"], name=user["name"], role=user.get("role", "admin"))
 
 
 @api_router.post("/auth/refresh")
