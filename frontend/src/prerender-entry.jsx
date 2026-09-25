@@ -10,13 +10,14 @@ import { config as experienceDesign } from "@/pages/ExperienceDesign";
 import { config as digitalCommerce } from "@/pages/DigitalCommerce";
 import { config as performanceServices } from "@/pages/PerformanceServices";
 import { config as managedSupport } from "@/pages/ManagedSupport";
+import { LEGAL_PAGES } from "@/data/legal";
 
 const SERVICES = [
   productDevelopment, workflowAutomation, legacyModernization, aiAutomation,
   experienceDesign, digitalCommerce, performanceServices, managedSupport,
 ];
 
-export const ROUTES = ["/", ...SERVICES.map((c) => c.path)];
+export const ROUTES = ["/", ...SERVICES.map((c) => c.path), ...LEGAL_PAGES.map((p) => p.path)];
 
 export function render(path) {
   const html = renderToStaticMarkup(

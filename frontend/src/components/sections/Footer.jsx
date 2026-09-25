@@ -150,6 +150,18 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container-x flex flex-col items-center justify-between gap-3 py-6 text-xs text-dim sm:flex-row">
           <span>{FOOTER.copyright}</span>
+          <div className="flex items-center gap-5" data-testid="footer-legal-links">
+            {FOOTER.legal.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="transition-colors duration-300 hover:text-crimson"
+                data-testid={`footer-legal-${l.to.slice(1)}`}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

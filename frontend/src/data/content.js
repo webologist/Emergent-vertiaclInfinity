@@ -178,7 +178,15 @@ export const FOOTER = {
     { name: "Startup India", logo: "/badges/startup-india.jpg" },
   ],
   copyright: "© 2003–2026 Vertical Infinity Pvt. Ltd. All rights reserved.",
+  legal: [
+    { label: "Privacy Policy", to: "/privacy-policy" },
+    { label: "Terms of Service", to: "/terms-of-service" },
+  ],
 };
+
+// Real Google reviews — paste from your Google Business Profile: { author, rating (1-5), text, date? }.
+// Leave empty to show only the live rating badge.
+export const GOOGLE_REVIEWS = [];
 
 export const ASSETS = {
   heroBg: "https://static.prod-images.emergentagent.com/jobs/dc85d5e8-cf2f-4435-a796-5396dc27e178/images/88f29ea496d496bd8c8b7af9eb6da2c5267999a8e0c5f27199491693158f45e0.jpeg",

@@ -7,6 +7,7 @@ import { ArrowUpRight, ArrowRight, Loader2, Check, ShieldCheck, ChevronRight } f
 import Nav from "@/components/sections/Nav";
 import Footer from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import GoogleReviews from "@/components/sections/GoogleReviews";
 import { Reveal } from "@/components/Reveal";
 import { ProcessFlow } from "@/components/diagrams/PDDiagrams";
 import { scrollToId } from "@/lib/scroll";
@@ -260,6 +261,8 @@ export default function ServicePage({ config }) {
             </div>
           </div>
         </section>
+
+        <GoogleReviews slug={cfg.slug} />
 
         {/* CONTACT */}
         <section id="contact" className="scroll-mt-24 border-t border-white/10 bg-crimson py-20 text-cwhite dark:bg-[#8F121F] md:py-28" data-testid={`${cfg.slug}-contact`}>

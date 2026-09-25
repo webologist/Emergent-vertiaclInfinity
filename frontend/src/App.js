@@ -20,6 +20,9 @@ import ExperienceDesign from "@/pages/ExperienceDesign";
 import DigitalCommerce from "@/pages/DigitalCommerce";
 import PerformanceServices from "@/pages/PerformanceServices";
 import ManagedSupport from "@/pages/ManagedSupport";
+import LegalPage from "@/pages/LegalPage";
+import GoogleReviews from "@/components/sections/GoogleReviews";
+import { PRIVACY_POLICY, TERMS_OF_SERVICE } from "@/data/legal";
 import { ThemeProvider, useTheme } from "@/lib/theme";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
@@ -58,6 +61,7 @@ function Home() {
         <SMEsMarquee />
         <Growth />
         <Journey />
+        <GoogleReviews slug="home" />
         <Contact />
       </main>
       <Footer />
@@ -111,6 +115,8 @@ export function AppInner() {
           <Route path="/digital-commerce" element={<DigitalCommerce />} />
           <Route path="/performance-services" element={<PerformanceServices />} />
           <Route path="/managed-support" element={<ManagedSupport />} />
+          <Route path="/privacy-policy" element={<LegalPage page={PRIVACY_POLICY} />} />
+          <Route path="/terms-of-service" element={<LegalPage page={TERMS_OF_SERVICE} />} />
           <Route path="*" element={<Home />} />
         </Routes>
         <ThemedToaster />
