@@ -12,8 +12,10 @@ if not BASE_URL:
                 BASE_URL = line.split("=", 1)[1].strip().rstrip("/")
                 break
 
-ADMIN_EMAIL = "admin@verticalinfinity.in"
-ADMIN_PASSWORD = "VInfinity!2026"
+from dotenv import dotenv_values
+_backend_env = dotenv_values("/app/backend/.env")
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL") or _backend_env["ADMIN_EMAIL"]
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or _backend_env["ADMIN_PASSWORD"]
 
 
 @pytest.fixture

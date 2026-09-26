@@ -322,7 +322,7 @@ function ServiceContactForm({ topics, slug }) {
   };
 
   return (
-    <form onSubmit={submit} className="relative flex flex-col rounded-2xl bg-cwhite p-7 text-ink md:p-9" data-testid={`${slug}-contact-form`}>
+    <form onSubmit={submit} className="relative flex flex-col rounded-2xl bg-cwhite p-7 text-cink md:p-9" data-testid={`${slug}-contact-form`}>
       <input
         type="text"
         name="website"
@@ -342,7 +342,7 @@ function ServiceContactForm({ topics, slug }) {
             onClick={() => setForm((f) => ({ ...f, topic: t }))}
             data-testid={`${slug}-topic-${t.split(" ")[0].toLowerCase()}`}
             className={`rounded-full border px-4 py-1.5 text-xs transition-colors duration-300 ${
-              form.topic === t ? "border-crimson bg-crimson text-cwhite" : "border-ink/15 text-ink/60 hover:border-ink/40"
+              form.topic === t ? "border-crimson bg-crimson text-cwhite" : "border-cink/15 text-cink/60 hover:border-cink/40"
             }`}
           >
             {t}
@@ -351,20 +351,20 @@ function ServiceContactForm({ topics, slug }) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <SField label="Name*">
-          <Input value={form.name} onChange={update("name")} placeholder="Jane Doe" data-testid={`${slug}-name-input`} className="border-ink/15 bg-transparent text-ink focus-visible:ring-crimson" />
+          <Input value={form.name} onChange={update("name")} placeholder="Jane Doe" data-testid={`${slug}-name-input`} className="border-cink/15 bg-transparent text-cink focus-visible:ring-crimson" />
         </SField>
         <SField label="Email*">
-          <Input type="email" value={form.email} onChange={update("email")} placeholder="jane@company.com" data-testid={`${slug}-email-input`} className="border-ink/15 bg-transparent text-ink focus-visible:ring-crimson" />
+          <Input type="email" value={form.email} onChange={update("email")} placeholder="jane@company.com" data-testid={`${slug}-email-input`} className="border-cink/15 bg-transparent text-cink focus-visible:ring-crimson" />
         </SField>
       </div>
       <div className="mt-4">
         <SField label="Company">
-          <Input value={form.company} onChange={update("company")} placeholder="Company name" data-testid={`${slug}-company-input`} className="border-ink/15 bg-transparent text-ink focus-visible:ring-crimson" />
+          <Input value={form.company} onChange={update("company")} placeholder="Company name" data-testid={`${slug}-company-input`} className="border-cink/15 bg-transparent text-cink focus-visible:ring-crimson" />
         </SField>
       </div>
       <div className="mt-4">
         <SField label="Tell us what you need*">
-          <Textarea value={form.message} onChange={update("message")} placeholder="A few lines about your goals + rough budget helps us reply well…" rows={5} data-testid={`${slug}-message-input`} className="resize-none border-ink/15 bg-transparent text-ink focus-visible:ring-crimson" />
+          <Textarea value={form.message} onChange={update("message")} placeholder="A few lines about your goals + rough budget helps us reply well…" rows={5} data-testid={`${slug}-message-input`} className="resize-none border-cink/15 bg-transparent text-cink focus-visible:ring-crimson" />
         </SField>
       </div>
       <motion.button
@@ -372,7 +372,7 @@ function ServiceContactForm({ topics, slug }) {
         disabled={status === "loading"}
         whileTap={{ scale: 0.98 }}
         data-testid={`${slug}-submit-btn`}
-        className="group mt-6 flex items-center justify-center gap-2 rounded-full bg-crimson px-6 py-4 text-sm font-semibold text-cwhite transition-colors duration-300 hover:bg-ink disabled:opacity-60"
+        className="group mt-6 flex items-center justify-center gap-2 rounded-full bg-crimson px-6 py-4 text-sm font-semibold text-cwhite transition-colors duration-300 hover:bg-cink disabled:opacity-60"
       >
         {status === "loading" && <Loader2 size={16} className="animate-spin" />}
         {status === "done" && <Check size={16} />}
@@ -385,7 +385,7 @@ function ServiceContactForm({ topics, slug }) {
 
 const SField = ({ label, children }) => (
   <label className="block">
-    <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-ink/50">{label}</span>
+    <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-cink/50">{label}</span>
     {children}
   </label>
 );

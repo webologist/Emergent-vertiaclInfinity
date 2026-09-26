@@ -92,7 +92,9 @@ REFRESH_TTL_DAYS = 7
 MAX_LOGIN_ATTEMPTS = 5
 LOCKOUT_MINUTES = 15
 CONTACT_RATE_LIMIT = 5
+CONTACT_GLOBAL_LIMIT = 60
 CONTACT_RATE_WINDOW_SEC = 600
+COOKIE_SAMESITE = "lax"
 
 
 def hash_password(password: str) -> str:
@@ -117,7 +119,7 @@ def create_refresh_token(user_id: str) -> str:
 
 def set_access_cookie(response: Response, token: str):
     response.set_cookie("access_token", token, httponly=True, secure=True,
-                        samesite="none", max_age=ACCESS_TTL_MIN * 60, path="/")
+                        samesite=COOKIE_SAMESITE, max_age=ACCESS_TTL_MIN * 60, path="/")
 
 
 class LoginRequest(BaseModel):
@@ -152,6 +154,12 @@ async def get_current_user(request: Request) -> UserOut:
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return UserOut(**user)
+
+
+async def require_admin(user: UserOut = Depends(get_current_user)) -> UserOut:
+    if user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
 
 
 # ---- Routes ----
@@ -190,10 +198,10 @@ async def root():
 
 
 @api_router.post("/auth/login", response_model=UserOut)
-async def login(payload: LoginRequest, response: Response):
+async def login(payload: LoginRequest, request: Request, response: Response):
     await ensure_startup()
     email = payload.email.lower().strip()
-    identifier = email
+    identifier = f"{client_ip(request)}|{email}"
     attempt = await db.login_attempts.find_one({"identifier": identifier})
     if attempt and attempt.get("count", 0) >= MAX_LOGIN_ATTEMPTS:
         last = datetime.fromisoformat(attempt["last_attempt"])
@@ -220,7 +228,7 @@ class GoogleSessionRequest(BaseModel):
 def issue_session_cookies(response: Response, user_id: str, email: str):
     set_access_cookie(response, create_access_token(user_id, email))
     response.set_cookie("refresh_token", create_refresh_token(user_id), httponly=True, secure=True,
-                        samesite="none", max_age=REFRESH_TTL_DAYS * 86400, path="/")
+                        samesite=COOKIE_SAMESITE, max_age=REFRESH_TTL_DAYS * 86400, path="/")
 
 
 def env_google_emails() -> set:
@@ -242,7 +250,7 @@ class AccessEntry(BaseModel):
 
 
 @api_router.get("/admin/access")
-async def list_access(user: UserOut = Depends(get_current_user)):
+async def list_access(user: UserOut = Depends(require_admin)):
     env_set = env_google_emails()
     items = [{"email": e, "source": "env", "added_by": None, "created_at": None} for e in sorted(env_set)]
     rows = await db.allowed_admins.find({}, {"_id": 0}).sort("created_at", 1).to_list(200)
@@ -251,7 +259,7 @@ async def list_access(user: UserOut = Depends(get_current_user)):
 
 
 @api_router.post("/admin/access", status_code=201)
-async def add_access(payload: AccessEntry, user: UserOut = Depends(get_current_user)):
+async def add_access(payload: AccessEntry, user: UserOut = Depends(require_admin)):
     email = payload.email.lower().strip()
     if email in await allowed_google_emails():
         raise HTTPException(status_code=409, detail="That account already has access")
@@ -261,7 +269,7 @@ async def add_access(payload: AccessEntry, user: UserOut = Depends(get_current_u
 
 
 @api_router.delete("/admin/access/{email}")
-async def remove_access(email: str, user: UserOut = Depends(get_current_user)):
+async def remove_access(email: str, user: UserOut = Depends(require_admin)):
     email = email.lower().strip()
     if email in env_google_emails():
         raise HTTPException(status_code=400, detail="This account is configured in the environment and cannot be removed here")
@@ -510,9 +518,13 @@ async def send_lead_alert(contact: "Contact"):
 
 
 def client_ip(request: Request) -> str:
+    # Trust the proxy-provided real IP; the leftmost X-Forwarded-For hop is caller-controlled.
+    real = request.headers.get("x-real-ip", "").strip()
+    if real:
+        return real
     fwd = request.headers.get("x-forwarded-for", "")
     if fwd:
-        return fwd.split(",")[0].strip()
+        return fwd.split(",")[-1].strip()
     return request.client.host if request.client else "unknown"
 
 
@@ -528,6 +540,10 @@ async def create_contact(payload: ContactCreate, request: Request, background_ta
     recent = await db.contact_rate.count_documents({"ip": ip, "created_at": {"$gte": window_start}})
     if recent >= CONTACT_RATE_LIMIT:
         raise HTTPException(status_code=429, detail="Too many messages. Please try again in a few minutes.")
+    total_recent = await db.contact_rate.count_documents({"created_at": {"$gte": window_start}})
+    if total_recent >= CONTACT_GLOBAL_LIMIT:
+        logger.warning("Global contact cap reached — possible flood")
+        raise HTTPException(status_code=429, detail="We're receiving a lot of messages right now. Please try again shortly.")
     await db.contact_rate.insert_one({"ip": ip, "created_at": datetime.now(timezone.utc)})
     doc = contact.model_dump()
     await db.contacts.insert_one(doc)
@@ -581,7 +597,7 @@ async def _count_by(field: str, since: Optional[datetime] = None):
 
 
 @api_router.get("/finder/insights")
-async def finder_insights(days: int = 30, user: UserOut = Depends(get_current_user)):
+async def finder_insights(days: int = 30, user: UserOut = Depends(require_admin)):
     days = max(1, min(days, 365))
     since = datetime.now(timezone.utc) - timedelta(days=days)
     total_all = await db.finder_events.count_documents({})
@@ -604,13 +620,13 @@ async def finder_insights(days: int = 30, user: UserOut = Depends(get_current_us
 
 
 @api_router.get("/contact", response_model=List[Contact])
-async def list_contacts(user: UserOut = Depends(get_current_user)):
+async def list_contacts(user: UserOut = Depends(require_admin)):
     items = await db.contacts.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     return items
 
 
 @api_router.delete("/contact/{contact_id}")
-async def delete_contact(contact_id: str, user: UserOut = Depends(get_current_user)):
+async def delete_contact(contact_id: str, user: UserOut = Depends(require_admin)):
     result = await db.contacts.delete_one({"id": contact_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Contact not found")
@@ -629,7 +645,7 @@ class StatusUpdate(BaseModel):
 
 
 @api_router.patch("/contact/{contact_id}/status", response_model=Contact)
-async def update_contact_status(contact_id: str, payload: StatusUpdate, user: UserOut = Depends(get_current_user)):
+async def update_contact_status(contact_id: str, payload: StatusUpdate, user: UserOut = Depends(require_admin)):
     result = await db.contacts.find_one_and_update(
         {"id": contact_id},
         {"$set": {"status": payload.status}},
@@ -643,6 +659,17 @@ async def update_contact_status(contact_id: str, payload: StatusUpdate, user: Us
 
 # Include the router in the main app
 app.include_router(api_router)
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    return response
 
 cors_origins = [o.strip() for o in os.environ.get('CORS_ORIGINS', '').split(',') if o.strip()]
 app.add_middleware(

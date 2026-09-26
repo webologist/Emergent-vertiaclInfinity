@@ -170,3 +170,7 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 
 ## 2026-09-25 — Team access list
 - Admin-protected GET/POST/DELETE /api/admin/access backed by `allowed_admins` (unique email index). Google allowlist = env (ADMIN_GOOGLE_EMAILS + ADMIN_EMAIL, shown as Locked) ∪ DB list. `TeamAccess` panel in admin inbox. Self-tested via curl + browser e2e.
+
+## 2026-09-26 — Security audit #2 remediation + form text bug
+- BUG FIX: service-page contact form text invisible in light theme (theme-dependent `ink` on fixed white card) → fixed `cink` colour (tailwind) used in ServiceContactForm.
+- client_ip trusts X-Real-IP / rightmost XFF; global contact cap 60/10min; cookies SameSite=Lax; login lockout keyed ip|email; `require_admin` dependency on all admin endpoints; security headers middleware (+ vercel.json headers); JWT_SECRET and ADMIN_PASSWORD rotated (see test_credentials.md). Tests updated to read creds from env.
