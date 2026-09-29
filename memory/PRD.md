@@ -179,3 +179,6 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 - CMS: `content_overrides` Mongo collection; GET /api/content (public), PUT/DELETE /api/content/{key} (admin, nh3-sanitised). Frontend `cms/CmsContext.jsx` (ContentProvider, useContent deep-override, Rich renderer; PLAIN_KEY_RE keeps labels/CTAs/SEO plain, SKIP_KEY_RE hides hrefs/ids), `cms/registry.js` (groups: home, footer, 8 services, legal), `components/admin/ContentEditor.jsx` (react-quill-new, lazy-loaded to keep prerender working). All sections/pages wired via useContent. Tests: iteration_11 pass (Mini Apps URL typo fixed after).
 - Hero image +5% right; Mini Apps pill → https://miniapps.services (new tab; domain not live yet).
 - Telegram lead alerts: user said "later".
+
+## 2026-09-29 — Live preview + image swapping
+- Content editor: side-by-side live preview iframe (unsaved drafts mirrored via postMessage; CmsContext merges preview over saved), toggle, per-group path. Images group: upload to Emergent object storage (POST /api/uploads/image admin → /api/files/{id} public), hero.image + client logos + footer badges swappable. EMERGENT_LLM_KEY added to backend/.env. X-Frame-Options now SAMEORIGIN. Tests: iteration_12.
