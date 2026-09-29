@@ -1,0 +1,63 @@
+{
+  "summary": "Iteration 11: Verified CMS content-overrides feature end-to-end. Backend: 8/8 pytest cases pass (public GET, unauth PUT 401, HTML sanitize via nh3 stripping <script>/<img>/javascript:, persist+GET, DELETE, invalid key 422, value >20000 chars 422, empty-state cleanup). Frontend: admin login -> admin-content-editor loads with 11 group tabs, Homepage group has 122 fields (>100 requirement met), search filter works (\"coffee\" -> 1 field), Legal group renders 99 fields. E2E: edited plain hero.cta and rich hero.sub (Ctrl+B bold), badges + edited-count appear, homepage renders new CTA and .cms-rich <strong>, reset flow clears badges + restores defaults, GET /api/content == {} at end. Service page: rich edit of service.product-development.faqs.0.a with <em> shows up on /product-development FAQ #0, ld+json count preserved at 4, title unchanged; reset works. Regression: contact form submits successfully (success text found), /privacy-policy renders 11 sections, /admin Team access + Finder insights render, 0 unexpected console errors on /, /product-development, /privacy-policy, /admin. FOUND ONE BUG: Mini Apps pill opens https://miniapps.service (singular) instead of https://miniapps.services (plural) — verified popup URL resolves to chrome-error://chromewebdata/ due to unresolvable domain.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "SMEsMarquee (Power for SMEs 'Mini Apps' pill)", "issue": "TAG_EXTERNAL maps 'Mini Apps' to 'https://miniapps.service' (singular) but requirement/spec is 'https://miniapps.services' (plural). Popup fails DNS resolution and shows chrome-error page.", "selector": "/app/frontend/src/components/sections/SMEsMarquee.jsx line 26", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "tests_executed": [
+    "BE GET /api/content -> 200 {} (public, unauth OK)",
+    "BE PUT /api/content/hero.sub unauth -> 401",
+    "BE PUT /api/content/hero.sub with admin cookie, dirty HTML with <script>, <img onerror>, javascript: href -> 200, sanitized value strips all three, keeps <strong>. GET reflects it.",
+    "BE DELETE /api/content/hero.sub -> 200, GET no longer contains key",
+    "BE PUT /api/content/bad!key -> 422 (regex reject)",
+    "BE PUT /api/content/hero.sub with value length 20001 -> 422 (pydantic max_length)",
+    "BE final cleanup: GET /api/content == {}",
+    "FE admin login (admin@verticalinfinity.in / VI-HKvfGW0kts!42) -> admin-inbox-page + admin-content-editor visible",
+    "FE 11 cms-group-* tabs present; Homepage active shows 122 cms-field-* rows (>100)",
+    "FE cms-search-input 'coffee' filters to 1 field; empty restores full list",
+    "FE click cms-group-legal shows 99 legal fields; back to cms-group-home",
+    "FE edit cms-input-hero.cta -> 'Book a coffee chat', save -> cms-modified-hero.cta badge shown",
+    "FE edit rich cms-editor-hero.sub via .ql-editor (Ctrl+A, delete, type 'Hello ', Ctrl+B, 'world', Ctrl+B), save -> cms-modified-hero.sub badge + cms-edited-count='2 edited'",
+    "FE / hero shows 'Book a coffee chat' + .cms-rich innerHTML = 'Hello&nbsp;<strong>world</strong>'",
+    "FE Hero image bbox x=1046 (right of viewport center) — translate-x-[5%] applied",
+    "FE cms-reset-hero.cta + cms-reset-hero.sub with confirm dialog auto-accepted -> both badges disappear",
+    "FE / restored: 'Let's Chat Over Coffee' present, 'Book a coffee chat' absent; GET /api/content == {}",
+    "FE cms-group-service-product-development -> edit cms-editor-service.product-development.faqs.0.a with Ctrl+I 'Italic answer here', save -> badge",
+    "FE /product-development open product-development-faq-0 -> answer HTML contains <em>Italic answer here</em>",
+    "FE /product-development ld+json script count = 4, <title>='Product Development Services | Vertical Infinity — Idea to Launch, On Your Budget'",
+    "FE reset service.product-development.faqs.0.a -> badge gone; GET /api/content == {}",
+    "FE Homepage 'Mini Apps' pill click -> popup opens chrome-error://chromewebdata/ because underlying URL is https://miniapps.service (singular). Expected https://miniapps.services. BUG.",
+    "FE Homepage contact form fill+submit -> success text (\"thank\"/\"we'll\") shown; TEST_iter11 lead cleaned up via admin DELETE",
+    "FE /privacy-policy renders 11 h2 section headings",
+    "FE /admin shows Finder insights (True) + Team access (True) sections",
+    "FE 0 unexpected console errors across /, /product-development, /privacy-policy, /admin (401 from /auth/me ignored per instructions)"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_content_cms.py",
+    "/app/test_reports/pytest/pytest_iter11.xml"
+  ],
+  "action_items": [
+    "Fix /app/frontend/src/components/sections/SMEsMarquee.jsx line 26: change 'https://miniapps.service' to 'https://miniapps.services' (plural). This is the only spec deviation found in this iteration."
+  ],
+  "critical_code_review_comments": [
+    "server.py content_overrides collection has no unique index on 'key' — put_content relies on update_one with upsert=True; concurrent PUTs to the same key could theoretically insert two docs. Non-critical (upsert filters by key), but adding db.content_overrides.create_index('key', unique=True) at startup would harden it.",
+    "server.py CONTENT_ALLOWED_TAGS includes h1/blockquote/sub/sup/s/i/b in addition to the tags stated in the review spec (spec listed a/strong/em/u/ul/ol/li/p/h2-4). Superset is safe (nh3 still strips everything else) but consider tightening if strict spec compliance matters.",
+    "CmsContext.jsx Rich component runs a regex on every string override to unwrap a single <p>… useMemo/useCallback around walk() would prevent re-rendering the whole tree when only unrelated overrides change; currently walk() re-runs for the entire content object on any override change.",
+    "SMEsMarquee.jsx TAG_EXTERNAL is a plain object literal declared at module scope with a typo in the URL — no test guards prevented this. Recommend either adding a unit test or moving external URLs to /app/frontend/.env for env-driven validation.",
+    "ContentEditor.jsx does not surface backend 422 errors (invalid key, value too long) to the user beyond a disabled state — clicking Save silently no-ops if backend rejects. Consider a toast/inline error near cms-save-<key>."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_content_cms.py (new)"
+  ],
+  "success_rate": {"backend": "100% (8/8)", "frontend": "96% (1 spec deviation: Mini Apps URL typo)"},
+  "test_credentials": "admin@verticalinfinity.in / VI-HKvfGW0kts!42 (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Created 1 TEST_iter11 contact lead during regression test then deleted it via admin DELETE /api/contact/{id}. All CMS content_overrides created during testing (hero.cta, hero.sub, service.product-development.faqs.0.a) were reset via the UI reset button and verified GET /api/content == {} at the end.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Only outstanding issue is the miniapps.service -> miniapps.services URL fix in SMEsMarquee.jsx line 26. All other iteration-11 features (CMS PUT/DELETE/sanitize, editor UI, hero image shift, service FAQ overrides, regressions) pass. Backend test file /app/backend/tests/test_content_cms.py is the canonical regression for the CMS endpoints. GET /api/content is expected to be {} at start of every fresh run — if not, cleanup with admin DELETE loop as done in test_cleanup_final.",
+  "rca of the issue": "SMEsMarquee.jsx Mini Apps URL typo — root cause is a hard-coded string literal 'https://miniapps.service' missing the trailing 's' in TAG_EXTERNAL dict. Reproduction: visit / at 1920px, click the 'Mini Apps' pill inside the Power for SMEs marquee. A new tab opens to https://miniapps.service which fails DNS (chrome-error://chromewebdata/). Mitigation: change line 26 to 'https://miniapps.services'."
+}

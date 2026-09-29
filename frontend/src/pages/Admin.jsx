@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
@@ -6,7 +6,8 @@ import { ArrowLeft, Inbox, LogOut, RefreshCcw, Trash2, Mail, Building2, Loader2 
 import { Logo } from "@/components/Logo";
 import { FinderInsights } from "@/components/admin/FinderInsights";
 import { TeamAccess } from "@/components/admin/TeamAccess";
-import { ContentEditor } from "@/components/admin/ContentEditor";
+// Lazy: the editor pulls in Quill, which touches `document` at import time (breaks build-time prerender).
+const ContentEditor = lazy(() => import("@/components/admin/ContentEditor").then((m) => ({ default: m.ContentEditor })));
 
 const api = axios.create({ baseURL: process.env.REACT_APP_BACKEND_URL || "", withCredentials: true });
 
@@ -382,7 +383,9 @@ export default function Admin() {
         )}
 
         <FinderInsights api={api} withRefresh={withRefresh} />
-        <ContentEditor api={api} withRefresh={withRefresh} />
+        <Suspense fallback={<div className="mt-16 flex items-center gap-2 text-sm text-dim" data-testid="admin-content-loading"><Loader2 size={14} className="animate-spin" /> Loading editor…</div>}>
+          <ContentEditor api={api} withRefresh={withRefresh} />
+        </Suspense>
         <TeamAccess api={api} withRefresh={withRefresh} currentEmail={user.email} />
       </main>
     </div>

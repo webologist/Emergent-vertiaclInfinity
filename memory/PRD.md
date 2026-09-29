@@ -174,3 +174,8 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 ## 2026-09-26 — Security audit #2 remediation + form text bug
 - BUG FIX: service-page contact form text invisible in light theme (theme-dependent `ink` on fixed white card) → fixed `cink` colour (tailwind) used in ServiceContactForm.
 - client_ip trusts X-Real-IP / rightmost XFF; global contact cap 60/10min; cookies SameSite=Lax; login lockout keyed ip|email; `require_admin` dependency on all admin endpoints; security headers middleware (+ vercel.json headers); JWT_SECRET and ADMIN_PASSWORD rotated (see test_credentials.md). Tests updated to read creds from env.
+
+## 2026-09-29 — Admin CMS (WYSIWYG) + small tweaks
+- CMS: `content_overrides` Mongo collection; GET /api/content (public), PUT/DELETE /api/content/{key} (admin, nh3-sanitised). Frontend `cms/CmsContext.jsx` (ContentProvider, useContent deep-override, Rich renderer; PLAIN_KEY_RE keeps labels/CTAs/SEO plain, SKIP_KEY_RE hides hrefs/ids), `cms/registry.js` (groups: home, footer, 8 services, legal), `components/admin/ContentEditor.jsx` (react-quill-new, lazy-loaded to keep prerender working). All sections/pages wired via useContent. Tests: iteration_11 pass (Mini Apps URL typo fixed after).
+- Hero image +5% right; Mini Apps pill → https://miniapps.services (new tab; domain not live yet).
+- Telegram lead alerts: user said "later".

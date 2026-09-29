@@ -23,7 +23,7 @@ const TAG_LINKS = {
 };
 // Pills that open an external site in a new tab.
 const TAG_EXTERNAL = {
-  "Mini Apps": "https://miniapps.service",
+  "Mini Apps": "https://miniapps.services",
 };
 
 // Soft "pop" using the Web Audio API — no asset needed.
