@@ -43,7 +43,7 @@ export default function Hero() {
         <div className="relative flex h-full translate-x-[5%] items-center justify-center pl-[9vw] lg:pl-[6vw] xl:pl-[3vw]">
           <div className="vi-8-glow absolute h-[62%] w-[62%] rounded-full bg-crimson/25 blur-[90px]" />
           <motion.img
-            src="/vi-8-hero.png"
+            src={HERO.image}
             alt=""
             className="vi-8-float relative h-[78%] max-h-[760px] w-auto object-contain opacity-90 drop-shadow-[0_0_45px_rgba(20,200,255,0.35)]"
             draggable={false}

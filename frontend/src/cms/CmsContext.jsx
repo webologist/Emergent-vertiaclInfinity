@@ -5,9 +5,9 @@ const CmsContext = createContext({ overrides: {}, setOverride: () => {}, loaded:
 
 // Keys that must stay plain text (used in hrefs, comparisons, test ids, meta tags).
 export const PLAIN_KEY_RE =
-  /(^nav\.|^service\.[^.]+\.(title|metaDescription|ogTitle|ogDescription|breadcrumb|jsonLdServiceType)$|^legal\.[^.]+\.(title|metaDescription|updated)$|\.(label|overline|tags|topics|name|whatsapp|email|address|copyright|accentWord|lines|primaryCta|secondaryCta|cta|ctaLabel|kicker|badge|q|links|heading|value|no|author|stat)(\.\d+)?$)/;
+  /(^nav\.|^service\.[^.]+\.(title|metaDescription|ogTitle|ogDescription|breadcrumb|jsonLdServiceType)$|^legal\.[^.]+\.(title|metaDescription|updated)$|\.(label|overline|tags|topics|name|whatsapp|email|address|copyright|accentWord|lines|primaryCta|secondaryCta|cta|ctaLabel|kicker|badge|q|links|heading|value|no|author|stat|image|logo|src)(\.\d+)?$)/;
 // Keys never exposed for editing.
-export const SKIP_KEY_RE = /(^|\.)(slug|path|href|ctaHref|to|url|src|id|icon|accent|service|priority|mapQuery|logo|picture|image|testid|external)(\.\d+)?$/;
+export const SKIP_KEY_RE = /(^|\.)(slug|path|href|ctaHref|to|url|id|icon|accent|service|priority|mapQuery|picture|testid|external)(\.\d+)?$/;
 
 const HAS_TAG = /<[a-z][\s\S]*>/i;
 const stripTags = (s) => s.replace(/<[^>]+>/g, "");
@@ -41,7 +41,20 @@ export function applyOverrides(prefix, obj, overrides) {
 
 export function ContentProvider({ children }) {
   const [overrides, setOverrides] = useState({});
+  const [preview, setPreview] = useState({});
   const [loaded, setLoaded] = useState(false);
+
+  // Live preview: when embedded in the admin editor's iframe, accept draft overrides via postMessage.
+  useEffect(() => {
+    if (typeof window === "undefined" || window.self === window.top) return;
+    const onMsg = (e) => {
+      if (e.origin !== window.location.origin || e.data?.type !== "cms-preview") return;
+      setPreview(e.data.overrides || {});
+    };
+    window.addEventListener("message", onMsg);
+    window.parent.postMessage({ type: "cms-preview-ready" }, window.location.origin);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
 
   useEffect(() => {
     fetch(`${API}/api/content`)
@@ -60,7 +73,8 @@ export function ContentProvider({ children }) {
     });
   }, []);
 
-  const value = useMemo(() => ({ overrides, setOverride, loaded }), [overrides, setOverride, loaded]);
+  const merged = useMemo(() => ({ ...overrides, ...preview }), [overrides, preview]);
+  const value = useMemo(() => ({ overrides: merged, saved: overrides, setOverride, loaded }), [merged, overrides, setOverride, loaded]);
   return <CmsContext.Provider value={value}>{children}</CmsContext.Provider>;
 }
 

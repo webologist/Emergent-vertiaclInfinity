@@ -10,6 +10,7 @@ export const NAV = {
 };
 
 export const HERO = {
+  image: "/vi-8-hero.png",
   overline: "AI-Enabled Digital Agency",
   lines: ["AI-Enabled Digital", "Partner. That Moves", "Businesses Forward."],
   accentWord: "Businesses Forward.",

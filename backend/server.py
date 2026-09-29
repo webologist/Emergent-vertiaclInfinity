@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, BackgroundTasks
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, BackgroundTasks, UploadFile, File
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -695,6 +695,70 @@ async def delete_content(key: str, user: UserOut = Depends(require_admin)):
     return {"ok": True}
 
 
+# ---- Image uploads (Emergent object storage) ----
+STORAGE_BASE = (os.environ.get("INTEGRATION_PROXY_URL") or "").strip() or "https://integrations.emergentagent.com"
+STORAGE_URL = STORAGE_BASE.rstrip("/") + "/objstore/api/v1/storage"
+STORAGE_APP = "vertical-infinity"
+IMAGE_TYPES = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif", "image/svg+xml": "svg"}
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
+_storage_key: Optional[str] = None
+
+
+async def storage_key(force: bool = False) -> str:
+    global _storage_key
+    if _storage_key and not force:
+        return _storage_key
+    async with httpx.AsyncClient(timeout=30) as http:
+        r = await http.post(f"{STORAGE_URL}/init", json={"emergent_key": os.environ["EMERGENT_LLM_KEY"]})
+    r.raise_for_status()
+    _storage_key = r.json()["storage_key"]
+    return _storage_key
+
+
+@api_router.post("/uploads/image", status_code=201)
+async def upload_image(file: UploadFile = File(...), user: UserOut = Depends(require_admin)):
+    ext = IMAGE_TYPES.get(file.content_type or "")
+    if not ext:
+        raise HTTPException(status_code=415, detail="Only PNG, JPG, WEBP, GIF or SVG images are allowed")
+    data = await file.read()
+    if len(data) > MAX_IMAGE_BYTES:
+        raise HTTPException(status_code=413, detail="Image must be under 5 MB")
+    file_id = str(uuid.uuid4())
+    path = f"{STORAGE_APP}/uploads/{file_id}.{ext}"
+    key = await storage_key()
+    async with httpx.AsyncClient(timeout=120) as http:
+        r = await http.put(f"{STORAGE_URL}/objects/{path}", headers={"X-Storage-Key": key, "Content-Type": file.content_type}, content=data)
+        if r.status_code == 404:
+            key = await storage_key(force=True)
+            r = await http.put(f"{STORAGE_URL}/objects/{path}", headers={"X-Storage-Key": key, "Content-Type": file.content_type}, content=data)
+    if r.status_code >= 400:
+        logger.error(f"Storage upload failed {r.status_code}: {r.text[:200]}")
+        raise HTTPException(status_code=502, detail="Image storage is unavailable right now")
+    await db.files.insert_one({
+        "id": file_id, "storage_path": r.json()["path"], "original_filename": file.filename,
+        "content_type": file.content_type, "size": len(data), "uploaded_by": user.email,
+        "is_deleted": False, "created_at": now_iso(),
+    })
+    return {"id": file_id, "url": f"/api/files/{file_id}"}
+
+
+@api_router.get("/files/{file_id}")
+async def serve_file(file_id: str):
+    rec = await db.files.find_one({"id": file_id, "is_deleted": False}, {"_id": 0})
+    if not rec:
+        raise HTTPException(status_code=404, detail="File not found")
+    key = await storage_key()
+    async with httpx.AsyncClient(timeout=60) as http:
+        r = await http.get(f"{STORAGE_URL}/objects/{rec['storage_path']}", headers={"X-Storage-Key": key})
+        if r.status_code == 404:
+            key = await storage_key(force=True)
+            r = await http.get(f"{STORAGE_URL}/objects/{rec['storage_path']}", headers={"X-Storage-Key": key})
+    if r.status_code >= 400:
+        raise HTTPException(status_code=502, detail="Could not load file")
+    return Response(content=r.content, media_type=rec["content_type"],
+                    headers={"Cache-Control": "public, max-age=31536000, immutable", "X-Content-Type-Options": "nosniff"})
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
@@ -703,7 +767,7 @@ app.include_router(api_router)
 async def security_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
-    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
     response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
     response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
