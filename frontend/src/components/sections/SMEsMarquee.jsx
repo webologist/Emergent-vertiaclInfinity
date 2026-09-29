@@ -2,7 +2,8 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
-import { SME } from "@/data/content";
+import { SME as SME_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { Reveal } from "@/components/Reveal";
 import { ShootingStars } from "@/components/ShootingStars";
 import { scrollToId } from "@/lib/scroll";
@@ -19,6 +20,10 @@ const BUBBLE_PHRASES = [
 // Pills that navigate to a dedicated page instead of showing a bubble.
 const TAG_LINKS = {
   "Project Development": "/product-development",
+};
+// Pills that open an external site in a new tab.
+const TAG_EXTERNAL = {
+  "Mini Apps": "https://miniapps.service",
 };
 
 // Soft "pop" using the Web Audio API — no asset needed.
@@ -46,6 +51,7 @@ function playPop() {
 }
 
 export default function SMEsMarquee() {
+  const SME = useContent("sme", SME_DEFAULT);
   const [activeTag, setActiveTag] = useState(null);
   const [phrase, setPhrase] = useState("");
   const dismissTimer = useRef(null);
@@ -54,6 +60,10 @@ export default function SMEsMarquee() {
   useEffect(() => () => clearTimeout(dismissTimer.current), []);
 
   const handleTagClick = useCallback((tag) => {
+    if (TAG_EXTERNAL[tag]) {
+      window.open(TAG_EXTERNAL[tag], "_blank", "noopener,noreferrer");
+      return;
+    }
     if (TAG_LINKS[tag]) {
       navigate(TAG_LINKS[tag]);
       return;

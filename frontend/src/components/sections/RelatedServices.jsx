@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
-import { SERVICE_INDEX, RELATED_SERVICES } from "@/data/services";
+import { SERVICE_INDEX as SERVICE_INDEX_DEFAULT, RELATED_SERVICES } from "@/data/services";
+import { useContent } from "@/cms/CmsContext";
 
 export default function RelatedServices({ slug }) {
+  const SERVICE_INDEX = useContent("services", SERVICE_INDEX_DEFAULT);
   const related = (RELATED_SERVICES[slug] || []).map((k) => SERVICE_INDEX[k]).filter(Boolean);
   if (!related.length) return null;
 

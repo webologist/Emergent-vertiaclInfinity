@@ -1,7 +1,8 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowUpRight, Sparkles } from "lucide-react";
-import { HERO } from "@/data/content";
+import { HERO as HERO_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { scrollToId } from "@/lib/scroll";
 import { useTheme } from "@/lib/theme";
 import { FishParticles } from "@/components/FishParticles";
@@ -15,6 +16,7 @@ const lineVariant = {
 };
 
 export default function Hero() {
+  const HERO = useContent("hero", HERO_DEFAULT);
   const ref = useRef(null);
   const { theme } = useTheme();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -38,7 +40,7 @@ export default function Hero() {
 
       {/* Right-side glowing techno "8" mark */}
       <div className="pointer-events-none absolute inset-y-0 right-0 -z-[5] hidden w-1/2 items-center justify-start overflow-hidden md:flex" aria-hidden="true">
-        <div className="relative flex h-full items-center justify-center pl-[9vw] lg:pl-[6vw] xl:pl-[3vw]">
+        <div className="relative flex h-full translate-x-[5%] items-center justify-center pl-[9vw] lg:pl-[6vw] xl:pl-[3vw]">
           <div className="vi-8-glow absolute h-[62%] w-[62%] rounded-full bg-crimson/25 blur-[90px]" />
           <motion.img
             src="/vi-8-hero.png"

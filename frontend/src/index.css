@@ -215,3 +215,21 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ---- CMS rich text ---- */
+.cms-rich p + p { margin-top: 0.75em; }
+.cms-rich ul, .cms-rich ol { margin: 0.5em 0 0.5em 1.25em; }
+.cms-rich ul { list-style: disc; }
+.cms-rich ol { list-style: decimal; }
+.cms-rich a { color: #CE1F2E; text-decoration: underline; text-underline-offset: 3px; }
+.cms-rich strong, .cms-rich b { font-weight: 700; }
+.cms-quill .ql-toolbar { border-radius: 0.75rem 0.75rem 0 0; border-color: rgb(var(--c-fg) / 0.12); background: rgb(var(--c-elevated)); }
+.cms-quill .ql-container { border-radius: 0 0 0.75rem 0.75rem; border-color: rgb(var(--c-fg) / 0.12); background: rgb(var(--c-ink)); font-family: inherit; font-size: 0.9rem; }
+.cms-quill .ql-editor { min-height: 96px; color: rgb(var(--c-fg)); }
+.cms-quill .ql-editor.ql-blank::before { color: rgb(var(--c-dim)); font-style: normal; }
+.cms-quill .ql-snow .ql-stroke { stroke: rgb(var(--c-fg)); }
+.cms-quill .ql-snow .ql-fill { fill: rgb(var(--c-fg)); }
+.cms-quill .ql-snow .ql-picker { color: rgb(var(--c-fg)); }
+.cms-quill .ql-snow .ql-picker-options { background: rgb(var(--c-elevated)); border-color: rgb(var(--c-fg) / 0.12); }
+.cms-quill .ql-snow.ql-toolbar button:hover .ql-stroke, .cms-quill .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #CE1F2E; }
+.cms-quill .ql-snow.ql-toolbar button:hover .ql-fill, .cms-quill .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: #CE1F2E; }

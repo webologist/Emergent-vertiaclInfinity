@@ -1,7 +1,8 @@
 import { ArrowUpRight, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { FOOTER } from "@/data/content";
+import { FOOTER as FOOTER_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { scrollToId } from "@/lib/scroll";
 import { Logo } from "@/components/Logo";
 
@@ -42,6 +43,7 @@ const WIP_LINKS = new Set([
 ]);
 
 export default function Footer() {
+  const FOOTER = useContent("footer", FOOTER_DEFAULT);
   return (
     <footer className="relative border-t border-white/10 bg-ink pt-20" data-testid="footer">
       <div className="container-x">

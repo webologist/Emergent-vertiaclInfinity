@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useContent } from "@/cms/CmsContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
@@ -55,9 +56,9 @@ export function buildJsonLd(cfg) {
 }
 
 export default function ServicePage({ config }) {
-  const cfg = config;
+  const cfg = useContent(`service.${config.slug}`, config);
   const canonical = `${ORIGIN}${cfg.path}`;
-  const jsonLd = useMemo(() => buildJsonLd(cfg), [cfg]);
+  const jsonLd = useMemo(() => buildJsonLd(config), [config]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -110,8 +111,8 @@ export default function ServicePage({ config }) {
             <Reveal>
               <span className="overline">{cfg.hero.overline}</span>
               <h1 className="mt-4 max-w-4xl font-display text-4xl font-extrabold uppercase leading-[0.98] tracking-tighter sm:text-5xl lg:text-6xl">
-                {cfg.hero.titleParts.map((p) => (
-                  <span key={p.text} className={p.accent ? "text-crimson" : ""}>{p.text}</span>
+                {cfg.hero.titleParts.map((p, i) => (
+                  <span key={`part-${i}`} className={p.accent ? "text-crimson" : ""}>{p.text}</span>
                 ))}
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-relaxed text-dim md:text-lg">{cfg.hero.sub}</p>
@@ -149,7 +150,7 @@ export default function ServicePage({ config }) {
             </Reveal>
             <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
               {cfg.values.items.map((v, i) => (
-                <Reveal key={v.title} delay={i * 0.08}>
+                <Reveal key={`v-${i}`} delay={i * 0.08}>
                   <div className="flex h-full flex-col bg-surface p-8" data-testid={`${cfg.slug}-value-${i}`}>
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 text-crimson">
                       <v.icon size={22} strokeWidth={1.7} />
@@ -227,7 +228,7 @@ export default function ServicePage({ config }) {
             </Reveal>
             <div className="mt-14 grid gap-6 md:grid-cols-3">
               {cfg.outcomes.items.map((o, i) => (
-                <Reveal key={o.title} delay={i * 0.08}>
+                <Reveal key={`o-${i}`} delay={i * 0.08}>
                   <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-surface p-8 transition-colors duration-300 hover:border-crimson/50" data-testid={`${cfg.slug}-outcome-${i}`}>
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 text-crimson">
                       <o.icon size={22} strokeWidth={1.7} />
@@ -250,7 +251,7 @@ export default function ServicePage({ config }) {
             </Reveal>
             <div className="mx-auto mt-12 max-w-3xl divide-y divide-white/10 border-y border-white/10">
               {cfg.faqs.map((f, i) => (
-                <details key={f.q} className="group py-5" data-testid={`${cfg.slug}-faq-${i}`}>
+                <details key={`faq-${i}`} className="group py-5" data-testid={`${cfg.slug}-faq-${i}`}>
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-base font-semibold md:text-lg">
                     {f.q}
                     <ChevronRight size={18} className="shrink-0 text-crimson transition-transform duration-300 group-open:rotate-90" />

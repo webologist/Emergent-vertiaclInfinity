@@ -4,8 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, ArrowLeft, RotateCcw, Check, MessageCircle } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { scrollToId } from "@/lib/scroll";
-import { SERVICE_INDEX, RELATED_SERVICES } from "@/data/services";
-import { SITUATIONS, PRIORITIES } from "@/data/serviceHelper";
+import { SERVICE_INDEX as SERVICE_INDEX_DEFAULT, RELATED_SERVICES } from "@/data/services";
+import { SITUATIONS as SITUATIONS_DEFAULT, PRIORITIES as PRIORITIES_DEFAULT } from "@/data/serviceHelper";
+import { useContent } from "@/cms/CmsContext";
 
 const slide = {
   initial: { opacity: 0, x: 24 },
@@ -30,6 +31,7 @@ const Chip = ({ active, onClick, children, testId }) => (
 );
 
 function Result({ situation, priority, onReset }) {
+  const SERVICE_INDEX = useContent("services", SERVICE_INDEX_DEFAULT);
   const primary = SERVICE_INDEX[situation.service];
   const secondary = SERVICE_INDEX[RELATED_SERVICES[situation.service][0]];
   return (
@@ -95,6 +97,9 @@ function Result({ situation, priority, onReset }) {
 }
 
 export default function ServiceFinder() {
+  const finder = useContent("finder", { situations: SITUATIONS_DEFAULT, priorities: PRIORITIES_DEFAULT });
+  const SITUATIONS = finder.situations;
+  const PRIORITIES = finder.priorities;
   const [situation, setSituation] = useState(null);
   const [priority, setPriority] = useState(null);
   const step = !situation ? 1 : !priority ? 2 : 3;

@@ -3,28 +3,18 @@ import axios from "axios";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { MapPin, MessageCircle, Mail, ArrowUpRight, Loader2, Check } from "lucide-react";
-import { CONTACT } from "@/data/content";
+import { CONTACT as CONTACT_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { Reveal } from "@/components/Reveal";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 const API = `${process.env.REACT_APP_BACKEND_URL || ""}/api`;
 
-const WA_TEXT = encodeURIComponent("Hi Vertical Infinity, I'd like to discuss a project.");
-const DETAILS = [
-  { icon: MapPin, label: "Registered Office", value: CONTACT.address },
-  {
-    icon: MessageCircle,
-    label: "WhatsApp",
-    value: CONTACT.whatsapp,
-    href: `https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}?text=${WA_TEXT}`,
-    external: true,
-  },
-  { icon: Mail, label: "Email", value: CONTACT.email, href: `mailto:${CONTACT.email}` },
-];
 
 
 export default function Contact() {
+  const CONTACT = useContent("contact", CONTACT_DEFAULT);
   return (
     <section id="contact" className="relative border-t border-white/10 py-24 md:py-36" data-testid="contact-section">
       <div className="container-x">
@@ -51,6 +41,19 @@ export default function Contact() {
 }
 
 function ContactDetails() {
+  const CONTACT = useContent("contact", CONTACT_DEFAULT);
+  const WA_TEXT = encodeURIComponent("Hi Vertical Infinity, I'd like to discuss a project.");
+  const DETAILS = [
+    { icon: MapPin, label: "Registered Office", value: CONTACT.address },
+    {
+      icon: MessageCircle,
+      label: "WhatsApp",
+      value: CONTACT.whatsapp,
+      href: `https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}?text=${WA_TEXT}`,
+      external: true,
+    },
+    { icon: Mail, label: "Email", value: CONTACT.email, href: `mailto:${CONTACT.email}` },
+  ];
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(CONTACT.mapQuery)}&output=embed`;
   return (
     <div className="flex h-full flex-col gap-6">
@@ -96,6 +99,7 @@ function ContactDetails() {
 }
 
 function ContactForm() {
+  const CONTACT = useContent("contact", CONTACT_DEFAULT);
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "", topic: "General", website: "" });
   const [status, setStatus] = useState("idle"); // idle | loading | done
 

@@ -1,12 +1,14 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Workflow, Boxes, RefreshCcw, ArrowRight } from "lucide-react";
-import { FOCUS } from "@/data/content";
+import { FOCUS as FOCUS_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
 
 const ICONS = { Workflow, Boxes, RefreshCcw };
 
 export default function FocusedAreas() {
+  const FOCUS = useContent("focus", FOCUS_DEFAULT);
   const navigate = useNavigate();
   return (
     <section id="focus" className="relative border-t border-white/10 py-24 md:py-36" data-testid="focus-section">

@@ -24,6 +24,7 @@ import LegalPage from "@/pages/LegalPage";
 import GoogleReviews from "@/components/sections/GoogleReviews";
 import ServiceFinder from "@/components/sections/ServiceFinder";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE } from "@/data/legal";
+import { ContentProvider } from "@/cms/CmsContext";
 import { ThemeProvider, useTheme } from "@/lib/theme";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
@@ -104,6 +105,7 @@ function App() {
 export function AppInner() {
   return (
     <ThemeProvider>
+      <ContentProvider>
       <div className="App bg-ink font-body text-white antialiased">
         <div className="noise-overlay" aria-hidden="true" />
         <AnalyticsTracker />
@@ -123,6 +125,7 @@ export function AppInner() {
         </Routes>
         <ThemedToaster />
       </div>
+      </ContentProvider>
     </ThemeProvider>
   );
 }

@@ -15,6 +15,8 @@ import jwt
 import httpx
 import asyncio
 import hashlib
+import re
+import nh3
 import aiosmtplib
 from email.message import EmailMessage
 from datetime import datetime, timezone, timedelta
@@ -655,6 +657,42 @@ async def update_contact_status(contact_id: str, payload: StatusUpdate, user: Us
     if not result:
         raise HTTPException(status_code=404, detail="Contact not found")
     return result
+
+
+# ---- Editable site content (admin CMS overrides) ----
+CONTENT_KEY_RE = re.compile(r"^[A-Za-z0-9_.\-]{1,200}$")
+CONTENT_ALLOWED_TAGS = {"p", "br", "strong", "b", "em", "i", "u", "s", "a", "ul", "ol", "li", "span", "h1", "h2", "h3", "h4", "blockquote", "sub", "sup"}
+CONTENT_ALLOWED_ATTRS = {"a": {"href", "target"}, "span": {"class"}, "p": {"class"}}
+
+
+class ContentValue(BaseModel):
+    value: str = Field(..., max_length=20000)
+
+
+@api_router.get("/content")
+async def get_content():
+    rows = await db.content_overrides.find({}, {"_id": 0, "key": 1, "value": 1}).to_list(2000)
+    return {r["key"]: r["value"] for r in rows}
+
+
+@api_router.put("/content/{key}")
+async def put_content(key: str, payload: ContentValue, user: UserOut = Depends(require_admin)):
+    if not CONTENT_KEY_RE.match(key):
+        raise HTTPException(status_code=422, detail="Invalid content key")
+    clean = nh3.clean(payload.value, tags=CONTENT_ALLOWED_TAGS, attributes=CONTENT_ALLOWED_ATTRS,
+                      link_rel="noopener noreferrer", url_schemes={"http", "https", "mailto", "tel"})
+    await db.content_overrides.update_one(
+        {"key": key},
+        {"$set": {"key": key, "value": clean, "updated_at": now_iso(), "updated_by": user.email}},
+        upsert=True,
+    )
+    return {"key": key, "value": clean}
+
+
+@api_router.delete("/content/{key}")
+async def delete_content(key: str, user: UserOut = Depends(require_admin)):
+    await db.content_overrides.delete_one({"key": key})
+    return {"ok": True}
 
 
 # Include the router in the main app

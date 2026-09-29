@@ -1,6 +1,7 @@
 aiohappyeyeballs==2.7.1
 aiohttp==3.14.3
 aiosignal==1.4.0
+aiosmtplib==3.0.2
 annotated-doc==0.0.5
 annotated-types==0.8.0
 anyio==4.14.2
@@ -63,6 +64,7 @@ motor==3.3.1
 multidict==6.7.1
 mypy==2.3.0
 mypy_extensions==1.1.0
+nh3==0.3.7
 numpy==2.4.6
 oauthlib==3.3.1
 openai==1.99.9
@@ -102,6 +104,7 @@ requests-oauthlib==2.0.0
 rich==15.0.0
 rpds-py==2026.6.3
 rsa==4.9.1
+ruff==0.16.2
 s3transfer==0.19.2
 s5cmd==0.2.0
 shellingham==1.5.4

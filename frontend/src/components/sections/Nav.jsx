@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Search, Menu, X, ArrowUpRight, Sun, Moon } from "lucide-react";
-import { NAV } from "@/data/content";
+import { NAV as NAV_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { scrollToId } from "@/lib/scroll";
 import { Logo } from "@/components/Logo";
 import { useTheme } from "@/lib/theme";
@@ -18,6 +19,7 @@ const NavMark = () => (
 );
 
 export default function Nav() {
+  const NAV = useContent("nav", NAV_DEFAULT);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { theme, toggle } = useTheme();

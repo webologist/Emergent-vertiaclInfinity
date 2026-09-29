@@ -1,7 +1,9 @@
-import { JOURNEY } from "@/data/content";
+import { JOURNEY as JOURNEY_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { Reveal } from "@/components/Reveal";
 
 export default function Journey() {
+  const JOURNEY = useContent("journey", JOURNEY_DEFAULT);
   return (
     <section id="journey" className="relative border-t border-white/10 py-24 md:py-36" data-testid="journey-section">
       <div className="container-x">
@@ -28,15 +30,15 @@ export default function Journey() {
                   Your growth is the true measure of our success.
                 </p>
                 <p className="mt-4 text-base leading-relaxed text-dim">
-                  {JOURNEY.chapters[1].body.replace("Your growth is the true measure of our success. ", "")}
+                  {typeof JOURNEY.chapters[1].body === "string" ? JOURNEY.chapters[1].body.replace("Your growth is the true measure of our success. ", "") : JOURNEY.chapters[1].body}
                 </p>
               </div>
             </Reveal>
 
             <Reveal delay={0.1}>
               <div className="mt-5 space-y-4 text-base leading-relaxed text-dim">
-                {JOURNEY.chapters[0].body.map((p) => (
-                  <p key={p.slice(0, 40)}>{p}</p>
+                {JOURNEY.chapters[0].body.map((p, i) => (
+                  <p key={`jp-${i}`}>{p}</p>
                 ))}
               </div>
             </Reveal>

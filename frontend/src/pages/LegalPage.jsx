@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useContent } from "@/cms/CmsContext";
 import { Link } from "react-router-dom";
 import { ChevronRight, ArrowUpRight } from "lucide-react";
 import Nav from "@/components/sections/Nav";
@@ -9,7 +10,8 @@ import { LEGAL_PAGES } from "@/data/legal";
 
 const ORIGIN = "https://verticalinfinity.in";
 
-export default function LegalPage({ page }) {
+export default function LegalPage({ page: pageDefault }) {
+  const page = useContent(`legal.${pageDefault.slug}`, pageDefault);
   const canonical = `${ORIGIN}${page.path}`;
   const other = LEGAL_PAGES.find((p) => p.slug !== page.slug);
 
@@ -72,8 +74,8 @@ export default function LegalPage({ page }) {
                   ))}
                   {s.bullets && (
                     <ul className="mt-4 flex flex-col gap-3">
-                      {s.bullets.map((b) => (
-                        <li key={b} className="flex gap-3 text-base leading-relaxed text-white/80">
+                      {s.bullets.map((b, bi) => (
+                        <li key={`b-${bi}`} className="flex gap-3 text-base leading-relaxed text-white/80">
                           <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-crimson" aria-hidden="true" />
                           <span>{b}</span>
                         </li>

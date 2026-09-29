@@ -6,6 +6,7 @@ import { ArrowLeft, Inbox, LogOut, RefreshCcw, Trash2, Mail, Building2, Loader2 
 import { Logo } from "@/components/Logo";
 import { FinderInsights } from "@/components/admin/FinderInsights";
 import { TeamAccess } from "@/components/admin/TeamAccess";
+import { ContentEditor } from "@/components/admin/ContentEditor";
 
 const api = axios.create({ baseURL: process.env.REACT_APP_BACKEND_URL || "", withCredentials: true });
 
@@ -381,6 +382,7 @@ export default function Admin() {
         )}
 
         <FinderInsights api={api} withRefresh={withRefresh} />
+        <ContentEditor api={api} withRefresh={withRefresh} />
         <TeamAccess api={api} withRefresh={withRefresh} currentEmail={user.email} />
       </main>
     </div>

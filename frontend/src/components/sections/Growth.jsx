@@ -1,13 +1,15 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Plus, ChevronDown } from "lucide-react";
-import { GROWTH } from "@/data/content";
+import { GROWTH as GROWTH_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
 import { scrollToId } from "@/lib/scroll";
 
 const INITIAL_COUNT = 9;
 
 export default function Growth() {
+  const GROWTH = useContent("growth", GROWTH_DEFAULT);
   const [showAll, setShowAll] = useState(false);
   const gridRef = useRef(null);
 
