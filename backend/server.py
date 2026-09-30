@@ -559,7 +559,7 @@ async def create_contact(payload: ContactCreate, request: Request, background_ta
     return contact
 
 
-FINDER_SITUATIONS = {"idea", "manual", "legacy", "ai", "ux", "sell", "slow", "care"}
+FINDER_SITUATIONS = {"idea", "manual", "legacy", "ai", "ux", "sell", "slow", "care", "bugs", "updates", "hosting", "accounts"}
 FINDER_PRIORITIES = {"speed", "cost", "reliability", "growth"}
 FINDER_SERVICES = {
     "product-development", "workflow-automation", "legacy-modernization", "ai-automation",

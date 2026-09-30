@@ -7,6 +7,12 @@ export const SITUATIONS = [
   { id: "sell", label: "I sell online — or want to start", service: "digital-commerce", why: "Storefront, catalog and checkout built around how your customers buy." },
   { id: "slow", label: "Our site or app is slow or ranks poorly", service: "performance-services", why: "Speed, Core Web Vitals and SEO fixes that show up in the numbers." },
   { id: "care", label: "I need someone to look after what we have", service: "managed-support", why: "Monitoring, maintenance and steady improvements — without hiring a team." },
+  // Maintenance
+  { id: "bugs", label: "Our website or app keeps breaking and needs fixing", service: "managed-support", why: "A maintenance retainer with fast bug fixes, monitoring and a named engineer who knows your stack — so issues get fixed before customers notice." },
+  { id: "updates", label: "We need regular updates, backups and security patches", service: "managed-support", why: "Scheduled updates, patching, backups and uptime monitoring handled for you, with a monthly health report so nothing silently rots." },
+  // Administration
+  { id: "hosting", label: "Domain, hosting or email administration", service: "managed-support", why: "We manage renewals, DNS, hosting, SSL and business email end to end — one accountable team instead of five vendor logins." },
+  { id: "accounts", label: "User accounts, access and vendor administration", service: "managed-support", why: "Onboarding/offboarding, access control, licences and vendor coordination handled as a service, with a clear audit trail." },
 ];
 
 export const PRIORITIES = [

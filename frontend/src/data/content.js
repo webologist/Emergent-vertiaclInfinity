@@ -6,6 +6,7 @@ export const NAV = {
     { label: "What we do", href: "#focus" },
     { label: "Who we are", href: "#journey" },
     { label: "Get in touch", href: "#contact" },
+    { label: "MiniApps", href: "https://miniapps.services", external: true },
   ],
 };
 

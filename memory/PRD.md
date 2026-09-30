@@ -182,3 +182,6 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
 
 ## 2026-09-29 — Live preview + image swapping
 - Content editor: side-by-side live preview iframe (unsaved drafts mirrored via postMessage; CmsContext merges preview over saved), toggle, per-group path. Images group: upload to Emergent object storage (POST /api/uploads/image admin → /api/files/{id} public), hero.image + client logos + footer badges swappable. EMERGENT_LLM_KEY added to backend/.env. X-Frame-Options now SAMEORIGIN. Tests: iteration_12.
+
+## 2026-09-30 — MiniApps nav + finder situations
+- NAV link "MiniApps" (external, new tab, ExternalLink icon; desktop + mobile). Finder: +4 situations (maintenance: bugs, updates; administration: hosting, accounts) → managed-support; backend FINDER_SITUATIONS updated. Self-tested.
