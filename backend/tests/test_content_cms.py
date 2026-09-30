@@ -1,5 +1,7 @@
 """CMS content overrides endpoint tests (iteration 11)."""
 import os
+from dotenv import dotenv_values
+_backend_env = dotenv_values("/app/backend/.env")
 import requests
 import pytest
 
@@ -11,8 +13,8 @@ if not BASE_URL:
         if line.startswith("REACT_APP_BACKEND_URL="):
             BASE_URL = line.split("=", 1)[1].strip().rstrip("/")
 
-ADMIN_EMAIL = "admin@verticalinfinity.in"
-ADMIN_PASSWORD = "VI-HKvfGW0kts!42"
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL") or _backend_env["ADMIN_EMAIL"]
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or _backend_env["ADMIN_PASSWORD"]
 
 TEST_KEY = "hero.sub"  # real key used by frontend but we clean up
 

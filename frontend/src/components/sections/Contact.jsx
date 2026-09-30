@@ -119,7 +119,6 @@ function ContactForm() {
       setForm({ name: "", email: "", company: "", message: "", topic: "General", website: "" });
       setTimeout(() => setStatus("idle"), 2500);
     } catch (err) {
-      if (process.env.NODE_ENV === "development") console.error(err);
       setStatus("idle");
       toast.error(
         err?.response?.status === 429

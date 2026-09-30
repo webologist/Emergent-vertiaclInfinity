@@ -312,7 +312,6 @@ function ServiceContactForm({ topics, slug }) {
       setForm({ name: "", email: "", company: "", message: "", topic: topics[0], website: "" });
       setTimeout(() => setStatus("idle"), 2500);
     } catch (err) {
-      if (process.env.NODE_ENV === "development") console.error(err);
       setStatus("idle");
       toast.error(
         err?.response?.status === 429

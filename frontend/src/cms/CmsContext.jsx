@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import DOMPurify from "dompurify";
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 const CmsContext = createContext({ overrides: {}, setOverride: () => {}, loaded: false });
@@ -12,9 +13,17 @@ export const SKIP_KEY_RE = /(^|\.)(slug|path|href|ctaHref|to|url|id|icon|accent|
 const HAS_TAG = /<[a-z][\s\S]*>/i;
 const stripTags = (s) => s.replace(/<[^>]+>/g, "");
 
+const PURIFY_OPTS = {
+  ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "u", "s", "a", "ul", "ol", "li", "span", "h1", "h2", "h3", "h4", "blockquote", "sub", "sup"],
+  ALLOWED_ATTR: ["href", "target", "rel", "class"],
+  ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
+};
+
+// Server already sanitises with nh3; DOMPurify here is defence in depth (client-only — SSR never renders overrides).
 export function Rich({ html, className = "" }) {
-  const m = html.match(/^\s*<p>([\s\S]*?)<\/p>\s*$/);
-  const inner = m && !m[1].includes("<p") ? m[1] : html;
+  const clean = typeof window === "undefined" ? "" : DOMPurify.sanitize(html, PURIFY_OPTS);
+  const m = clean.match(/^\s*<p>([\s\S]*?)<\/p>\s*$/);
+  const inner = m && !m[1].includes("<p") ? m[1] : clean;
   return <span className={`cms-rich ${className}`} dangerouslySetInnerHTML={{ __html: inner }} />;
 }
 

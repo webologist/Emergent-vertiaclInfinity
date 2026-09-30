@@ -15,7 +15,7 @@ load_dotenv(Path("/app/backend/.env"))
 BASE_URL = os.environ["REACT_APP_BACKEND_URL"].rstrip("/")
 ADMIN_EMAIL = os.environ["ADMIN_EMAIL"].strip('"')
 ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"].strip('"')
-OLD_PASSWORD = "VInfinity!2026"
+OLD_PASSWORD = "not-the-current-password"
 
 MONGO_URL = os.environ["MONGO_URL"].strip('"')
 DB_NAME = os.environ["DB_NAME"].strip('"')

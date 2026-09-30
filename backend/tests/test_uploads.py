@@ -1,5 +1,7 @@
 """Iteration 12 — Image upload endpoints (/api/uploads/image, /api/files/{id})."""
 import os
+from dotenv import dotenv_values
+_backend_env = dotenv_values("/app/backend/.env")
 import uuid
 import hashlib
 import requests
@@ -10,8 +12,8 @@ BASE_URL = os.environ.get("REACT_APP_BACKEND_URL") or (
 )
 BASE_URL = BASE_URL.rstrip("/")
 
-ADMIN_EMAIL = "admin@verticalinfinity.in"
-ADMIN_PASSWORD = "VI-HKvfGW0kts!42"
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL") or _backend_env["ADMIN_EMAIL"]
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or _backend_env["ADMIN_PASSWORD"]
 LOGO_PATH = "/app/frontend/public/vi-logo.png"
 
 

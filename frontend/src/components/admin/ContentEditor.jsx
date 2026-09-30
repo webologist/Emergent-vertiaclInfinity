@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { toast } from "sonner";
@@ -138,19 +138,19 @@ export function ContentEditor({ api, withRefresh }) {
   const group = CONTENT_GROUPS.find((g) => g.id === groupId);
   const previewPath = PREVIEW_PATH(group);
 
-  const postDrafts = (d) => iframeRef.current?.contentWindow?.postMessage({ type: "cms-preview", overrides: d }, window.location.origin);
-  const onDraft = (key, value) => setDrafts((prev) => {
+  const postDrafts = useCallback((d) => iframeRef.current?.contentWindow?.postMessage({ type: "cms-preview", overrides: d }, window.location.origin), []);
+  const onDraft = useCallback((key, value) => setDrafts((prev) => {
     const next = { ...prev, [key]: value };
     postDrafts(next);
     return next;
-  });
+  }), [postDrafts]);
   useEffect(() => {
     const onMsg = (e) => {
       if (e.origin === window.location.origin && e.data?.type === "cms-preview-ready") postDrafts(drafts);
     };
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
-  }, [drafts]);
+  }, [drafts, postDrafts]);
   const fields = useMemo(() => fieldsForGroup(group), [group]);
   const q = query.trim().toLowerCase();
   const visible = q ? fields.filter((f) => f.label.toLowerCase().includes(q) || f.defaultValue.toLowerCase().includes(q)) : fields;
