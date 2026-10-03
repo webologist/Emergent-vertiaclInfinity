@@ -1,8 +1,21 @@
-import { ArrowUpRight, ShieldCheck, Star } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { FOOTER } from "@/data/content";
+import { FOOTER as FOOTER_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { scrollToId } from "@/lib/scroll";
 import { Logo } from "@/components/Logo";
+
+const ROUTE_LINKS = {
+  "Product Development": "/product-development",
+  "Workflow Automation": "/workflow-automation",
+  "Legacy Modernization": "/legacy-modernization",
+  "AI & Automation": "/ai-automation",
+  "Experience Design": "/experience-design",
+  "Digital Commerce": "/digital-commerce",
+  "Performance Services": "/performance-services",
+  "Managed Support": "/managed-support",
+};
 
 const DEST = {
   "Our Focused Areas": "#focus",
@@ -18,7 +31,19 @@ const DEST = {
 };
 const destFor = (l) => DEST[l] || "#contact";
 
+const EXTERNAL_LINKS = {
+  "Domain, Hosting, Email": "https://zxis000.supersite2.myorderbox.com/",
+};
+
+const WIP_LINKS = new Set([
+  "Case Studies",
+  "Social Responsibility",
+  "Platform Modernization",
+  "Product Engineering",
+]);
+
 export default function Footer() {
+  const FOOTER = useContent("footer", FOOTER_DEFAULT);
   return (
     <footer className="relative border-t border-white/10 bg-ink pt-20" data-testid="footer">
       <div className="container-x">
@@ -63,13 +88,36 @@ export default function Footer() {
                 <ul className="mt-4 space-y-3">
                   {col.links.map((l) => (
                     <li key={l}>
-                      <button
-                        onClick={() => scrollToId(destFor(l))}
-                        className="text-left text-sm text-dim transition-colors duration-300 hover:text-crimson"
-                        data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
-                      >
-                        {l}
-                      </button>
+                      {ROUTE_LINKS[l] ? (
+                        <Link
+                          to={ROUTE_LINKS[l]}
+                          className="text-left text-sm text-dim transition-colors duration-300 hover:text-crimson"
+                          data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
+                        >
+                          {l}
+                        </Link>
+                      ) : EXTERNAL_LINKS[l] ? (
+                        <a
+                          href={EXTERNAL_LINKS[l]}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-left text-sm text-dim transition-colors duration-300 hover:text-crimson"
+                          data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
+                        >
+                          {l}
+                        </a>
+                      ) : (
+                        <button
+                          onClick={() => scrollToId(destFor(l))}
+                          className="text-left text-sm text-dim transition-colors duration-300 hover:text-crimson"
+                          data-testid={`footer-link-${l.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
+                        >
+                          {l}
+                          {WIP_LINKS.has(l) && (
+                            <sup className="ml-0.5 align-super text-[9px] font-bold uppercase tracking-wider text-crimson">WIP</sup>
+                          )}
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -79,16 +127,15 @@ export default function Footer() {
         </div>
 
         {/* Badges */}
-        <div className="mt-16 flex flex-wrap gap-3 border-t border-white/10 pt-8">
+        <div className="mt-16 flex flex-wrap items-center gap-5 border-t border-white/10 pt-8">
           {FOOTER.badges.map((b) => (
-            <span
-              key={b}
-              className="flex items-center gap-2 rounded-full border border-white/10 bg-surface px-4 py-2 text-xs text-dim"
-              data-testid={`badge-${b.split(" ")[0].toLowerCase()}`}
+            <div
+              key={b.name}
+              className="flex items-center justify-center rounded-lg bg-cwhite p-3"
+              data-testid={`badge-${b.name.split(" ")[0].toLowerCase().replace(/[^a-z0-9]/g, "")}`}
             >
-              <ShieldCheck size={13} className="text-crimson" />
-              {b}
-            </span>
+              <img src={b.logo} alt={b.name} className="h-auto w-full max-w-[220px] object-contain" loading="lazy" />
+            </div>
           ))}
         </div>
       </div>
@@ -105,7 +152,18 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container-x flex flex-col items-center justify-between gap-3 py-6 text-xs text-dim sm:flex-row">
           <span>{FOOTER.copyright}</span>
-          <button className="transition-colors duration-300 hover:text-white" data-testid="footer-legal-link" onClick={() => toast("Legal & Privacy — full policy pages coming soon.")}>Legal</button>
+          <div className="flex items-center gap-5" data-testid="footer-legal-links">
+            {FOOTER.legal.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="transition-colors duration-300 hover:text-crimson"
+                data-testid={`footer-legal-${l.to.slice(1)}`}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

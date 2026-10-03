@@ -1,0 +1,38 @@
+{
+  "summary": "Iteration 10: Verified light-theme text visibility bug fix on /product-development and /managed-support embedded contact forms, plus full security remediation (rotated admin password, spoof-proof rate-limit via rightmost XFF, global contact cap, ip|email login lockout, require_admin on all admin endpoints, security response headers). 14/14 backend pytest cases pass. Frontend Playwright verifies computed input color rgb(17,17,17) on white form bg in BOTH light and dark themes for both service pages, plus admin login with new password + Team access + Finder insights + sign out. No source modifications.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "tests_executed": [
+    "BE GET /api/ security headers: x-content-type-options=nosniff, x-frame-options=DENY, referrer-policy, strict-transport-security, permissions-policy all present",
+    "BE POST /api/auth/login new password (VI-HKvfGW0kts!42) -> 200 + access_token & refresh_token cookies",
+    "BE POST /api/auth/login OLD password (VInfinity!2026) -> 401",
+    "BE GET /api/auth/me, /api/contact, /api/finder/insights, /api/admin/access without auth -> 401 (all 4)",
+    "BE Same 4 endpoints with admin cookie -> 200 (all 4, require_admin passes)",
+    "BE Rate-limit spoof resistance: 6 POST /api/contact with X-Forwarded-For='1.2.3.<i>, 10.9.9.9' (different leftmost, same rightmost) -> [200,200,200,200,200,429]. contact_rate rows for 10.9.9.9 cleaned up post-test; created leads deleted via admin DELETE /api/contact/{id}",
+    "BE Login lockout on ip|email: 5 wrong passwords + 6th on admin email -> [401x5, 429]. login_attempts entries cleaned up",
+    "BE POST /api/auth/google/session {session_id:'bogus_iter10'} -> 401",
+    "FE /product-development LIGHT (no dark class, vi-theme cleared): input color rgb(17,17,17), form bg rgb(255,255,255), typed text visible; LIGHT screenshot saved",
+    "FE /product-development DARK (add class 'dark' on <html>): input color still rgb(17,17,17) on white form bg (form uses fixed cink/cwhite regardless of theme); DARK screenshot saved",
+    "FE /managed-support LIGHT and DARK: same behavior verified (rgb(17,17,17) on rgb(255,255,255)); screenshots saved",
+    "FE /admin login with new password -> admin-inbox-page renders, Team access panel present, Finder insights present, admin-lead-count='0 leads' (after rate-limit test cleanup)",
+    "FE admin-logout-btn -> returns to admin-login-page"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_security_iteration10.py",
+    "/app/test_reports/pytest/pytest_iter10.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py::client_ip returns request.client.host (which is the proxy IP inside k8s) as ultimate fallback when neither x-real-ip nor x-forwarded-for is set. In a preview environment the proxy always injects one of these, but if the app is ever deployed behind a proxy that strips both headers, all traffic collapses to the same source IP and per-IP rate limiting effectively becomes a global limiter. Acceptable defense-in-depth given the additional CONTACT_GLOBAL_LIMIT, but worth documenting the trust boundary.",
+    "server.py rate-limit uses count_documents with an in-memory 'window_start' filter alongside a Mongo TTL index on created_at (expireAfterSeconds=CONTACT_RATE_WINDOW_SEC). This is correct but slightly redundant; the TTL sweep runs every 60s so occasional counts can include documents up to ~60s past the window, marginally over-counting. Non-blocking.",
+    "server.py security_headers is registered as an app middleware AFTER app.include_router(api_router). FastAPI/Starlette registers middleware in reverse of the actual runtime chain, so this works today, but adding another middleware later in the file without matching CORS registration order could reorder in surprising ways. Consider grouping middleware registration in a single block near app creation.",
+    "ServicePage.jsx ServiceContactForm hard-codes text-cink/bg-cwhite (correct fix), but the Field wrapper label at line ~388 uses text-cink/50 — the browser computed value in our test came back as null for span discovery due to selector, but visually the labels are legible in both themes (confirmed by screenshots). No action needed."
+  ],
+  "updated_files": ["/app/backend/tests/test_security_iteration10.py"],
+  "success_rate": {"backend": "100% (14/14)", "frontend": "100% (all flows)"},
+  "test_credentials": "admin@verticalinfinity.in / VI-HKvfGW0kts!42 (rotated, from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Created 5 TEST_ contact leads during rate-limit test then DELETEd them via admin API. Cleared contact_rate rows for ip=10.9.9.9 and login_attempts rows for identifier=*|admin@verticalinfinity.in so subsequent tests are not blocked.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Rotated admin password is VI-HKvfGW0kts!42 (env-driven; do NOT hard-code). Rate-limit and lockout tests are self-cleaning: they delete their own contact_rate and login_attempts rows via pymongo using MONGO_URL/DB_NAME. If a rate-limit or lockout test is aborted mid-way, next run may need manual cleanup of the two collections. Preview proxy still rewrites Set-Cookie to SameSite=None; Partitioned as expected — not a code bug."
+}

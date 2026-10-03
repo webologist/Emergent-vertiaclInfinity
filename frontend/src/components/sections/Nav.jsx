@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { Search, Menu, X, ArrowUpRight, Sun, Moon } from "lucide-react";
-import { NAV } from "@/data/content";
+import { Search, Menu, X, ArrowUpRight, Sun, Moon, ExternalLink } from "lucide-react";
+import { NAV as NAV_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { scrollToId } from "@/lib/scroll";
 import { Logo } from "@/components/Logo";
 import { useTheme } from "@/lib/theme";
@@ -16,10 +18,15 @@ const NavMark = () => (
   </div>
 );
 
+const linkId = (l) => (l.external ? l.label.toLowerCase().replace(/\s+/g, "-") : l.href.slice(1));
+
 export default function Nav() {
+  const NAV = useContent("nav", NAV_DEFAULT);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { theme, toggle } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -28,9 +35,23 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const go = (href) => {
+  const go = (target) => {
     setOpen(false);
-    scrollToId(href);
+    const link = typeof target === "string" ? { href: target } : target;
+    if (link.external) {
+      window.open(link.href, "_blank", "noopener,noreferrer");
+      return;
+    }
+    const href = link.href;
+    const id = href.startsWith("#") ? href.slice(1) : href;
+    // Scroll within the current page if the target exists, else route home + hash.
+    if (document.getElementById(id)) {
+      scrollToId(href);
+    } else if (location.pathname !== "/") {
+      navigate(`/${href}`);
+    } else {
+      scrollToId(href);
+    }
   };
 
   return (
@@ -49,17 +70,22 @@ export default function Nav() {
             <NavMark />
           </button>
 
-          <div className="hidden items-center gap-9 md:flex">
+          <div className="hidden items-center gap-10 md:flex">
             {NAV.links.map((l) => (
-              <button
+              <motion.button
                 key={l.href}
-                onClick={() => go(l.href)}
-                data-testid={`nav-link-${l.href.slice(1)}`}
-                className="group relative text-sm text-dim transition-colors duration-300 hover:text-white"
+                onClick={() => go(l)}
+                data-testid={`nav-link-${linkId(l)}`}
+                title={l.external ? "Opens in a new tab" : undefined}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                className="group relative inline-flex items-center gap-1.5 text-base font-medium text-dim transition-colors duration-300 hover:text-white"
               >
                 {l.label}
-                <span className="absolute -bottom-1.5 left-0 h-px w-0 bg-crimson transition-all duration-300 group-hover:w-full" />
-              </button>
+                {l.external && <ExternalLink size={14} className="text-dim transition-colors group-hover:text-crimson" aria-label="opens in a new tab" data-testid={`nav-external-icon-${linkId(l)}`} />}
+                <span className="absolute -bottom-1.5 left-0 h-0.5 w-0 rounded-full bg-crimson transition-all duration-300 group-hover:w-full" />
+              </motion.button>
             ))}
           </div>
 
@@ -113,14 +139,15 @@ export default function Nav() {
               {NAV.links.map((l, i) => (
                 <motion.button
                   key={l.href}
-                  onClick={() => go(l.href)}
+                  onClick={() => go(l)}
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.08 * i }}
-                  className="text-left font-display text-4xl font-bold"
-                  data-testid={`mobile-link-${l.href.slice(1)}`}
+                  className="inline-flex items-center gap-3 text-left font-display text-4xl font-bold"
+                  data-testid={`mobile-link-${linkId(l)}`}
                 >
                   {l.label}
+                  {l.external && <ExternalLink size={22} className="text-crimson" aria-label="opens in a new tab" />}
                 </motion.button>
               ))}
             </div>

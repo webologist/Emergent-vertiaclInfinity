@@ -1,11 +1,15 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Workflow, Boxes, RefreshCcw, ArrowRight } from "lucide-react";
-import { FOCUS } from "@/data/content";
+import { FOCUS as FOCUS_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { Reveal, StaggerGroup, staggerItem } from "@/components/Reveal";
 
 const ICONS = { Workflow, Boxes, RefreshCcw };
 
 export default function FocusedAreas() {
+  const FOCUS = useContent("focus", FOCUS_DEFAULT);
+  const navigate = useNavigate();
   return (
     <section id="focus" className="relative border-t border-white/10 py-24 md:py-36" data-testid="focus-section">
       <div className="container-x">
@@ -26,7 +30,11 @@ export default function FocusedAreas() {
               <motion.article
                 key={s.no}
                 variants={staggerItem}
-                className="group relative flex flex-col justify-between bg-surface p-8 transition-colors duration-500 hover:bg-elevated md:p-10 md:min-h-[420px]"
+                onClick={s.href ? () => navigate(s.href) : undefined}
+                onKeyDown={s.href ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(s.href); } } : undefined}
+                role={s.href ? "link" : undefined}
+                tabIndex={s.href ? 0 : undefined}
+                className={`group relative flex flex-col justify-between bg-surface p-8 transition-colors duration-500 hover:bg-elevated md:p-10 md:min-h-[420px] ${s.href ? "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-crimson" : ""}`}
                 data-testid={`service-card-${s.no}`}
               >
                 <div className="absolute right-8 top-8 font-display text-sm text-dim/50 transition-colors duration-300 group-hover:text-crimson">
@@ -40,7 +48,7 @@ export default function FocusedAreas() {
                   <p className="mt-4 text-sm leading-relaxed text-dim">{s.body}</p>
                 </div>
                 <div className="mt-10 flex items-center gap-2 text-sm font-semibold text-white">
-                  <span className="text-dim transition-colors duration-300 group-hover:text-white">Learn more</span>
+                  <span className="text-dim transition-colors duration-300 group-hover:text-white">{s.href ? `Explore ${s.title}` : "Learn more"}</span>
                   <ArrowRight size={16} className="text-crimson transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
               </motion.article>

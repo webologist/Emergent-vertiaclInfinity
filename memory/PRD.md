@@ -100,3 +100,88 @@ black + white with rare crimson red. Later: LIGHT MODE BY DEFAULT with dark-mode
   Key is server-side only; recommend user restricts it to Places API (New) in Cloud Console.
 - P2: Real case-study content swap; real destination pages for footer links; functional site search.
 - P3: Real team photos/client logos, blog pages.
+
+## Changelog (2026-06 continued — fork)
+- Hero redesign: removed old bg image; added interactive "fish in water" particle field (CodePen alexsafayan
+  adaptation, theme-aware, reduced-motion safe) + glowing techno "8" mark on right (`/vi-8-hero.png`),
+  float+glow CSS. Headline size reduced, CTA stacked below sub, content constrained to left ~62% to avoid
+  overlap; fits 100svh at all resolutions. Brand logo replaced with `/vi-logo.png` (nav+footer+favicon).
+- SME section: pills are clickable — bubble with random Hinglish phrase, pop sound (Web Audio), auto-dismiss,
+  tappable-to-contact. EXCEPTION: "Project Development" pill routes to /product-development.
+  Shooting stars now travel bottom→top.
+- Growth section: shows 9 logos first + crimson "View all brands" toggle (no count), "Show less" smooth-scrolls
+  to grid top, logo hover tooltips (client name).
+- Footer: WIP red superscript on 9 service labels; "Domain, Hosting, Email" → https://services.zxis.com (ext);
+  Sitemap removed; added "Product Development" internal route link.
+- Floating scroll-to-top button (bottom-right, appears >600px, works with/without Lenis).
+- NEW PAGE /product-development (2026-06): SEO/AIO optimized inner page. React 19 head hoisting for
+  <title>/meta/canonical/OG + 3 JSON-LD blocks (Service, BreadcrumbList, FAQPage). Sections: hero+breadcrumb,
+  value props, animated Discover→Design→Build→Launch→Scale SVG process flow (`components/diagrams/PDDiagrams.jsx`),
+  budget-ladder diagram, outcomes, FAQ (<details>), embedded contact form (posts to /api/contact, topics
+  New Project/MVP/Custom App/Not sure). Multiple CTAs → #contact / #process. Linked from: Focus "Product
+  Development" card, SME "Project Development" pill, Footer. Nav updated (useNavigate/useLocation) to route
+  home+hash from inner pages; Home scrolls to hash on arrival. All entry points + form self-tested (screenshots).
+- MORE SERVICE PAGES (2026-06): refactored into reusable data-driven `pages/ServicePage.jsx` + shared diagrams
+  (`components/diagrams/PDDiagrams.jsx`: ProcessFlow(steps), LadderDiagram, BudgetLadder, BeforeAfter).
+  Live routes: /product-development, /workflow-automation, /legacy-modernization, /ai-automation,
+  /experience-design, /digital-commerce, /performance-services, /managed-support. Each: full SEO
+  (title/meta/canonical/OG via React 19 head hoist) + 3 JSON-LD (Service, BreadcrumbList, FAQPage), hero+
+  breadcrumb, values, animated process flow, highlight diagram, outcomes, FAQ, embedded contact form
+  (POST /api/contact). Linked from Focus cards (01/02/03) + Footer Services/More columns (react-router Link
+  via ROUTE_LINKS). Footer WIP superscript now only on Case Studies + Social Responsibility. Bottom "Legal"
+  link removed. All 8 pages self-tested (render + JSON-LD + footer links + Legal removed).
+
+## 2026-06 — Contact update
+- WhatsApp number changed to +91 8691948779 in `frontend/src/data/content.js` (renders in Get in touch section). Verified in preview; redeploy required for production.
+
+## 2026-09-25 — Vercel compatibility (additive) + SEO/AIO
+- Vercel: `/app/api/index.py` ASGI entry, root `/app/requirements.txt`, `/app/vercel.json` (rewrites /api → function, SPA fallback, maxDuration 30). server.py: SMTP lead alert path when `SMTP_HOST` set (aiosmtplib STARTTLS), awaited with 15s timeout when `VERCEL` env set; `ensure_startup()` idempotent seed called at startup + login. Frontend REACT_APP_BACKEND_URL falls back to "". Tested: iteration_6 (49/50, CORS intentional).
+- GA4 ID switched to G-9S5PLRJSEV (index.html; SPA page_view tracker unchanged).
+- SEO/AIO: static robots/OG/Twitter meta + Organization/ProfessionalService/WebSite JSON-LD in index.html; homepage canonical via React; robots.txt (AI crawlers allowed, /admin & /api disallowed, sitemap ref); llms.txt; sitemap lastmod; og:image + twitter tags on service pages; noindex on /admin. Verified via DOM inspection.
+- Not done (needs user): Google Search Console verification token, prerendering/SSR for non-JS crawlers.
+
+## 2026-09-25 — Prerender + anti-spam + WhatsApp CTA
+- Build-time prerender (SSG): `frontend/scripts/prerender.mjs` (postbuild, esbuild + react-dom/server + StaticRouter) writes static HTML for / and 8 service pages into build/ (per-route title/meta/canonical/JSON-LD). Fail-safe: any error keeps plain SPA build. `index.js` hydrates when #root has content. App.js exports router-less `AppInner`; page configs exported. Verified: raw HTML has full content, hydration clean, no console errors, no duplicate JSON-LD.
+- Anti-spam: honeypot `website` field (both forms, silently dropped) + per-IP rate limit 5/10min via Mongo `contact_rate` TTL collection (429 → friendly toast).
+- WhatsApp click-to-chat (wa.me + pre-filled greeting, new tab) and mailto link in Get in touch.
+- Search Console: no token provided — verify via the Google Analytics method (GA4 tag already installed).
+- Tests: iteration_7 all pass.
+
+## 2026-09-25 — Google reviews section + legal pages
+- `GoogleReviews` section (live 4.9★/count badge via /api/reviews, Read/Write review links; optional curated review cards from `GOOGLE_REVIEWS` in content.js — currently EMPTY because Places API returns no review bodies; user must paste real reviews) on homepage + all 8 service pages. Old card removed from Growth.
+- Legal pages `/privacy-policy`, `/terms-of-service` (data in `data/legal.js`, renderer `pages/LegalPage.jsx`), footer bottom-bar links, sitemap/llms/prerender updated. Template text — not legal advice.
+- Tests: iteration_8 all pass.
+
+## 2026-09-25 — Related services
+- `RelatedServices` section (3 curated cross-links per service, `data/services.js` SERVICE_INDEX + RELATED_SERVICES) inserted after FAQ on all 8 service pages. Self-tested (desktop/mobile, navigation, no errors).
+
+## 2026-09-25 — Service finder + deploy check
+- `ServiceFinder` ("Which service do I need?") 2-step helper on homepage after What We Do (data in `data/serviceHelper.js`, GA event `service_finder_result`). Self-tested desktop/mobile.
+- Deployment check: fixed BLOCKER (.gitignore was excluding .env files) → PASS.
+
+## 2026-09-25 — Finder insights
+- POST /api/finder (public, enum-validated, stores hashed IP) → `finder_events`; GET /api/finder/insights?days= (admin) → totals, by_service/by_situation/by_priority, recent 20. Admin inbox shows `FinderInsights` panel (7/30/90d). Self-tested via curl + browser e2e.
+
+## 2026-09-25 — Code review fixes
+- Tests load admin creds from env/backend/.env; place_id initialised; ServicePage JSON-LD memoised with proper deps; content-based list keys; dev-only console logging; Contact split into ContactDetails/ContactForm. Skipped (false positives/intentional): mount-only effect deps (Lenis, FishParticles, Admin), `is None` comparisons, cookie-name strings flagged as secrets, test-suite complexity.
+
+## 2026-09-25 — Google sign-in (admin)
+- Emergent-managed Google Auth on /admin alongside password login. POST /api/auth/google/session exchanges session_id server-side, enforces allowlist (ADMIN_GOOGLE_EMAILS env + ADMIN_EMAIL → 403 otherwise), issues the same JWT httpOnly cookies. Callback detected via useLocation().hash; errors shown on login card. Tests: iteration_9 all pass (17/17). Real Google login must be confirmed manually by the user.
+
+## 2026-09-25 — Team access list
+- Admin-protected GET/POST/DELETE /api/admin/access backed by `allowed_admins` (unique email index). Google allowlist = env (ADMIN_GOOGLE_EMAILS + ADMIN_EMAIL, shown as Locked) ∪ DB list. `TeamAccess` panel in admin inbox. Self-tested via curl + browser e2e.
+
+## 2026-09-26 — Security audit #2 remediation + form text bug
+- BUG FIX: service-page contact form text invisible in light theme (theme-dependent `ink` on fixed white card) → fixed `cink` colour (tailwind) used in ServiceContactForm.
+- client_ip trusts X-Real-IP / rightmost XFF; global contact cap 60/10min; cookies SameSite=Lax; login lockout keyed ip|email; `require_admin` dependency on all admin endpoints; security headers middleware (+ vercel.json headers); JWT_SECRET and ADMIN_PASSWORD rotated (see test_credentials.md). Tests updated to read creds from env.
+
+## 2026-09-29 — Admin CMS (WYSIWYG) + small tweaks
+- CMS: `content_overrides` Mongo collection; GET /api/content (public), PUT/DELETE /api/content/{key} (admin, nh3-sanitised). Frontend `cms/CmsContext.jsx` (ContentProvider, useContent deep-override, Rich renderer; PLAIN_KEY_RE keeps labels/CTAs/SEO plain, SKIP_KEY_RE hides hrefs/ids), `cms/registry.js` (groups: home, footer, 8 services, legal), `components/admin/ContentEditor.jsx` (react-quill-new, lazy-loaded to keep prerender working). All sections/pages wired via useContent. Tests: iteration_11 pass (Mini Apps URL typo fixed after).
+- Hero image +5% right; Mini Apps pill → https://miniapps.services (new tab; domain not live yet).
+- Telegram lead alerts: user said "later".
+
+## 2026-09-29 — Live preview + image swapping
+- Content editor: side-by-side live preview iframe (unsaved drafts mirrored via postMessage; CmsContext merges preview over saved), toggle, per-group path. Images group: upload to Emergent object storage (POST /api/uploads/image admin → /api/files/{id} public), hero.image + client logos + footer badges swappable. EMERGENT_LLM_KEY added to backend/.env. X-Frame-Options now SAMEORIGIN. Tests: iteration_12.
+
+## 2026-09-30 — MiniApps nav + finder situations
+- NAV link "MiniApps" (external, new tab, ExternalLink icon; desktop + mobile). Finder: +4 situations (maintenance: bugs, updates; administration: hosting, accounts) → managed-support; backend FINDER_SITUATIONS updated. Self-tested.
