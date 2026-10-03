@@ -3,6 +3,7 @@ import "@/App.css";
 import Lenis from "lenis";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/react";
 import Nav from "@/components/sections/Nav";
 import Hero from "@/components/sections/Hero";
 import FocusedAreas from "@/components/sections/FocusedAreas";
@@ -124,6 +125,7 @@ export function AppInner() {
           <Route path="*" element={<Home />} />
         </Routes>
         <ThemedToaster />
+        <Analytics />
       </div>
       </ContentProvider>
     </ThemeProvider>
