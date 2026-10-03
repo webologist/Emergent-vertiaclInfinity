@@ -82,6 +82,7 @@ export default function ServicePage({ config }) {
     <>
       <title>{cfg.title}</title>
       <meta name="description" content={cfg.metaDescription} />
+      {cfg.metaKeywords ? <meta name="keywords" content={cfg.metaKeywords} /> : null}
       <link rel="canonical" href={canonical} />
       <meta property="og:type" content="website" />
       <meta property="og:title" content={cfg.ogTitle} />

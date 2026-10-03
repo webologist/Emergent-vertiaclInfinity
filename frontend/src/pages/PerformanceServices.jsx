@@ -9,16 +9,17 @@ export const config = {
   slug: "performance-services",
   path: "/performance-services",
   breadcrumb: "Performance Services",
-  title: "Website & App Performance Services | Vertical Infinity — Make It Fast",
+  title: "Core Web Vitals Optimization Services | Vertical Infinity",
   metaDescription:
-    "Vertical Infinity makes slow websites and apps fast — better speed, Core Web Vitals and reliability that lift conversions and rankings. Built to your budget since 2003.",
+    "Core Web Vitals optimization services and website speed optimization that make slow websites and apps fast — lifting conversions and rankings.",
   ogTitle: "Performance Services | Vertical Infinity",
   ogDescription: "Slow costs you sales and rankings. We diagnose and fix performance so your site is fast, stable and profitable.",
   jsonLdServiceType: "Website & Application Performance Optimization",
+  metaKeywords: "Core Web Vitals optimization services, website speed optimization",
   hero: {
     overline: "What we build",
     titleParts: [
-      { text: "Performance tuning that " },
+      { text: "Website speed optimization that " },
       { text: "wins back lost sales", accent: true },
       { text: "." },
     ],

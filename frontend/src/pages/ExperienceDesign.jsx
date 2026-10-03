@@ -9,16 +9,17 @@ export const config = {
   slug: "experience-design",
   path: "/experience-design",
   breadcrumb: "Experience Design",
-  title: "Experience Design (UX/UI) Services | Vertical Infinity — Design People Love",
+  title: "UI UX Design Agency in Mumbai | Vertical Infinity",
   metaDescription:
-    "Vertical Infinity designs clean, intuitive experiences that turn visitors into customers — research-led UX and beautiful UI, built to your budget. Since 2003.",
+    "UI UX design agency in Mumbai — research-led UX and clean, intuitive UI that turn visitors into customers. Built to your budget since 2003.",
   ogTitle: "Experience Design (UX/UI) Services | Vertical Infinity",
   ogDescription: "Research-led UX and beautiful, accessible UI that makes your product a joy to use — and easy to buy from.",
   jsonLdServiceType: "Experience Design (UX/UI)",
+  metaKeywords: "UI UX design agency Mumbai, experience design",
   hero: {
     overline: "What we build",
     titleParts: [
-      { text: "Experience design that " },
+      { text: "UI/UX design that " },
       { text: "people actually enjoy", accent: true },
       { text: "." },
     ],

@@ -9,16 +9,17 @@ export const config = {
   slug: "workflow-automation",
   path: "/workflow-automation",
   breadcrumb: "Workflow Automation",
-  title: "Workflow Automation Services | Vertical Infinity — Cut Busywork, Move Faster",
+  title: "Business Workflow Automation Services | Vertical Infinity",
   metaDescription:
-    "Vertical Infinity automates the repetitive work slowing your team down — connecting your tools into reliable, error-free workflows. Clear process, full ownership, built to your budget since 2003.",
+    "Business workflow automation services that cut repetitive work — we connect your tools into reliable, error-free workflows. Full ownership, since 2003.",
   ogTitle: "Workflow Automation Services | Vertical Infinity",
   ogDescription: "Stop doing by hand what software can do for you. Reliable, custom automation that saves hours every week.",
   jsonLdServiceType: "Workflow Automation",
+  metaKeywords: "workflow automation, business workflow automation services",
   hero: {
     overline: "What we build",
     titleParts: [
-      { text: "Workflow automation that " },
+      { text: "Business workflow automation that " },
       { text: "gives you back your time", accent: true },
       { text: "." },
     ],

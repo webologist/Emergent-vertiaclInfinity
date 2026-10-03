@@ -6,7 +6,7 @@ const CmsContext = createContext({ overrides: {}, setOverride: () => {}, loaded:
 
 // Keys that must stay plain text (used in hrefs, comparisons, test ids, meta tags).
 export const PLAIN_KEY_RE =
-  /(^nav\.|^service\.[^.]+\.(title|metaDescription|ogTitle|ogDescription|breadcrumb|jsonLdServiceType)$|^legal\.[^.]+\.(title|metaDescription|updated)$|\.(label|overline|tags|topics|name|whatsapp|email|address|copyright|accentWord|lines|primaryCta|secondaryCta|cta|ctaLabel|kicker|badge|q|links|heading|value|no|author|stat|image|logo|src)(\.\d+)?$)/;
+  /(^nav\.|^service\.[^.]+\.(title|metaDescription|metaKeywords|ogTitle|ogDescription|breadcrumb|jsonLdServiceType)$|^legal\.[^.]+\.(title|metaDescription|updated)$|\.(label|overline|tags|topics|name|whatsapp|email|address|copyright|accentWord|lines|primaryCta|secondaryCta|cta|ctaLabel|kicker|badge|q|links|heading|value|no|author|stat|image|logo|src)(\.\d+)?$)/;
 // Keys never exposed for editing.
 export const SKIP_KEY_RE = /(^|\.)(slug|path|href|ctaHref|to|url|id|icon|accent|service|priority|mapQuery|picture|testid|external)(\.\d+)?$/;
 

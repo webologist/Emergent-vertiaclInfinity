@@ -9,16 +9,17 @@ export const config = {
   slug: "managed-support",
   path: "/managed-support",
   breadcrumb: "Managed Support",
-  title: "Managed Support & Maintenance | Vertical Infinity — We Keep It Running",
+  title: "Website Maintenance Services India (AMC) | Vertical Infinity",
   metaDescription:
-    "Vertical Infinity keeps your website and apps secure, updated and running smoothly — proactive monitoring, fast fixes and continuous improvement. Built to your budget since 2003.",
+    "Website maintenance services in India — a website AMC with proactive monitoring, security updates and fast fixes that keep your site and apps running.",
   ogTitle: "Managed Support & Maintenance | Vertical Infinity",
   ogDescription: "Stop firefighting. Proactive support that keeps your platform secure, fast and always online.",
   jsonLdServiceType: "Managed Support & Maintenance",
+  metaKeywords: "website maintenance services India, website AMC",
   hero: {
     overline: "What we build",
     titleParts: [
-      { text: "Managed support that " },
+      { text: "Website maintenance & support that " },
       { text: "lets you stop worrying", accent: true },
       { text: "." },
     ],

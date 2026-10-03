@@ -16,16 +16,17 @@ export const config = {
   slug: "legacy-modernization",
   path: "/legacy-modernization",
   breadcrumb: "Legacy Modernization",
-  title: "Legacy Modernization Services | Vertical Infinity — Update Safely, Without Downtime",
+  title: "Legacy Application Modernization Services | Vertical Infinity",
   metaDescription:
-    "Vertical Infinity modernizes outdated software safely — pinpointing risks, patching what's urgent and rebuilding step-by-step without breaking daily operations. Transparent, budget-aware, since 2003.",
+    "Legacy application modernization services — we pinpoint risks, patch what's urgent and rebuild step-by-step without downtime. Budget-aware, since 2003.",
   ogTitle: "Legacy Modernization Services | Vertical Infinity",
   ogDescription: "Outdated software slowing you down? We modernize it safely, one careful step at a time — no downtime, no drama.",
   jsonLdServiceType: "Legacy Software Modernization",
+  metaKeywords: "legacy modernization, legacy application modernization services",
   hero: {
     overline: "What we build",
     titleParts: [
-      { text: "Modernize your legacy software — " },
+      { text: "Legacy application modernization — " },
       { text: "safely, without the downtime", accent: true },
       { text: "." },
     ],

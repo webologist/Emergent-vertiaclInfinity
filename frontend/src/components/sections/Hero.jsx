@@ -87,6 +87,17 @@ export default function Hero() {
 
         {/* Sub + CTA */}
         <div className="mt-8 flex flex-col items-start gap-6 lg:max-w-[62%]">
+          {HERO.descriptor ? (
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.9 }}
+              className="-mb-3 max-w-md font-display text-lg font-semibold tracking-tight text-white md:text-xl"
+              data-testid="hero-descriptor"
+            >
+              {HERO.descriptor}
+            </motion.p>
+          ) : null}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

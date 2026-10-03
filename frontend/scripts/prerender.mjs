@@ -13,6 +13,7 @@ const outFile = join(root, "node_modules", ".cache", "prerender", "entry.cjs");
 const HEAD_KEYS = [
   [/<title>[\s\S]*?<\/title>/g, () => true],
   [/<meta\s+name="description"[^>]*>/g, () => true],
+  [/<meta\s+name="keywords"[^>]*>/g, () => true],
   [/<link\s+rel="canonical"[^>]*>/g, () => true],
   [/<meta\s+property="og:(title|description|url|type|image)"[^>]*>/g, () => true],
   [/<meta\s+name="twitter:(title|description|card)"[^>]*>/g, () => true],

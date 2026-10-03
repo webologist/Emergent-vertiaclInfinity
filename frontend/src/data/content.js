@@ -15,6 +15,7 @@ export const HERO = {
   overline: "AI-Enabled Digital Agency",
   lines: ["AI-Enabled Digital", "Partner. That Moves", "Businesses Forward."],
   accentWord: "Businesses Forward.",
+  descriptor: "AI automation agency and custom software development company in Mumbai.",
   sub: "We help SaaS, Education, Media & Publishing, and eCommerce organizations build high-performing digital platforms, connect complex systems, and scale with confidence.",
   cta: "Let's Chat Over Coffee",
   ctaHref: "#contact",

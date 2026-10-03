@@ -15,16 +15,17 @@ export const config = {
   slug: "digital-commerce",
   path: "/digital-commerce",
   breadcrumb: "Digital Commerce",
-  title: "Digital Commerce Services | Vertical Infinity — Stores That Sell",
+  title: "Ecommerce Website Development Company Mumbai | Vertical Infinity",
   metaDescription:
-    "Vertical Infinity builds fast, reliable online stores that convert — from launch to scale, with secure payments and full ownership. Built to your budget since 2003.",
+    "Ecommerce website development company in Mumbai building fast, reliable online stores that convert — secure payments, full ownership, launch to scale.",
   ogTitle: "Digital Commerce Services | Vertical Infinity",
   ogDescription: "Fast, reliable, high-converting online stores — from your first sale to high-volume scale.",
   jsonLdServiceType: "Digital Commerce & eCommerce Development",
+  metaKeywords: "ecommerce website development company Mumbai, digital commerce",
   hero: {
     overline: "What we build",
     titleParts: [
-      { text: "Online stores that " },
+      { text: "Ecommerce website development for stores that " },
       { text: "actually sell", accent: true },
       { text: "." },
     ],

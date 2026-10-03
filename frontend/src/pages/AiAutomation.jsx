@@ -15,16 +15,17 @@ export const config = {
   slug: "ai-automation",
   path: "/ai-automation",
   breadcrumb: "AI & Automation",
-  title: "AI & Automation Services | Vertical Infinity — Put AI to Work, Sensibly",
+  title: "AI Agents for Business & Chatbot Development | Vertical Infinity",
   metaDescription:
-    "Vertical Infinity brings practical AI into your business — assistants, smart automation and predictions that save time and cut costs. Clear process, full ownership, built to your budget since 2003.",
+    "AI agents for business from an AI chatbot development company in India — assistants, smart automation and predictions that save time and cut costs.",
   ogTitle: "AI & Automation Services | Vertical Infinity",
   ogDescription: "Practical, safe AI that actually helps — from smart assistants to automated workflows and predictions.",
   jsonLdServiceType: "AI & Automation",
+  metaKeywords: "AI automation agency in Mumbai, AI agents for business, AI chatbot development company India",
   hero: {
     overline: "What we build",
     titleParts: [
-      { text: "AI that does real work — " },
+      { text: "AI agents & automation for business that do real work — " },
       { text: "not just hype", accent: true },
       { text: "." },
     ],

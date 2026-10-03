@@ -9,16 +9,17 @@ export const config = {
   slug: "product-development",
   path: "/product-development",
   breadcrumb: "Product Development",
-  title: "Product Development Services | Vertical Infinity — Idea to Launch, On Your Budget",
+  title: "SaaS Product Development Company India | Vertical Infinity",
   metaDescription:
-    "Vertical Infinity builds your product end-to-end — a clear five-stage journey from Discover to Scale, full code ownership, and products built to your budget. Building since 2003.",
+    "Custom software development company in Mumbai building SaaS, web and mobile products end-to-end — Discover to Scale, full code ownership, built to your budget.",
   ogTitle: "Product Development Services | Vertical Infinity",
   ogDescription: "Idea to launch and beyond. A transparent, budget-aware product development journey with full IP ownership.",
   jsonLdServiceType: "Product Development",
+  metaKeywords: "product development, custom software development company Mumbai, SaaS product development company India",
   hero: {
     overline: "What we build",
     titleParts: [
-      { text: "Product development, " },
+      { text: "Custom software & SaaS product development, " },
       { text: "made simple", accent: true },
       { text: " — from idea to launch and beyond." },
     ],
