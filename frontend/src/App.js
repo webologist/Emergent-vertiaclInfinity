@@ -27,6 +27,7 @@ import { PRIVACY_POLICY, TERMS_OF_SERVICE } from "@/data/legal";
 import { ContentProvider } from "@/cms/CmsContext";
 import { ThemeProvider, useTheme } from "@/lib/theme";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 
 function Home() {
   useEffect(() => {
@@ -123,6 +124,7 @@ export function AppInner() {
           <Route path="/terms-of-service" element={<LegalPage page={TERMS_OF_SERVICE} />} />
           <Route path="*" element={<Home />} />
         </Routes>
+        <WhatsAppFloat />
         <ThemedToaster />
       </div>
       </ContentProvider>

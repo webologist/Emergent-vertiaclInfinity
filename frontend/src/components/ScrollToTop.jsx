@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 
 // Floating scroll-to-top button, appears after the user scrolls down.
+// Sits one slot above the WhatsApp button (see WhatsAppFloat.jsx), which owns the corner.
 export function ScrollToTop() {
   const [visible, setVisible] = useState(false);
 
@@ -28,7 +29,7 @@ export function ScrollToTop() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.6, y: 20 }}
           transition={{ type: "spring", stiffness: 420, damping: 24 }}
-          className="group fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-crimson text-cwhite shadow-lg shadow-crimson/30 transition-colors duration-300 hover:bg-white hover:text-ink md:bottom-8 md:right-8"
+          className="group fixed bottom-[5.25rem] right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-crimson text-cwhite shadow-lg shadow-crimson/30 transition-colors duration-300 hover:bg-white hover:text-ink md:bottom-[5.75rem] md:right-8"
           aria-label="Scroll back to top"
           data-testid="scroll-to-top-btn"
         >
