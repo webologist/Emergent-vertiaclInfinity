@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { FOOTER as FOOTER_DEFAULT } from "@/data/content";
 import { useContent } from "@/cms/CmsContext";
 import { scrollToId } from "@/lib/scroll";
-import { Logo } from "@/components/Logo";
+import { LogoWordmark } from "@/components/Logo";
 
 const ROUTE_LINKS = {
   "Product Development": "/product-development",
@@ -50,10 +50,7 @@ export default function Footer() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2.6fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <Logo size={30} />
-              <span className="font-display text-lg font-bold tracking-tight">
-                Vertical<span className="text-crimson">.</span>Infinity
-              </span>
+              <LogoWordmark className="h-[30px]" />
             </div>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-dim">
               AI-enabled digital agency that moves businesses forward. Building high-performing platforms since 2003.

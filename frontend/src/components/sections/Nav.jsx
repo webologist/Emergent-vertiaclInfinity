@@ -6,15 +6,12 @@ import { Search, Menu, X, ArrowUpRight, Sun, Moon, ExternalLink } from "lucide-r
 import { NAV as NAV_DEFAULT } from "@/data/content";
 import { useContent } from "@/cms/CmsContext";
 import { scrollToId } from "@/lib/scroll";
-import { Logo } from "@/components/Logo";
+import { LogoWordmark } from "@/components/Logo";
 import { useTheme } from "@/lib/theme";
 
 const NavMark = () => (
   <div className="flex items-center gap-2.5" data-testid="nav-brand">
-    <Logo size={30} />
-    <span className="font-display text-[15px] font-bold tracking-tight leading-none">
-      Vertical<span className="text-crimson">.</span>Infinity
-    </span>
+    <LogoWordmark className="h-[22px] md:h-[26px]" />
   </div>
 );
 
