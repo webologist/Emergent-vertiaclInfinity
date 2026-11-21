@@ -25,6 +25,7 @@ module.exports = {
         white: 'rgb(var(--c-fg) / <alpha-value>)',
         black: 'rgb(var(--c-bgstrong) / <alpha-value>)',
         cwhite: '#FFFFFF',
+        cink: '#111111',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

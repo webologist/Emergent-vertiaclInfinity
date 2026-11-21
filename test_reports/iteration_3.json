@@ -1,0 +1,28 @@
+{
+  "summary": "Verified the /api/reviews 502->fallback fix and CORS_ORIGINS='*' change did not break anything. Code review confirmed except clause is now `except (httpx.HTTPError, HTTPException):` in server.py line 288. Ran 8 backend pytest cases (reviews stability, CORS preflight/headers, auth login/me/contact, invalid login, health root) - all 8 passed. Critically, live backend logs during testing showed Google Places API actually rate-limiting (HTTP 429) the app repeatedly (real-world condition the bug was about), and every /api/reviews call during that 429 storm still returned 200 with fallback data - directly confirming the fix works under the exact failure condition it targets. Also ran 20 sequential direct requests to /api/reviews - 20/20 returned 200. Verified admin auth: bcrypt hash starts with $2b$, unique index on users.email exists, login sets access_token+refresh_token cookies, /me and /api/contact work post-login, /api/contact returns 401 without auth. Verified CORS: server.py already guards against the invalid wildcard+credentials combo via `allow_credentials='*' not in cors_origins` (auto-disables credentials when CORS_ORIGINS='*'), confirmed live: Access-Control-Allow-Origin=*, Access-Control-Allow-Credentials header absent - no CORS violation. Frontend homepage smoke-tested via screenshot - hero headline 'AI-Enabled Digital Partner. That Moves Businesses Forward.' renders correctly, no console/page errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/reviews", "issue": "Historical/leftover log entries (from before this fix's restart) in /var/log/supervisor/backend.out.log showed a block of 502s from a prior session - confirmed via log analysis this predates the fix and is not a live issue. Current live behavior is 100% 200 (20/20 direct calls + pytest run captured mid a real 429 storm from Google Places API, all still 200)."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_reviews_and_auth.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Fix is correct and minimal: `except (httpx.HTTPError, HTTPException):` now catches both httpx-level errors and the internally-raised FastAPI HTTPException(502) from resolve_place_id()/get_reviews(), returning FALLBACK_REVIEWS gracefully.",
+    "CORS_ORIGINS='*' is safe here because server.py already sets allow_credentials=False when '*' is present in cors_origins (line 435), avoiding the invalid CORS spec combo (wildcard origin + credentials=true) that a prior iteration_2.json report flagged as CRITICAL for a different CORS misconfiguration state. This appears to already be resolved/guarded in current code - not an issue in this session."
+  ],
+  "updated_files": ["/app/backend/tests/test_reviews_and_auth.py"],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "admin@verticalinfinity.in / VInfinity!2026 (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "The 502->fallback fix for GET /api/reviews is verified working correctly, including under a real live 429 rate-limit burst from Google Places API observed in backend logs during this test run. CORS_ORIGINS='*' change verified not breaking anything - server.py's `allow_credentials='*' not in cors_origins` guard prevents the invalid wildcard+credentials CORS combo. Admin auth flow (login/me/contact) fully working per auth_testing.md playbook: bcrypt $2b$ hash confirmed, unique email index confirmed. No regressions found on homepage smoke test. Note: iteration_2.json (prior unrelated session) flagged brute-force lockout not triggering (IP-based counter split across ingress proxy IPs) as CRITICAL - this was NOT in scope for the current review request and was not retested in this session; flagging for awareness only, not a regression from current fix.",
+  "rca_of_the_issue": "N/A - this was a fix verification, not a new bug investigation. Original RCA (from problem statement) was accurate: HTTPException is not a subclass of httpx.HTTPError, so the except block previously missed it; fix adds HTTPException to the tuple of caught exception types. Verified correct via code inspection and live testing under actual rate-limit conditions."
+}

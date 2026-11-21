@@ -1,0 +1,35 @@
+{
+  "summary": "Full backend + frontend regression on new anti-spam (honeypot + rate limit) and WhatsApp/Email click-to-chat + SEO changes. Backend: 10/10 pytest passed (tests/test_contact_antispam.py) — POST /api/contact valid persists; POST with website=<url> returns 200 but is NOT stored; 5 posts with X-Forwarded-For:198.51.100.77 all 200 and 6th returns 429 with 'Too many messages...' detail; different XFF still 200; login, /auth/me, PATCH status, GET /api/reviews, GET /api/ all healthy; /robots.txt, /llms.txt, /sitemap.xml all 200 with expected content. Rate limit correctly keys on first XFF IP (ingress does NOT override). Frontend on preview: homepage has exactly 1 canonical=https://verticalinfinity.in/, exactly 1 ld+json, GA script src contains G-9S5PLRJSEV; WhatsApp link href starts with https://wa.me/918691948779?text= and target=_blank; Email mailto:hello@verticalinfinity.in; honeypot input off-screen (left=-9999, w=0, h=0) and empty; homepage form submit reached 'Sent!'. /product-development canonical + 4 ld+json (org+Service+Breadcrumb+FAQ), embedded form submit reached 'Sent!'; nav back to Home returns to exactly 1 ld+json (adopt/cleanup effect correct). /admin login with admin creds succeeds, 4 leads rendered.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Admin.jsx robots meta injection", "issue": "Admin appends a new <meta name=robots content='noindex, nofollow'> but does NOT remove/replace the pre-existing <meta name=robots content='index, follow, ...'> that ships in public/index.html. Result: /admin ends up with TWO conflicting robots metas. Most crawlers pick the more restrictive one so functionally OK, but is a real SEO hygiene bug. Fix: in Admin.jsx useEffect, either querySelector('meta[name=robots]') and update its content (restore on cleanup), or remove the head-level default before appending the noindex one.", "selector": "meta[name='robots']", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_contact_antispam.py",
+    "/app/test_reports/pytest/pytest_antispam.xml"
+  ],
+  "action_items": [
+    "OPTIONAL LOW: In /app/frontend/src/pages/Admin.jsx useEffect (line ~187), replace the existing meta[name=robots] instead of appending a second one, so /admin has a single robots meta with 'noindex, nofollow'. Everything else on the review checklist passes as spec'd."
+  ],
+  "critical_code_review_comments": [
+    "server.py create_contact honeypot correctly returns the Contact object without persisting when website is non-empty (early return before insert_one). Good.",
+    "Rate limit uses db.contact_rate with TTL index expireAfterSeconds=600 and a plain 'ip' index; count_documents window filter is correct. TTL cleanup means legitimate users unblock automatically.",
+    "client_ip() takes first token of x-forwarded-for — matches the review contract. Ingress on the preview does NOT prepend/override our XFF (verified: 5 sends with 198.51.100.77 then 6th got 429; a different XFF got 200), so isolation works.",
+    "ServicePage JSON-LD effect appends 3 scripts on mount and removes them on unmount; homepage renders its 1 script inline via React 19 head hoisting — nav-back returns to exactly 1 as required. Good.",
+    "Admin.jsx robots meta append is a small SEO hygiene bug (2 conflicting metas). See action_items."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_contact_antispam.py (new)"
+  ],
+  "success_rate": {"backend": "100% (10/10 new anti-spam+regression tests)", "frontend": "~95% (all 9 checklist items pass; 1 minor SEO hygiene issue on /admin robots meta)"},
+  "test_credentials": "admin@verticalinfinity.in / VInfinity!2026 — working; httpOnly cookies set on login.",
+  "seed_data_creation": "Tests create TEST_-prefixed leads; module-level cleanup deletes them via admin DELETE. Two Playwright-created UI leads (TEST_pw-home-*, TEST_pw-sp-*) were cleaned up after run. Rate-limit contact_rate docs left to expire via 10-min TTL (per review-note guidance).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Anti-spam (honeypot + rate limit) fully verified on preview URL. Rate limit is keyed on first X-Forwarded-For token — send your own XFF to isolate. The Admin robots meta duplication is minor and does NOT block the review. Backend test file to reuse for regression: /app/backend/tests/test_contact_antispam.py. Pre-existing wildcard-CORS assertion in backend_test.py remains out-of-scope (documented in iterations 4-6).",
+  "rca_of_the_issue": "Admin robots meta bug RCA: Admin.jsx does document.head.appendChild(newRobotsMeta) without first removing the existing meta[name=robots] injected via public/index.html. Reproduction: navigate to /admin, run document.querySelectorAll('meta[name=robots]') in console — returns 2 nodes. Mitigation: change the useEffect to (a) capture existing = document.querySelector('meta[name=robots]'), (b) save existing.content, (c) set existing.content='noindex, nofollow', (d) on cleanup restore the original content — avoids DOM churn and guarantees a single canonical robots tag."
+}

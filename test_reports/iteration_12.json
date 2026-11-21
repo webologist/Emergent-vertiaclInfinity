@@ -1,0 +1,46 @@
+{
+  "summary": "Iteration 12 — Verified CMS live-preview iframe + image swapping feature end-to-end. Backend: 4/4 pytest cases pass (unauth POST /api/uploads/image -> 401; text/plain -> 415; PNG upload with admin cookie -> 201 with {id,url:/api/files/<id>}, downloaded bytes hash-match source; GET /api/files/<random-uuid> -> 404). Frontend @1920x1080: admin login -> cms-preview-iframe visible inside cms-preview-pane, iframe loads homepage h1 ('AI-ENABLED DIGITAL PARTNER. THAT MOVES BUSINESSES FORWARD.'). Typed 'Draft only text' into cms-input-hero.cta WITHOUT saving -> iframe body contained the draft within 1.5s via postMessage, GET /api/content stayed {}. cms-toggle-preview hides pane (count=0) and shows again. Switching to cms-group-service-ai-automation -> iframe src = /ai-automation. cms-group-images shows 26 image thumbnails (>=20). Uploaded /app/frontend/public/vi-logo.png via cms-upload-input-hero.image (set_input_files) -> thumbnail src became https://.../api/files/<uuid>; cms-save-hero.image -> cms-modified-hero.image badge; visit / -> img.vi-8-float src contains /api/files/. cms-reset-hero.image with dialog accepted -> GET /api/content == {} and / hero img src back to /vi-8-hero.png. Regression: text edit of hero.cta -> 'Regression CTA' saved and reflected on /, then reset -> GET /api/content == {}. 0 console errors on /, /product-development, /privacy-policy (401 auth/me filtered). No overrides left behind at end of run.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "tests_executed": [
+    "BE POST /api/uploads/image unauth -> 401",
+    "BE POST /api/uploads/image with text/plain -> 415",
+    "BE POST /api/uploads/image with admin cookie + vi-logo.png -> 201 {id,url:/api/files/<id>}; GET url -> 200 image/png bytes identical (sha256 match)",
+    "BE GET /api/files/<random-uuid> -> 404",
+    "FE admin login -> cms-preview-pane + cms-preview-iframe visible at 1920x1080",
+    "FE iframe loads homepage h1 successfully",
+    "FE type into cms-input-hero.cta 'Draft only text' -> iframe mirrors within 1.5s (postMessage) AND GET /api/content still {}",
+    "FE cms-toggle-preview hides pane (count=0) and re-shows",
+    "FE cms-group-service-ai-automation -> iframe src ends /ai-automation",
+    "FE cms-group-images has 26 image thumbnails (>=20)",
+    "FE upload vi-logo.png via cms-upload-input-hero.image -> preview thumbnail src contains /api/files/",
+    "FE cms-save-hero.image -> cms-modified-hero.image badge appears",
+    "FE / hero img.vi-8-float src contains /api/files/<uuid>",
+    "FE cms-reset-hero.image (accept dialog) -> GET /api/content == {} and hero src back to /vi-8-hero.png",
+    "FE regression: edit+save cms-input-hero.cta -> /  shows 'Regression CTA'; reset -> GET /api/content == {}",
+    "FE console errors == 0 on /, /product-development, /privacy-policy"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_uploads.py",
+    "/app/test_reports/pytest/pytest_iter12.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py upload_image: content type is trusted from the client Content-Type header (file.content_type). A malicious client could set image/png on a non-image payload and get it stored. Consider validating magic bytes (e.g. imghdr / Pillow) before persisting. Not blocking since ext is only used for the storage path suffix and serve_file returns the same declared content_type.",
+    "server.py serve_file: no auth or referer check — /api/files/<id> is fully public. This is intentional per spec ('files served publicly') but note that the uuid namespace is the only access control. Predictable enumeration is infeasible (uuid4) but audit logs are absent — consider a soft rate limit on GET /api/files/ if abuse is a concern.",
+    "server.py has no DELETE endpoint for uploaded files — Reset only clears the content_overrides key, leaving orphan blobs in Emergent storage. Test iteration created blobs that will accumulate over time. Consider a periodic sweeper or a DELETE /api/files/{id} admin endpoint that flips is_deleted and removes the object.",
+    "ContentEditor.jsx Field uploadImage: prefixes API + data.url without checking that data.url starts with '/'. Also no client-side MAX size guard — user can select a >5MB file and only see the toast after full network upload. A quick f.size > 5*1024*1024 check before FormData would improve UX.",
+    "ContentEditor.jsx: onDraft posts drafts for every keystroke including in rich (Quill) fields — for heavy pages the postMessage payload can rebuild the entire preview tree on every char. A small debounce (e.g. 150ms) around postDrafts would reduce iframe re-renders.",
+    "registry.js flattenSource: /(^|\\.)(image|logo|src)$/ + extension check is fine, but the 'src' key also matches unrelated fields (e.g. any future data.src property). Consider a whitelist of explicit image roots (hero.image, growth.clients.*.logo, footer.badges.*) to avoid accidental exposure."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_uploads.py (new)"
+  ],
+  "success_rate": {"backend": "100% (4/4)", "frontend": "100%"},
+  "test_credentials": "admin@verticalinfinity.in / VI-HKvfGW0kts!42 (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Uploaded 1 PNG via /api/uploads/image during the test. As instructed uploaded blobs are allowed to remain (soft storage). All /api/content keys created during the run (hero.image, hero.cta) were reset via the UI. Final GET /api/content == {} verified.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 12 CMS live-preview + image swap feature is fully working. Backend test file: /app/backend/tests/test_uploads.py (canonical regression). No open bugs from this iteration. Prior iteration 11 flagged 'Mini Apps' URL typo (SMEsMarquee.jsx line 26) — not re-tested here but still open unless fixed. GET /api/content should be {} at start of every fresh run.",
+  "rca of the issue": "N/A — no failures found in iteration 12 scope."
+}

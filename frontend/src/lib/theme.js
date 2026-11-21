@@ -3,7 +3,9 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ThemeContext = createContext({ theme: "light", toggle: () => {} });
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => localStorage.getItem("vi-theme") || "light");
+  const [theme, setTheme] = useState(() =>
+    (typeof window !== "undefined" && localStorage.getItem("vi-theme")) || "light",
+  );
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");

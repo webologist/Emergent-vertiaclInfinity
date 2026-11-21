@@ -1,9 +1,11 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowUpRight, Sparkles } from "lucide-react";
-import { HERO, ASSETS } from "@/data/content";
+import { HERO as HERO_DEFAULT } from "@/data/content";
+import { useContent } from "@/cms/CmsContext";
 import { scrollToId } from "@/lib/scroll";
 import { useTheme } from "@/lib/theme";
+import { FishParticles } from "@/components/FishParticles";
 
 const lineVariant = {
   hidden: { y: "110%" },
@@ -14,6 +16,7 @@ const lineVariant = {
 };
 
 export default function Hero() {
+  const HERO = useContent("hero", HERO_DEFAULT);
   const ref = useRef(null);
   const { theme } = useTheme();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -26,12 +29,32 @@ export default function Hero() {
     <section id="top" ref={ref} className="relative min-h-[100svh] w-full overflow-hidden" data-testid="hero-section">
       {/* Parallax background */}
       <motion.div style={{ y: bgY, scale: bgScale }} className="absolute inset-0 -z-10">
-        <img src={theme === "dark" ? ASSETS.heroBg : ASSETS.heroBgLight} alt="" className="h-full w-full object-cover object-right" draggable={false} />
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60" />
       </motion.div>
 
-      <motion.div style={{ y: contentY, opacity: fade }} className="container-x flex min-h-[100svh] flex-col justify-center pt-28 pb-24">
+      {/* Swimming fish particle field */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <FishParticles theme={theme} />
+      </div>
+
+      {/* Right-side glowing techno "8" mark */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 -z-[5] hidden w-1/2 items-center justify-start overflow-hidden md:flex" aria-hidden="true">
+        <div className="relative flex h-full translate-x-[5%] items-center justify-center pl-[9vw] lg:pl-[6vw] xl:pl-[3vw]">
+          <div className="vi-8-glow absolute h-[62%] w-[62%] rounded-full bg-crimson/25 blur-[90px]" />
+          <motion.img
+            src={HERO.image}
+            alt=""
+            className="vi-8-float relative h-[78%] max-h-[760px] w-auto object-contain opacity-90 drop-shadow-[0_0_45px_rgba(20,200,255,0.35)]"
+            draggable={false}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 0.9, scale: 1 }}
+            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          />
+        </div>
+      </div>
+
+      <motion.div style={{ y: contentY, opacity: fade }} className="container-x flex min-h-[100svh] flex-col justify-center pt-24 pb-20">
         {/* Overline */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -46,9 +69,9 @@ export default function Hero() {
         </motion.div>
 
         {/* Kinetic masked headline */}
-        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tighter text-white text-[clamp(2.7rem,10vw,8.5rem)]">
+        <h1 className="font-display font-extrabold uppercase leading-[0.95] tracking-tighter text-white text-[clamp(1.8rem,4.6vw,4.2rem)] lg:max-w-[62%]">
           {HERO.lines.map((line, i) => (
-            <span key={i} className="block overflow-hidden">
+            <span key={line} className="block overflow-hidden">
               <motion.span
                 className={`inline-block ${line === HERO.accentWord ? "text-crimson" : ""}`}
                 custom={i}
@@ -63,12 +86,23 @@ export default function Hero() {
         </h1>
 
         {/* Sub + CTA */}
-        <div className="mt-10 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mt-8 flex flex-col items-start gap-6 lg:max-w-[62%]">
+          {HERO.descriptor ? (
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.9 }}
+              className="-mb-3 max-w-md font-display text-lg font-semibold tracking-tight text-white md:text-xl"
+              data-testid="hero-descriptor"
+            >
+              {HERO.descriptor}
+            </motion.p>
+          ) : null}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.9 }}
-            className="max-w-xl text-base leading-relaxed text-dim md:text-lg"
+            className="max-w-md text-base leading-relaxed text-dim md:text-lg"
             data-testid="hero-sub"
           >
             {HERO.sub}
@@ -94,7 +128,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3, duration: 0.9 }}
-          className="mt-16 flex flex-wrap gap-3"
+          className="mt-10 flex flex-wrap gap-3 lg:max-w-[62%]"
           data-testid="hero-stats"
         >
           {HERO.stats.map((s) => (

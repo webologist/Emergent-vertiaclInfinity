@@ -1,0 +1,41 @@
+{
+  "summary": "Regression pass after ADDITIVE Vercel-compat changes (api/index.py entry, root requirements.txt, vercel.json, SMTP branch guarded by SMTP_HOST env, ensure_startup idempotency called from startup + login, REACT_APP_BACKEND_URL fallback to '' in Contact/Growth/ServicePage/Admin). Verified on preview URL https://clean-tech-hero.preview.emergentagent.com. Vercel ASGI import works: `python -c \"import sys; sys.path.insert(0,'api'); import index; print(index.app.title)\"` prints 'Vertical Infinity API'. Full pytest suite (3 files, 50 tests): 49 passed, 1 pre-existing wildcard-CORS failure (already documented in iterations 4 & 5, explicitly excluded per request). GET /api/ returns {message:'Vertical Infinity API is live'}. Repeated POST /api/auth/login (3x) all return 200 -> ensure_startup idempotency holds (module-level flag prevents rehashing/reseed on every call). Admin session works: /auth/me, GET /api/contact lists 3 leads, PATCH /api/contact/{id}/status new<->contacted, unauth 401, PATCH invalid status 422, 404 on unknown id. GET /api/reviews 200 with aggregate rating=4.9, review_count=21. FRONTEND: homepage loads and Contact form submits successfully (button transitions to 'Sent!'). /product-development service page loads, embedded Contact submits successfully. /admin login with admin creds -> lead inbox with 3 leads rendered; clicking status pill updates badge (NEW -> CONTACTED) and PATCH call succeeds. Contact form uses data-testid attrs as expected.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "OPTIONS /api/* (CORS)", "issue": "PRE-EXISTING (iterations 4 & 5, explicitly excluded from this run's scope): CORS_ORIGINS='*' forces allow_credentials=False. Not a regression from Vercel-compat changes."},
+      {"endpoint": "server.py startup/shutdown", "issue": "Still uses deprecated @app.on_event; DeprecationWarning at boot. Not a regression; migrate to lifespan when convenient."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/test_reviews_and_auth.py",
+    "/app/backend/tests/test_status_endpoint_removal.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "None required — Vercel-compat additive changes verified with zero regressions on Emergent preview.",
+    "Optional (carried over): replace CORS_ORIGINS='*' with explicit allowlist if cookie auth is ever consumed cross-origin."
+  ],
+  "critical_code_review_comments": [
+    "api/index.py cleanly re-exports backend.server:app via sys.path insertion — import succeeds and app.title matches.",
+    "vercel.json rewrites correctly route /api/* to the ASGI function and everything else to index.html (SPA fallback); no static asset regex conflict observed.",
+    "server.py send_lead_alert SMTP branch is env-gated (SMTP_HOST); on preview neither SMTP_HOST nor VERCEL env is set, so behaviour reduces to the existing Emergent Resend background-task path — POST /api/contact stays fast (200 in <500ms observed in logs).",
+    "ensure_startup() has a module-level flag; login handler calls it at request-start with negligible overhead once initialised. Verified via 3 back-to-back logins all returning 200.",
+    "Frontend fallback `${process.env.REACT_APP_BACKEND_URL || ''}` is correct: on Vercel deploy where env is empty, it produces a same-origin relative URL that matches the /api rewrite; on preview it correctly hits the configured absolute backend URL.",
+    "server.py still 445+ lines — auth/contact/reviews would benefit from being split into routers, but not urgent."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "98% (49/50; the sole failure is the pre-existing wildcard-CORS assertion, out of scope this run)", "frontend": "100% (4/4 flows: homepage load, homepage contact submit, service-page contact submit, admin login + status update)"},
+  "test_credentials": "admin@verticalinfinity.in / VInfinity!2026 (from /app/memory/test_credentials.md) — verified working; httpOnly access_token + refresh_token cookies set on login.",
+  "seed_data_creation": "Pytest suites create TEST_-prefixed leads and delete them in fixture teardown. Two UI test leads submitted via Playwright were not persisted in the final DB snapshot (likely cleaned up by concurrent pytest teardown between runs); browser flow independently verified via the button reaching 'Sent!' state and 200 responses in backend logs. Final DB state: 3 pre-existing leads untouched.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Vercel-compat additive changes verified. Files touched by main agent: /app/api/index.py, /app/requirements.txt, /app/vercel.json, backend/server.py (send_lead_alert env-gating + ensure_startup idempotency), and 4 frontend files with `|| ''` fallback for REACT_APP_BACKEND_URL. Run `cd /app/backend && python -m pytest tests/ -v` — expect exactly 1 failure (wildcard-CORS, out of scope). Frontend data-testids on Contact form: contact-name-input, contact-email-input, contact-company-input, contact-message-input, contact-submit-btn. Admin: admin-email-input, admin-password-input, admin-login-submit, admin-inbox-page, lead-card-{id}, lead-status-{status}-{id}, lead-status-badge-{id}. NOTE: `python-playwright` MCP wrapper here needs `await` on locator methods (async API).",
+  "rca_of_the_issue": "Not applicable — no regressions detected from the Vercel-compat additive changes."
+}

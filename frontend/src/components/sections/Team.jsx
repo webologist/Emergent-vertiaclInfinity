@@ -7,17 +7,13 @@ export default function Team() {
     <section id="team" className="relative border-t border-white/10 py-24 md:py-36" data-testid="team-section">
       <div className="container-x">
         <Reveal>
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <span className="overline">{TEAM.overline}</span>
-              <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tighter sm:text-5xl lg:text-6xl">
-                {TEAM.title}
-              </h2>
-            </div>
-            <p className="max-w-xs text-sm text-dim">
-              Curious minds, genuine connection, and a goal to keep reaching new heights — together.
-            </p>
-          </div>
+          <span className="overline">{TEAM.overline}</span>
+          <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tighter sm:text-5xl lg:text-6xl">
+            {TEAM.title}
+          </h2>
+          <p className="mt-5 max-w-md text-sm text-dim md:text-base" data-testid="team-subtext">
+            Curious minds, genuine connection, and a goal to keep reaching new heights — together.
+          </p>
         </Reveal>
 
         <StaggerGroup className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6">
@@ -32,7 +28,7 @@ export default function Team() {
                 <img
                   src={m.img}
                   alt={m.name}
-                  className="h-full w-full object-cover grayscale contrast-125 transition-[filter,transform] duration-700 ease-out group-hover:grayscale-0 group-hover:scale-105"
+                  className="h-full w-full object-contain grayscale contrast-125 transition-[filter,transform] duration-700 ease-out group-hover:grayscale-0 group-hover:scale-105"
                   draggable={false}
                   loading="lazy"
                 />

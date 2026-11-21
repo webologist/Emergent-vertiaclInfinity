@@ -1,0 +1,38 @@
+{
+  "summary": "Backend-only verification of the /api/status security removal plus regression suite against the public preview URL (REACT_APP_BACKEND_URL). GET/POST /api/status (and trailing-slash variant) now return 404 with FastAPI's {'detail':'Not Found'}, the route is gone from the OpenAPI schema, and the protected PATCH /api/contact/{id}/status is untouched. All requested regressions pass: contact creation (status 'new', persisted and visible in the authenticated leads list), 422 semantic validation (whitespace name, invalid email), PATCH status 200/422/401/404, admin login (httpOnly access+refresh cookies, /auth/me), unauthenticated leads list 401, and GET /api/reviews 200 with live aggregate (rating 4.9, review_count 21). Full suite: 49/50 passed; the single failure is the pre-existing wildcard-CORS finding already reported in iteration_4, not a regression from this change.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "OPTIONS /api/auth/login (CORS)", "issue": "PRE-EXISTING (also flagged in iteration_4, unchanged): backend/.env has CORS_ORIGINS=\"*\", so server.py sets allow_credentials=False and returns Access-Control-Allow-Origin: * . Cookie-based admin auth would break for any true cross-origin frontend. Replace with an explicit allowlist (https://verticalinfinity.in + deployed frontend origin)."},
+      {"endpoint": "server.py startup/shutdown", "issue": "Uses deprecated @app.on_event; migrate to lifespan handlers (DeprecationWarning on every boot)."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_status_endpoint_removal.py",
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/test_reviews_and_auth.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "No action required for the /api/status removal — verified clean, no regressions, and no frontend caller exists (frontend only uses /api/contact/{id}/status).",
+    "Optional (carried over from iteration_4): replace CORS_ORIGINS=\"*\" with an explicit credentialed origin allowlist if cross-origin cookie auth is needed."
+  ],
+  "critical_code_review_comments": [
+    "Removal is complete and surgical: git diff shows only 30 deleted lines in backend/server.py; no leftover references to StatusCheck/StatusCheckCreate or db.status_checks, and the status_checks collection is empty (0 docs) so no orphaned data handling is needed.",
+    "Legacy lead documents created before the status field existed have no 'status' key; the Contact response model defaults it to 'new', so PATCH/list stay safe — no action needed but worth noting.",
+    "server.py is 445 lines — approaching the point where auth/contact/reviews should be split into routers."
+  ],
+  "updated_files": ["/app/backend/tests/test_status_endpoint_removal.py"],
+  "success_rate": {"backend": "98% (49/50; sole failure is the pre-existing wildcard-CORS assertion)", "frontend": "not tested (backend-only request)"},
+  "seed_data_creation": "Created 2 temporary leads (TEST_Status Removal, TEST_Patch Target) via POST /api/contact; both deleted in fixture teardown. DB verified: 0 TEST_ leads remaining; only the 2 pre-existing leads from earlier iterations remain untouched.",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_self_test": true,
+  "test_credentials": "admin@verticalinfinity.in / VInfinity!2026 from /app/memory/test_credentials.md — valid, login returns 200 with httpOnly cookies; bcrypt hash verified as $2b$ with unique users.email and login_attempts.identifier indexes; brute-force lockout returns 429 after 5 failures; seed_admin correctly rehashes a stale password.",
+  "context_for_next_testing_agent": "New file /app/backend/tests/test_status_endpoint_removal.py covers /api/status 404 (GET/POST/trailing slash/OpenAPI), contact create+persist+422 validation, PATCH status 200/422/401/404, admin login cookies, and reviews aggregate shape (keys are rating/review_count/live, NOT count). Note: /openapi.json is not reachable via the public ingress (returns the frontend HTML), so that test falls back to http://localhost:8001/openapi.json. Run the whole suite with `cd /app/backend && python -m pytest tests/ -v`; the only expected failure is TestAuthStorageAndCORS::test_configured_frontend_origin_supports_credentialed_cors due to CORS_ORIGINS=\"*\".",
+  "rca_of_the_issue": "Not applicable — the security fix behaves as intended. The single failing test stems from backend/.env CORS_ORIGINS=\"*\", which forces allow_credentials=False in server.py's CORSMiddleware config; unrelated to the /api/status removal."
+}
