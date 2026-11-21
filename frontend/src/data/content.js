@@ -12,10 +12,10 @@ export const NAV = {
 
 export const HERO = {
   image: "/vi-8-hero.png",
-  overline: "AI-Enabled Digital Agency",
+  overline: "Build. Automate. Scale.",
   lines: ["AI-Enabled Digital", "Partner. That Moves", "Businesses Forward."],
   accentWord: "Businesses Forward.",
-  descriptor: "IT company in Borivali, Mumbai — AI automation and custom software development since 2003.",
+  descriptor: "IT company in Mumbai — AI automation and custom software development since 2003.",
   sub: "We help SaaS, Education, Media & Publishing, and eCommerce organizations build high-performing digital platforms, connect complex systems, and scale with confidence.",
   cta: "Let's Chat Over Coffee",
   ctaHref: "#contact",

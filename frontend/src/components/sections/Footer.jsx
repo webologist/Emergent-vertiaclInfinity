@@ -52,7 +52,8 @@ export default function Footer() {
             <div className="flex items-center gap-2.5">
               <LogoWordmark className="h-[30px]" />
             </div>
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-dim">
+            <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-crimson">Build. Automate. Scale.</p>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-dim">
               AI-enabled digital agency that moves businesses forward. Building high-performing platforms since 2003.
             </p>
             <button
